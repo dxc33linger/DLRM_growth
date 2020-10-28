@@ -35,7 +35,7 @@ import torch
 from torch.utils.data import Dataset, RandomSampler
 
 import data_loader_terabyte
-
+import logging
 
 # Kaggle Display Advertising Challenge Dataset
 # dataset (str): name of dataset (Kaggle or Terabyte)
@@ -55,7 +55,8 @@ class CriteoDataset(Dataset):
             split="train",
             raw_path="",
             pro_data="",
-            memory_map=False
+            memory_map=False,
+            dataset_multiprocessing=False
     ):
         # dataset
         # tar_fea = 1   # single target
@@ -64,7 +65,7 @@ class CriteoDataset(Dataset):
         # tad_fea = tar_fea + den_fea
         # tot_fea = tad_fea + spa_fea
         if dataset == "kaggle":
-            days = 7
+            days = 3
             out_file = "kaggleAdDisplayChallenge_processed"
         elif dataset == "terabyte":
             days = 24
@@ -73,7 +74,7 @@ class CriteoDataset(Dataset):
             raise(ValueError("Data set option is not supported"))
         self.max_ind_range = max_ind_range
         self.memory_map = memory_map
-
+        logging.info('dataset {} #day {}'.format(dataset, days))
         # split the datafile into path and filename
         lstr = raw_path.split("/")
         self.d_path = "/".join(lstr[0:-1]) + "/"
@@ -99,10 +100,10 @@ class CriteoDataset(Dataset):
         # pre-process data if needed
         # WARNNING: when memory mapping is used we get a collection of files
         if data_ready:
-            print("Reading pre-processed data=%s" % (str(pro_data)))
+            logging.info("Reading pre-processed data=%s" % (str(pro_data)))
             file = str(pro_data)
         else:
-            print("Reading raw data=%s" % (str(raw_path)))
+            logging.info("Reading raw data=%s" % (str(raw_path)))
             file = data_utils.getCriteoAdData(
                 raw_path,
                 out_file,
@@ -112,7 +113,8 @@ class CriteoDataset(Dataset):
                 split,
                 randomize,
                 dataset == "kaggle",
-                memory_map
+                memory_map,
+                dataset_multiprocessing
             )
 
         # get a number of samples per day
@@ -181,7 +183,7 @@ class CriteoDataset(Dataset):
                 self.counts = data["counts"]
             self.m_den = den_fea  # X_int.shape[1]
             self.n_emb = len(self.counts)
-            print("Sparse features= %d, Dense features= %d" % (self.n_emb, self.m_den))
+            logging.info("Sparse features= %d, Dense features= %d" % (self.n_emb, self.m_den))
 
             # Load the test data
             # Only a single day is used for testing
@@ -204,7 +206,7 @@ class CriteoDataset(Dataset):
                 self.counts = data["counts"]
             self.m_den = X_int.shape[1]  # den_fea
             self.n_emb = len(self.counts)
-            print("Sparse fea = %d, Dense fea = %d" % (self.n_emb, self.m_den))
+            logging.info("Sparse fea = %d, Dense fea = %d" % (self.n_emb, self.m_den))
 
             # create reordering
             indices = np.arange(len(y))
@@ -213,7 +215,7 @@ class CriteoDataset(Dataset):
                 # randomize all data
                 if randomize == "total":
                     indices = np.random.permutation(indices)
-                    print("Randomized indices...")
+                    logging.info("Randomized indices...")
 
                 X_int[indices] = X_int
                 X_cat[indices] = X_cat
@@ -226,18 +228,18 @@ class CriteoDataset(Dataset):
                 if randomize == "day":  # or randomize == "total":
                     for i in range(len(indices) - 1):
                         indices[i] = np.random.permutation(indices[i])
-                    print("Randomized indices per day ...")
+                    logging.info("Randomized indices per day ...")
 
                 train_indices = np.concatenate(indices[:-1])
                 test_indices = indices[-1]
                 test_indices, val_indices = np.array_split(test_indices, 2)
 
-                print("Defined %s indices..." % (split))
+                logging.info("Defined %s indices..." % (split))
 
                 # randomize train data (across days)
                 if randomize == "total":
                     train_indices = np.random.permutation(train_indices)
-                    print("Randomized indices across days ...")
+                    logging.info("Randomized indices across days ...")
 
                 # create training, validation, and test sets
                 if split == 'train':
@@ -253,7 +255,7 @@ class CriteoDataset(Dataset):
                     self.X_cat = [X_cat[i] for i in test_indices]
                     self.y = [y[i] for i in test_indices]
 
-            print("Split data according to indices...")
+            logging.info("Split data according to indices...")
 
     def __getitem__(self, index):
 
@@ -345,7 +347,8 @@ def ensure_dataset_preprocessed(args, d_path):
         "train",
         args.raw_data_file,
         args.processed_data_file,
-        args.memory_map
+        args.memory_map,
+        args.dataset_multiprocessing
     )
 
     _ = CriteoDataset(
@@ -356,11 +359,12 @@ def ensure_dataset_preprocessed(args, d_path):
         "test",
         args.raw_data_file,
         args.processed_data_file,
-        args.memory_map
+        args.memory_map,
+        args.dataset_multiprocessing
     )
 
     for split in ['train', 'val', 'test']:
-        print('Running preprocessing for split =', split)
+        logging.info('Running preprocessing for split =', split)
 
         train_files = ['{}_{}_reordered.npz'.format(args.raw_data_file, day)
                        for
@@ -442,7 +446,8 @@ def make_criteo_data_and_loaders(args):
                 "train",
                 args.raw_data_file,
                 args.processed_data_file,
-                args.memory_map
+                args.memory_map,
+                args.dataset_multiprocessing
             )
 
             test_data = CriteoDataset(
@@ -453,7 +458,8 @@ def make_criteo_data_and_loaders(args):
                 "test",
                 args.raw_data_file,
                 args.processed_data_file,
-                args.memory_map
+                args.memory_map,
+                args.dataset_multiprocessing
             )
 
             train_loader = data_loader_terabyte.DataLoader(
@@ -482,7 +488,8 @@ def make_criteo_data_and_loaders(args):
             "train",
             args.raw_data_file,
             args.processed_data_file,
-            args.memory_map
+            args.memory_map,
+            args.dataset_multiprocessing
         )
 
         test_data = CriteoDataset(
@@ -493,7 +500,8 @@ def make_criteo_data_and_loaders(args):
             "test",
             args.raw_data_file,
             args.processed_data_file,
-            args.memory_map
+            args.memory_map,
+            args.dataset_multiprocessing
         )
 
         train_loader = torch.utils.data.DataLoader(
