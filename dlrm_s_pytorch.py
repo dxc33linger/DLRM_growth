@@ -522,7 +522,7 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
     # j will be replaced with the table number
     parser.add_argument(
-        "--arch-mlp-bot", type=dash_separated_ints, default="3-64-32-33-2")
+        "--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-33-16")
     parser.add_argument(
         "--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
     parser.add_argument(
@@ -609,6 +609,7 @@ if __name__ == "__main__":
     parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
     parser.add_argument("--size-scale", type=int, default="1")
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
+    parser.add_argument("--grow-embedding", action='store_true',  default=False)
 
 
 
@@ -617,7 +618,8 @@ if __name__ == "__main__":
     log_format = '%(asctime)s   %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M%p')
-    fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_{}X_growthStep{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.size_scale, args.growth_step)))
+    fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_{}X_growthStep{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.size_scale,
+                                                                                                                              args.growth_step, args.grow_embedding, args.initialization)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
     logging.info("******************************************************")
@@ -672,7 +674,13 @@ if __name__ == "__main__":
     #===============
     def instance_dimension(size_scale, growth_scale, trainset):
         ### prepare training data ###
-        ln_bot = np.fromstring(args.arch_mlp_bot, dtype=int, sep="-") * size_scale * growth_scale
+        ln_bot = np.fromstring(args.arch_mlp_bot, dtype=int, sep="-")
+        print('ln_bot', ln_bot)
+        if args.grow_embedding:
+            ln_bot = ln_bot *size_scale * growth_scale
+        else:
+            ln_bot[0:-1] = ln_bot[0:-1] * size_scale * growth_scale
+        # print('ln_bot', ln_bot)
         # input data
         train_data, train_ld, nbatches = trainset
 
@@ -687,8 +695,12 @@ if __name__ == "__main__":
                 ln_emb
             )))
         ### parse command line arguments ###
-        m_spa = args.arch_sparse_feature_size * size_scale * growth_scale
+        if args.grow_embedding:
+            m_spa = args.arch_sparse_feature_size * size_scale * growth_scale
+        else:
+            m_spa = args.arch_sparse_feature_size * size_scale
         m_den_out = ln_bot[ln_bot.size - 1]
+        # print('m_den_out', m_den_out)
         if args.arch_interaction_op == "dot":
             # approach 1: all
             # num_int = num_fea * num_fea + m_den_out
@@ -706,8 +718,10 @@ if __name__ == "__main__":
                 + " is not supported"
             )
         arch_mlp_top_adjusted = str(num_int) + "-" + args.arch_mlp_top
+        print('arch_mlp_top_adjusted', arch_mlp_top_adjusted)
         ln_top = np.fromstring(arch_mlp_top_adjusted, dtype=int, sep="-")
         ln_top[1:-1] = ln_top[1:-1] * size_scale * growth_scale
+
         # sanity check: feature sizes and mlp dimensions must match
         if m_den != ln_bot[0]:
             sys.exit(
@@ -887,10 +901,36 @@ if __name__ == "__main__":
 
 
             if args.initialization == 'random':
-                if re.search( 'emb', layer_name):
-                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
-                    random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                # if args.grow_embedding:
+                #     if re.search( 'emb', layer_name):
+                #         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
+                #         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                #         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                # else:
+                #     if re.search('emb', layer_name):
+                #         param_new = Variable(param_old.clone(), requires_grad=True)
+                #     elif layer_name == 'bot_l.6.weight':
+                #         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                #         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                #         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
+                if re.search('emb', layer_name):
+                    if args.grow_embedding:
+                        param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                    else:
+                        param_new = Variable(param_old.clone(), requires_grad=True)
+                elif layer_name == 'bot_l.6.weight':
+                    if args.grow_embedding:
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
+                    else:
+                        param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                 elif layer_name == 'bot_l.0.weight':
                     param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
                     random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
