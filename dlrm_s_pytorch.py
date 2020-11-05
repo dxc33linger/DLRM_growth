@@ -606,8 +606,10 @@ if __name__ == "__main__":
     parser.add_argument("--lr-num-decay-steps", type=int, default=0)
     ## added
     parser.add_argument("--gpu-id", type= str, default='0')
-    parser.add_argument("--growth-step", type=int, default="0")
+    parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
     parser.add_argument("--size-scale", type=int, default="1")
+    parser.add_argument("--initialization", type=str, default="zero")  # random or zero
+
 
 
     args = parser.parse_args()
@@ -882,35 +884,73 @@ if __name__ == "__main__":
         for layer_name, param_new in to_net.state_dict().items():
             param_old = old_param_dict[layer_name].type(torch.cuda.FloatTensor)
             std = param_old.std().item()
-            if re.search( 'emb', layer_name):
-                param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
-                random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
-            elif layer_name == 'bot_l.0.weight':
-                param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
-                random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                param_new[param_old.shape[0]: , :] = Variable(random_initialization, requires_grad = True)
-            elif layer_name == 'bot_l.0.bias':
-                param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad = True)
-            elif layer_name == 'top_l.4.weight':
-                param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
-            elif layer_name == 'top_l.4.bias':
-                param_new = Variable(param_old.clone(), requires_grad=True)
-            else:
-                if len(param_old.shape) == 2: # weight
-                    param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+
+
+            if args.initialization == 'random':
+                if re.search( 'emb', layer_name):
+                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
                     random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
-                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
-                else:
+                    param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                elif layer_name == 'bot_l.0.weight':
+                    param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
+                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]: , :] = Variable(random_initialization, requires_grad = True)
+                elif layer_name == 'bot_l.0.bias':
                     param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
                     random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad=True)
+                    param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad = True)
+                elif layer_name == 'top_l.4.weight':
+                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                    random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                elif layer_name == 'top_l.4.bias':
+                    param_new = Variable(param_old.clone(), requires_grad=True)
+                else:
+                    if len(param_old.shape) == 2: # weight
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
+                    else:
+                        param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad=True)
+            elif args.initialization == 'zero':
+                if re.search( 'emb', layer_name):
+                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
+                    zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad = True)
+                elif layer_name == 'bot_l.0.weight':
+                    param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
+                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]: , :] = Variable(zero_initialization, requires_grad = True)
+                elif layer_name == 'bot_l.0.bias':
+                    param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
+                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad = True)
+                elif layer_name == 'top_l.4.weight':
+                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                    zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad = True)
+                elif layer_name == 'top_l.4.bias':
+                    param_new = Variable(param_old.clone(), requires_grad=True)
+                else:
+                    if len(param_old.shape) == 2: # weight
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                        zero_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(zero_initialization, requires_grad=True)
+                        zero_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[param_old.shape[0]:, :] = Variable(zero_initialization, requires_grad=True)
+                    else:
+                        param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
+                        zero_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad=True)
+
+            # if layer_name == ('emb_l.8.weight' or 'bot_l.0.weight' or 'bot_l.6.weight' or 'top_l.4.weight'):
+            #     print('param_old', param_old, param_old.shape)
+            #     print('param_new', param_new)
+            #     print(layer_name)
 
             new_param_dict[layer_name] = Variable(param_new.type(torch.cuda.FloatTensor), requires_grad=True)
         to_net.load_state_dict(new_param_dict)
@@ -1371,8 +1411,7 @@ if __name__ == "__main__":
                     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                     load_trained_model(dlrm, growth_id)
                     growth_id += 1
-                    torch.cuda.empty_cache()
-
+            torch.cuda.empty_cache()
             k += 1  # nepochs
 
             #### train ends
