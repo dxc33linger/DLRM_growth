@@ -517,7 +517,7 @@ if __name__ == "__main__":
         description="Train Deep Learning Recommendation Model (DLRM)"
     )
     # model related parameters
-    parser.add_argument("--arch-sparse-feature-size", type=int, default=2)
+    parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
     parser.add_argument(
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
     # j will be replaced with the table number
@@ -888,6 +888,14 @@ if __name__ == "__main__":
         logging.info('save_model: {}'.format(current_net))
 
 
+    def hook_fn_forward(module, input, output):
+        global growth_id
+        print('growth_id', growth_id)
+        print('output', output, output.shape)
+        output = output * growth_id / (growth_id+1)
+        print('output',output, output.shape)
+
+
     def load_trained_model(to_net, growth_id):
         file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
@@ -901,18 +909,6 @@ if __name__ == "__main__":
 
 
             if args.initialization == 'random':
-                # if args.grow_embedding:
-                #     if re.search( 'emb', layer_name):
-                #         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
-                #         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                #         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
-                # else:
-                #     if re.search('emb', layer_name):
-                #         param_new = Variable(param_old.clone(), requires_grad=True)
-                #     elif layer_name == 'bot_l.6.weight':
-                #         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                #         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                #         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                 if re.search('emb', layer_name):
                     if args.grow_embedding:
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
@@ -987,13 +983,22 @@ if __name__ == "__main__":
                         zero_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad=True)
 
-            # if layer_name == ('emb_l.8.weight' or 'bot_l.0.weight' or 'bot_l.6.weight' or 'top_l.4.weight'):
-            #     print('param_old', param_old, param_old.shape)
-            #     print('param_new', param_new)
-            #     print(layer_name)
-
             new_param_dict[layer_name] = Variable(param_new.type(torch.cuda.FloatTensor), requires_grad=True)
         to_net.load_state_dict(new_param_dict)
+        if args.initialization == 'random':
+            handle1 = to_net.bot_l[1].register_forward_hook(hook_fn_forward)
+            handle2 = to_net.bot_l[3].register_forward_hook(hook_fn_forward)
+            handle3 = to_net.bot_l[5].register_forward_hook(hook_fn_forward)
+            handle4 = to_net.bot_l[7].register_forward_hook(hook_fn_forward)
+            handle5 = to_net.top_l[1].register_forward_hook(hook_fn_forward)
+            handle6 = to_net.top_l[3].register_forward_hook(hook_fn_forward)
+            handle1.remove()
+            handle2.remove()
+            handle3.remove()
+            handle4.remove()
+            handle5.remove()
+            handle6.remove()
+
         logging.info('load_model: Loading {}....'.format(path))
 
 
@@ -1157,7 +1162,9 @@ if __name__ == "__main__":
                 end_growth = args.growth_step
             else:
                 end_growth = 1
+            global growth_id
             growth_id = 0
+
             if args.growth_step != 0:
                 start_idx = math.ceil(nbatches / args.growth_step) * growth_id
                 logging.info('Stage {}, This growth start from input index {}'.format(growth_id, start_idx))
@@ -1449,6 +1456,7 @@ if __name__ == "__main__":
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                    print('growth_id pre', growth_id)
                     load_trained_model(dlrm, growth_id)
                     growth_id += 1
             torch.cuda.empty_cache()
