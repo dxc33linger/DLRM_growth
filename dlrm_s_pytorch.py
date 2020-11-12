@@ -610,6 +610,7 @@ if __name__ == "__main__":
     parser.add_argument("--size-scale", type=int, default="1")
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
     parser.add_argument("--grow-embedding", action='store_true',  default=False)
+    parser.add_argument("--growth-stop-horizon", type=float, default=0.5)
 
 
 
@@ -1450,7 +1451,7 @@ if __name__ == "__main__":
                         break
 
                 ### locate growth
-                if args.growth_step != 0 and j == math.ceil(nbatches / args.growth_step) * (growth_id+1):
+                if args.growth_step != 0 and j == math.ceil(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1):
                     save_trained_model(dlrm, growth_id)
                     logging.info('Growth ID {}, Growing from {}X to {}X.....'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
