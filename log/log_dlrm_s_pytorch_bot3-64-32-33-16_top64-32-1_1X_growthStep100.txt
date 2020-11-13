@@ -1,0 +1,188 @@
+2020-11-05 13:38:09,383   ******************************************************
+2020-11-05 13:38:09,383                     dlrm_s_pytorch.py                   
+2020-11-05 13:38:09,383   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-16', arch_mlp_top='64-32-1', arch_sparse_feature_size=16, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', grow_embedding=True, growth_step=100, inference_only=False, initialization='zero', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-05 13:38:09,392   dataset kaggle #day 2
+2020-11-05 13:38:09,392   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 13:38:37,924   Sparse fea = 26, Dense fea = 13
+2020-11-05 13:38:37,987   Defined train indices...
+2020-11-05 13:38:38,500   Randomized indices across days ...
+2020-11-05 13:38:48,387   Split data according to indices...
+2020-11-05 13:38:48,388   dataset kaggle #day 2
+2020-11-05 13:38:48,388   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 13:39:16,902   Sparse fea = 26, Dense fea = 13
+2020-11-05 13:39:16,965   Defined test indices...
+2020-11-05 13:39:17,475   Randomized indices across days ...
+2020-11-05 13:39:31,082   Split data according to indices...
+2020-11-05 13:39:31,084   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 13:39:31,084   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 13:39:41,331   time/loss/accuracy (if enabled):
+2020-11-05 13:39:41,332   Stage 0, This growth start from input index 0
+2020-11-05 13:39:53,079   Finished training it 1024/204646 of epoch 0, -1.00 ms/it, loss 0.520279, accuracy 75.668 %
+2020-11-05 13:40:03,248   Finished training it 2048/204646 of epoch 0, -1.00 ms/it, loss 0.503424, accuracy 76.373 %
+2020-11-05 13:40:06,961   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 16, mode=sum)
+    (1): EmbeddingBag(583, 16, mode=sum)
+    (2): EmbeddingBag(10131227, 16, mode=sum)
+    (3): EmbeddingBag(2202608, 16, mode=sum)
+    (4): EmbeddingBag(305, 16, mode=sum)
+    (5): EmbeddingBag(24, 16, mode=sum)
+    (6): EmbeddingBag(12517, 16, mode=sum)
+    (7): EmbeddingBag(633, 16, mode=sum)
+    (8): EmbeddingBag(3, 16, mode=sum)
+    (9): EmbeddingBag(93145, 16, mode=sum)
+    (10): EmbeddingBag(5683, 16, mode=sum)
+    (11): EmbeddingBag(8351593, 16, mode=sum)
+    (12): EmbeddingBag(3194, 16, mode=sum)
+    (13): EmbeddingBag(27, 16, mode=sum)
+    (14): EmbeddingBag(14992, 16, mode=sum)
+    (15): EmbeddingBag(5461306, 16, mode=sum)
+    (16): EmbeddingBag(10, 16, mode=sum)
+    (17): EmbeddingBag(5652, 16, mode=sum)
+    (18): EmbeddingBag(2173, 16, mode=sum)
+    (19): EmbeddingBag(4, 16, mode=sum)
+    (20): EmbeddingBag(7046547, 16, mode=sum)
+    (21): EmbeddingBag(18, 16, mode=sum)
+    (22): EmbeddingBag(15, 16, mode=sum)
+    (23): EmbeddingBag(286181, 16, mode=sum)
+    (24): EmbeddingBag(105, 16, mode=sum)
+    (25): EmbeddingBag(142572, 16, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=16, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=367, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-05 13:40:06,961   Growth ID 0, Growing from 1X to 2X.....
+2020-11-05 13:40:06,962   m_spa=32, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66  32], ln_top=[383 128  64   1]
+2020-11-05 13:40:25,100   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-05 13:40:35,856   Finished training it 3072/204646 of epoch 0, -1.00 ms/it, loss 0.591065, accuracy 74.660 %
+2020-11-05 13:47:36,316   ******************************************************
+2020-11-05 13:47:36,316                     dlrm_s_pytorch.py                   
+2020-11-05 13:47:36,316   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-16', arch_mlp_top='64-32-1', arch_sparse_feature_size=16, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', grow_embedding=True, growth_step=100, inference_only=False, initialization='random', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-05 13:47:36,325   dataset kaggle #day 2
+2020-11-05 13:47:36,325   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 13:48:04,794   Sparse fea = 26, Dense fea = 13
+2020-11-05 13:48:04,855   Defined train indices...
+2020-11-05 13:48:05,364   Randomized indices across days ...
+2020-11-05 13:48:15,728   Split data according to indices...
+2020-11-05 13:48:15,729   dataset kaggle #day 2
+2020-11-05 13:48:15,729   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 13:48:44,273   Sparse fea = 26, Dense fea = 13
+2020-11-05 13:48:44,336   Defined test indices...
+2020-11-05 13:48:44,851   Randomized indices across days ...
+2020-11-05 13:48:58,669   Split data according to indices...
+2020-11-05 13:48:58,670   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 13:48:58,671   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 13:49:08,988   time/loss/accuracy (if enabled):
+2020-11-05 13:49:08,989   Stage 0, This growth start from input index 0
+2020-11-05 13:49:20,357   Finished training it 1024/204646 of epoch 0, -1.00 ms/it, loss 0.520265, accuracy 75.655 %
+2020-11-05 13:49:30,627   Finished training it 2048/204646 of epoch 0, -1.00 ms/it, loss 0.503479, accuracy 76.392 %
+2020-11-05 13:49:34,488   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 16, mode=sum)
+    (1): EmbeddingBag(583, 16, mode=sum)
+    (2): EmbeddingBag(10131227, 16, mode=sum)
+    (3): EmbeddingBag(2202608, 16, mode=sum)
+    (4): EmbeddingBag(305, 16, mode=sum)
+    (5): EmbeddingBag(24, 16, mode=sum)
+    (6): EmbeddingBag(12517, 16, mode=sum)
+    (7): EmbeddingBag(633, 16, mode=sum)
+    (8): EmbeddingBag(3, 16, mode=sum)
+    (9): EmbeddingBag(93145, 16, mode=sum)
+    (10): EmbeddingBag(5683, 16, mode=sum)
+    (11): EmbeddingBag(8351593, 16, mode=sum)
+    (12): EmbeddingBag(3194, 16, mode=sum)
+    (13): EmbeddingBag(27, 16, mode=sum)
+    (14): EmbeddingBag(14992, 16, mode=sum)
+    (15): EmbeddingBag(5461306, 16, mode=sum)
+    (16): EmbeddingBag(10, 16, mode=sum)
+    (17): EmbeddingBag(5652, 16, mode=sum)
+    (18): EmbeddingBag(2173, 16, mode=sum)
+    (19): EmbeddingBag(4, 16, mode=sum)
+    (20): EmbeddingBag(7046547, 16, mode=sum)
+    (21): EmbeddingBag(18, 16, mode=sum)
+    (22): EmbeddingBag(15, 16, mode=sum)
+    (23): EmbeddingBag(286181, 16, mode=sum)
+    (24): EmbeddingBag(105, 16, mode=sum)
+    (25): EmbeddingBag(142572, 16, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=16, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=367, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-05 13:49:34,488   Growth ID 0, Growing from 1X to 2X.....
+2020-11-05 13:49:34,488   m_spa=32, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66  32], ln_top=[383 128  64   1]
+2020-11-05 13:49:56,076   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-05 14:20:17,738   ******************************************************
+2020-11-05 14:20:17,738                     dlrm_s_pytorch.py                   
+2020-11-05 14:20:17,738   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-16', arch_mlp_top='64-32-1', arch_sparse_feature_size=16, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', grow_embedding=True, growth_step=100, inference_only=False, initialization='random', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-05 14:20:17,747   dataset kaggle #day 2
+2020-11-05 14:20:17,747   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 14:20:46,262   Sparse fea = 26, Dense fea = 13
+2020-11-05 14:20:46,324   Defined train indices...
+2020-11-05 14:20:46,832   Randomized indices across days ...
+2020-11-05 14:20:57,068   Split data according to indices...
+2020-11-05 14:20:57,069   dataset kaggle #day 2
+2020-11-05 14:20:57,069   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-05 14:21:25,529   Sparse fea = 26, Dense fea = 13
+2020-11-05 14:21:25,591   Defined test indices...
+2020-11-05 14:21:26,099   Randomized indices across days ...
+2020-11-05 14:21:40,071   Split data according to indices...
+2020-11-05 14:21:40,072   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 14:21:40,072   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33 16], ln_top=[367  64  32   1]
+2020-11-05 14:21:50,145   time/loss/accuracy (if enabled):
+2020-11-05 14:21:50,146   Stage 0, This growth start from input index 0

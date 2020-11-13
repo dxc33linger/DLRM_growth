@@ -1,0 +1,1212 @@
+2020-11-04 15:27:04,927   ******************************************************
+2020-11-04 15:27:04,927                     dlrm_s_pytorch.py                   
+2020-11-04 15:27:04,927   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-2', arch_mlp_top='64-32-1', arch_sparse_feature_size=2, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', growth_step=400, inference_only=False, initialization='zero', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-04 15:27:04,936   dataset kaggle #day 7
+2020-11-04 15:27:04,936   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-04 15:27:33,336   Sparse fea = 26, Dense fea = 13
+2020-11-04 15:27:33,422   Defined train indices...
+2020-11-04 15:27:35,166   Randomized indices across days ...
+2020-11-04 15:28:06,227   Split data according to indices...
+2020-11-04 15:28:06,228   dataset kaggle #day 7
+2020-11-04 15:28:06,228   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-04 15:28:34,730   Sparse fea = 26, Dense fea = 13
+2020-11-04 15:28:34,822   Defined test indices...
+2020-11-04 15:28:36,566   Randomized indices across days ...
+2020-11-04 15:28:38,882   Split data according to indices...
+2020-11-04 15:28:38,884   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-11-04 15:28:38,884   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-11-04 15:28:42,481   time/loss/accuracy (if enabled):
+2020-11-04 15:28:42,481   Stage 0, This growth start from input index 0
+2020-11-04 15:28:54,572   Finished training it 1024/613937 of epoch 0, -1.00 ms/it, loss 0.532735, accuracy 74.557 %
+2020-11-04 15:29:00,115   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 2, mode=sum)
+    (1): EmbeddingBag(583, 2, mode=sum)
+    (2): EmbeddingBag(10131227, 2, mode=sum)
+    (3): EmbeddingBag(2202608, 2, mode=sum)
+    (4): EmbeddingBag(305, 2, mode=sum)
+    (5): EmbeddingBag(24, 2, mode=sum)
+    (6): EmbeddingBag(12517, 2, mode=sum)
+    (7): EmbeddingBag(633, 2, mode=sum)
+    (8): EmbeddingBag(3, 2, mode=sum)
+    (9): EmbeddingBag(93145, 2, mode=sum)
+    (10): EmbeddingBag(5683, 2, mode=sum)
+    (11): EmbeddingBag(8351593, 2, mode=sum)
+    (12): EmbeddingBag(3194, 2, mode=sum)
+    (13): EmbeddingBag(27, 2, mode=sum)
+    (14): EmbeddingBag(14992, 2, mode=sum)
+    (15): EmbeddingBag(5461306, 2, mode=sum)
+    (16): EmbeddingBag(10, 2, mode=sum)
+    (17): EmbeddingBag(5652, 2, mode=sum)
+    (18): EmbeddingBag(2173, 2, mode=sum)
+    (19): EmbeddingBag(4, 2, mode=sum)
+    (20): EmbeddingBag(7046547, 2, mode=sum)
+    (21): EmbeddingBag(18, 2, mode=sum)
+    (22): EmbeddingBag(15, 2, mode=sum)
+    (23): EmbeddingBag(286181, 2, mode=sum)
+    (24): EmbeddingBag(105, 2, mode=sum)
+    (25): EmbeddingBag(142572, 2, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=2, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=353, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:29:00,115   Growth ID 0, Growing from 1X to 2X.....
+2020-11-04 15:29:00,116   m_spa=4, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66   4], ln_top=[355 128  64   1]
+2020-11-04 15:29:02,428   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-04 15:29:07,605   Finished training it 2048/613937 of epoch 0, -1.00 ms/it, loss 0.557771, accuracy 75.468 %
+2020-11-04 15:29:23,951   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 4, mode=sum)
+    (1): EmbeddingBag(583, 4, mode=sum)
+    (2): EmbeddingBag(10131227, 4, mode=sum)
+    (3): EmbeddingBag(2202608, 4, mode=sum)
+    (4): EmbeddingBag(305, 4, mode=sum)
+    (5): EmbeddingBag(24, 4, mode=sum)
+    (6): EmbeddingBag(12517, 4, mode=sum)
+    (7): EmbeddingBag(633, 4, mode=sum)
+    (8): EmbeddingBag(3, 4, mode=sum)
+    (9): EmbeddingBag(93145, 4, mode=sum)
+    (10): EmbeddingBag(5683, 4, mode=sum)
+    (11): EmbeddingBag(8351593, 4, mode=sum)
+    (12): EmbeddingBag(3194, 4, mode=sum)
+    (13): EmbeddingBag(27, 4, mode=sum)
+    (14): EmbeddingBag(14992, 4, mode=sum)
+    (15): EmbeddingBag(5461306, 4, mode=sum)
+    (16): EmbeddingBag(10, 4, mode=sum)
+    (17): EmbeddingBag(5652, 4, mode=sum)
+    (18): EmbeddingBag(2173, 4, mode=sum)
+    (19): EmbeddingBag(4, 4, mode=sum)
+    (20): EmbeddingBag(7046547, 4, mode=sum)
+    (21): EmbeddingBag(18, 4, mode=sum)
+    (22): EmbeddingBag(15, 4, mode=sum)
+    (23): EmbeddingBag(286181, 4, mode=sum)
+    (24): EmbeddingBag(105, 4, mode=sum)
+    (25): EmbeddingBag(142572, 4, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=66, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=66, out_features=4, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=355, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:29:23,951   Growth ID 1, Growing from 2X to 3X.....
+2020-11-04 15:29:23,951   m_spa=6, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 192  96  99   6], ln_top=[357 192  96   1]
+2020-11-04 15:29:27,475   load_model: Loading ./saved_model/model_after_growth1.pickle....
+2020-11-04 15:29:27,484   Finished training it 3072/613937 of epoch 0, -1.00 ms/it, loss 0.610694, accuracy 74.501 %
+2020-11-04 15:29:40,636   Finished training it 4096/613937 of epoch 0, -1.00 ms/it, loss 0.602318, accuracy 74.284 %
+2020-11-04 15:29:47,910   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 6, mode=sum)
+    (1): EmbeddingBag(583, 6, mode=sum)
+    (2): EmbeddingBag(10131227, 6, mode=sum)
+    (3): EmbeddingBag(2202608, 6, mode=sum)
+    (4): EmbeddingBag(305, 6, mode=sum)
+    (5): EmbeddingBag(24, 6, mode=sum)
+    (6): EmbeddingBag(12517, 6, mode=sum)
+    (7): EmbeddingBag(633, 6, mode=sum)
+    (8): EmbeddingBag(3, 6, mode=sum)
+    (9): EmbeddingBag(93145, 6, mode=sum)
+    (10): EmbeddingBag(5683, 6, mode=sum)
+    (11): EmbeddingBag(8351593, 6, mode=sum)
+    (12): EmbeddingBag(3194, 6, mode=sum)
+    (13): EmbeddingBag(27, 6, mode=sum)
+    (14): EmbeddingBag(14992, 6, mode=sum)
+    (15): EmbeddingBag(5461306, 6, mode=sum)
+    (16): EmbeddingBag(10, 6, mode=sum)
+    (17): EmbeddingBag(5652, 6, mode=sum)
+    (18): EmbeddingBag(2173, 6, mode=sum)
+    (19): EmbeddingBag(4, 6, mode=sum)
+    (20): EmbeddingBag(7046547, 6, mode=sum)
+    (21): EmbeddingBag(18, 6, mode=sum)
+    (22): EmbeddingBag(15, 6, mode=sum)
+    (23): EmbeddingBag(286181, 6, mode=sum)
+    (24): EmbeddingBag(105, 6, mode=sum)
+    (25): EmbeddingBag(142572, 6, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=99, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=99, out_features=6, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=357, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:29:47,910   Growth ID 2, Growing from 3X to 4X.....
+2020-11-04 15:29:47,911   m_spa=8, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 256 128 132   8], ln_top=[359 256 128   1]
+2020-11-04 15:29:52,706   load_model: Loading ./saved_model/model_after_growth2.pickle....
+2020-11-04 15:29:59,251   Finished training it 5120/613937 of epoch 0, -1.00 ms/it, loss 0.673244, accuracy 74.471 %
+2020-11-04 15:30:14,324   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 8, mode=sum)
+    (1): EmbeddingBag(583, 8, mode=sum)
+    (2): EmbeddingBag(10131227, 8, mode=sum)
+    (3): EmbeddingBag(2202608, 8, mode=sum)
+    (4): EmbeddingBag(305, 8, mode=sum)
+    (5): EmbeddingBag(24, 8, mode=sum)
+    (6): EmbeddingBag(12517, 8, mode=sum)
+    (7): EmbeddingBag(633, 8, mode=sum)
+    (8): EmbeddingBag(3, 8, mode=sum)
+    (9): EmbeddingBag(93145, 8, mode=sum)
+    (10): EmbeddingBag(5683, 8, mode=sum)
+    (11): EmbeddingBag(8351593, 8, mode=sum)
+    (12): EmbeddingBag(3194, 8, mode=sum)
+    (13): EmbeddingBag(27, 8, mode=sum)
+    (14): EmbeddingBag(14992, 8, mode=sum)
+    (15): EmbeddingBag(5461306, 8, mode=sum)
+    (16): EmbeddingBag(10, 8, mode=sum)
+    (17): EmbeddingBag(5652, 8, mode=sum)
+    (18): EmbeddingBag(2173, 8, mode=sum)
+    (19): EmbeddingBag(4, 8, mode=sum)
+    (20): EmbeddingBag(7046547, 8, mode=sum)
+    (21): EmbeddingBag(18, 8, mode=sum)
+    (22): EmbeddingBag(15, 8, mode=sum)
+    (23): EmbeddingBag(286181, 8, mode=sum)
+    (24): EmbeddingBag(105, 8, mode=sum)
+    (25): EmbeddingBag(142572, 8, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=132, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=132, out_features=8, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=359, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:30:14,325   Growth ID 3, Growing from 4X to 5X.....
+2020-11-04 15:30:14,325   m_spa=10, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 320 160 165  10], ln_top=[361 320 160   1]
+2020-11-04 15:30:20,403   load_model: Loading ./saved_model/model_after_growth3.pickle....
+2020-11-04 15:30:20,434   Finished training it 6144/613937 of epoch 0, -1.00 ms/it, loss 0.745072, accuracy 74.403 %
+2020-11-04 15:30:33,652   Finished training it 7168/613937 of epoch 0, -1.00 ms/it, loss 0.740969, accuracy 74.727 %
+2020-11-04 15:30:41,426   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 10, mode=sum)
+    (1): EmbeddingBag(583, 10, mode=sum)
+    (2): EmbeddingBag(10131227, 10, mode=sum)
+    (3): EmbeddingBag(2202608, 10, mode=sum)
+    (4): EmbeddingBag(305, 10, mode=sum)
+    (5): EmbeddingBag(24, 10, mode=sum)
+    (6): EmbeddingBag(12517, 10, mode=sum)
+    (7): EmbeddingBag(633, 10, mode=sum)
+    (8): EmbeddingBag(3, 10, mode=sum)
+    (9): EmbeddingBag(93145, 10, mode=sum)
+    (10): EmbeddingBag(5683, 10, mode=sum)
+    (11): EmbeddingBag(8351593, 10, mode=sum)
+    (12): EmbeddingBag(3194, 10, mode=sum)
+    (13): EmbeddingBag(27, 10, mode=sum)
+    (14): EmbeddingBag(14992, 10, mode=sum)
+    (15): EmbeddingBag(5461306, 10, mode=sum)
+    (16): EmbeddingBag(10, 10, mode=sum)
+    (17): EmbeddingBag(5652, 10, mode=sum)
+    (18): EmbeddingBag(2173, 10, mode=sum)
+    (19): EmbeddingBag(4, 10, mode=sum)
+    (20): EmbeddingBag(7046547, 10, mode=sum)
+    (21): EmbeddingBag(18, 10, mode=sum)
+    (22): EmbeddingBag(15, 10, mode=sum)
+    (23): EmbeddingBag(286181, 10, mode=sum)
+    (24): EmbeddingBag(105, 10, mode=sum)
+    (25): EmbeddingBag(142572, 10, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=165, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=165, out_features=10, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=361, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:30:41,427   Growth ID 4, Growing from 5X to 6X.....
+2020-11-04 15:30:41,427   m_spa=12, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 384 192 198  12], ln_top=[363 384 192   1]
+2020-11-04 15:30:48,787   load_model: Loading ./saved_model/model_after_growth4.pickle....
+2020-11-04 15:30:53,992   Finished training it 8192/613937 of epoch 0, -1.00 ms/it, loss 0.975410, accuracy 74.812 %
+2020-11-04 15:31:09,338   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 12, mode=sum)
+    (1): EmbeddingBag(583, 12, mode=sum)
+    (2): EmbeddingBag(10131227, 12, mode=sum)
+    (3): EmbeddingBag(2202608, 12, mode=sum)
+    (4): EmbeddingBag(305, 12, mode=sum)
+    (5): EmbeddingBag(24, 12, mode=sum)
+    (6): EmbeddingBag(12517, 12, mode=sum)
+    (7): EmbeddingBag(633, 12, mode=sum)
+    (8): EmbeddingBag(3, 12, mode=sum)
+    (9): EmbeddingBag(93145, 12, mode=sum)
+    (10): EmbeddingBag(5683, 12, mode=sum)
+    (11): EmbeddingBag(8351593, 12, mode=sum)
+    (12): EmbeddingBag(3194, 12, mode=sum)
+    (13): EmbeddingBag(27, 12, mode=sum)
+    (14): EmbeddingBag(14992, 12, mode=sum)
+    (15): EmbeddingBag(5461306, 12, mode=sum)
+    (16): EmbeddingBag(10, 12, mode=sum)
+    (17): EmbeddingBag(5652, 12, mode=sum)
+    (18): EmbeddingBag(2173, 12, mode=sum)
+    (19): EmbeddingBag(4, 12, mode=sum)
+    (20): EmbeddingBag(7046547, 12, mode=sum)
+    (21): EmbeddingBag(18, 12, mode=sum)
+    (22): EmbeddingBag(15, 12, mode=sum)
+    (23): EmbeddingBag(286181, 12, mode=sum)
+    (24): EmbeddingBag(105, 12, mode=sum)
+    (25): EmbeddingBag(142572, 12, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=198, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=198, out_features=12, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=363, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:31:09,338   Growth ID 5, Growing from 6X to 7X.....
+2020-11-04 15:31:09,338   m_spa=14, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 448 224 231  14], ln_top=[365 448 224   1]
+2020-11-04 15:31:17,786   load_model: Loading ./saved_model/model_after_growth5.pickle....
+2020-11-04 15:31:17,848   Finished training it 9216/613937 of epoch 0, -1.00 ms/it, loss 1.239148, accuracy 74.092 %
+2020-11-04 15:31:27,298   Finished training it 10240/613937 of epoch 0, -1.00 ms/it, loss 2.054320, accuracy 28.127 %
+2020-11-04 15:31:33,648   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 14, mode=sum)
+    (1): EmbeddingBag(583, 14, mode=sum)
+    (2): EmbeddingBag(10131227, 14, mode=sum)
+    (3): EmbeddingBag(2202608, 14, mode=sum)
+    (4): EmbeddingBag(305, 14, mode=sum)
+    (5): EmbeddingBag(24, 14, mode=sum)
+    (6): EmbeddingBag(12517, 14, mode=sum)
+    (7): EmbeddingBag(633, 14, mode=sum)
+    (8): EmbeddingBag(3, 14, mode=sum)
+    (9): EmbeddingBag(93145, 14, mode=sum)
+    (10): EmbeddingBag(5683, 14, mode=sum)
+    (11): EmbeddingBag(8351593, 14, mode=sum)
+    (12): EmbeddingBag(3194, 14, mode=sum)
+    (13): EmbeddingBag(27, 14, mode=sum)
+    (14): EmbeddingBag(14992, 14, mode=sum)
+    (15): EmbeddingBag(5461306, 14, mode=sum)
+    (16): EmbeddingBag(10, 14, mode=sum)
+    (17): EmbeddingBag(5652, 14, mode=sum)
+    (18): EmbeddingBag(2173, 14, mode=sum)
+    (19): EmbeddingBag(4, 14, mode=sum)
+    (20): EmbeddingBag(7046547, 14, mode=sum)
+    (21): EmbeddingBag(18, 14, mode=sum)
+    (22): EmbeddingBag(15, 14, mode=sum)
+    (23): EmbeddingBag(286181, 14, mode=sum)
+    (24): EmbeddingBag(105, 14, mode=sum)
+    (25): EmbeddingBag(142572, 14, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=231, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=231, out_features=14, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=365, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:31:33,648   Growth ID 6, Growing from 7X to 8X.....
+2020-11-04 15:31:33,649   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 512 256 264  16], ln_top=[367 512 256   1]
+2020-11-04 15:31:43,283   load_model: Loading ./saved_model/model_after_growth6.pickle....
+2020-11-04 15:31:47,537   Finished training it 11264/613937 of epoch 0, -1.00 ms/it, loss 1.919077, accuracy 31.715 %
+2020-11-04 15:31:58,567   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 16, mode=sum)
+    (1): EmbeddingBag(583, 16, mode=sum)
+    (2): EmbeddingBag(10131227, 16, mode=sum)
+    (3): EmbeddingBag(2202608, 16, mode=sum)
+    (4): EmbeddingBag(305, 16, mode=sum)
+    (5): EmbeddingBag(24, 16, mode=sum)
+    (6): EmbeddingBag(12517, 16, mode=sum)
+    (7): EmbeddingBag(633, 16, mode=sum)
+    (8): EmbeddingBag(3, 16, mode=sum)
+    (9): EmbeddingBag(93145, 16, mode=sum)
+    (10): EmbeddingBag(5683, 16, mode=sum)
+    (11): EmbeddingBag(8351593, 16, mode=sum)
+    (12): EmbeddingBag(3194, 16, mode=sum)
+    (13): EmbeddingBag(27, 16, mode=sum)
+    (14): EmbeddingBag(14992, 16, mode=sum)
+    (15): EmbeddingBag(5461306, 16, mode=sum)
+    (16): EmbeddingBag(10, 16, mode=sum)
+    (17): EmbeddingBag(5652, 16, mode=sum)
+    (18): EmbeddingBag(2173, 16, mode=sum)
+    (19): EmbeddingBag(4, 16, mode=sum)
+    (20): EmbeddingBag(7046547, 16, mode=sum)
+    (21): EmbeddingBag(18, 16, mode=sum)
+    (22): EmbeddingBag(15, 16, mode=sum)
+    (23): EmbeddingBag(286181, 16, mode=sum)
+    (24): EmbeddingBag(105, 16, mode=sum)
+    (25): EmbeddingBag(142572, 16, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=256, out_features=264, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=264, out_features=16, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=367, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=256, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:31:58,567   Growth ID 7, Growing from 8X to 9X.....
+2020-11-04 15:31:58,568   m_spa=18, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 576 288 297  18], ln_top=[369 576 288   1]
+2020-11-04 15:32:09,425   load_model: Loading ./saved_model/model_after_growth7.pickle....
+2020-11-04 15:32:09,478   Finished training it 12288/613937 of epoch 0, -1.00 ms/it, loss 1.784936, accuracy 35.214 %
+2020-11-04 15:32:17,694   Finished training it 13312/613937 of epoch 0, -1.00 ms/it, loss 1.716462, accuracy 31.067 %
+2020-11-04 15:32:24,624   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 18, mode=sum)
+    (1): EmbeddingBag(583, 18, mode=sum)
+    (2): EmbeddingBag(10131227, 18, mode=sum)
+    (3): EmbeddingBag(2202608, 18, mode=sum)
+    (4): EmbeddingBag(305, 18, mode=sum)
+    (5): EmbeddingBag(24, 18, mode=sum)
+    (6): EmbeddingBag(12517, 18, mode=sum)
+    (7): EmbeddingBag(633, 18, mode=sum)
+    (8): EmbeddingBag(3, 18, mode=sum)
+    (9): EmbeddingBag(93145, 18, mode=sum)
+    (10): EmbeddingBag(5683, 18, mode=sum)
+    (11): EmbeddingBag(8351593, 18, mode=sum)
+    (12): EmbeddingBag(3194, 18, mode=sum)
+    (13): EmbeddingBag(27, 18, mode=sum)
+    (14): EmbeddingBag(14992, 18, mode=sum)
+    (15): EmbeddingBag(5461306, 18, mode=sum)
+    (16): EmbeddingBag(10, 18, mode=sum)
+    (17): EmbeddingBag(5652, 18, mode=sum)
+    (18): EmbeddingBag(2173, 18, mode=sum)
+    (19): EmbeddingBag(4, 18, mode=sum)
+    (20): EmbeddingBag(7046547, 18, mode=sum)
+    (21): EmbeddingBag(18, 18, mode=sum)
+    (22): EmbeddingBag(15, 18, mode=sum)
+    (23): EmbeddingBag(286181, 18, mode=sum)
+    (24): EmbeddingBag(105, 18, mode=sum)
+    (25): EmbeddingBag(142572, 18, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=576, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=576, out_features=288, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=288, out_features=297, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=297, out_features=18, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=369, out_features=576, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=576, out_features=288, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=288, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 15:32:24,624   Growth ID 8, Growing from 9X to 10X.....
+2020-11-04 15:32:24,625   m_spa=20, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 640 320 330  20], ln_top=[371 640 320   1]
+2020-11-04 16:18:17,993   ******************************************************
+2020-11-04 16:18:17,993                     dlrm_s_pytorch.py                   
+2020-11-04 16:18:17,993   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-2', arch_mlp_top='64-32-1', arch_sparse_feature_size=2, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='1', growth_step=400, inference_only=False, initialization='zero', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-04 16:18:18,015   dataset kaggle #day 7
+2020-11-04 16:18:18,015   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-04 16:18:46,593   Sparse fea = 26, Dense fea = 13
+2020-11-04 16:18:46,681   Defined train indices...
+2020-11-04 16:18:48,447   Randomized indices across days ...
+2020-11-04 16:19:18,674   Split data according to indices...
+2020-11-04 16:19:18,675   dataset kaggle #day 7
+2020-11-04 16:19:18,675   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-04 16:19:47,157   Sparse fea = 26, Dense fea = 13
+2020-11-04 16:19:47,244   Defined test indices...
+2020-11-04 16:19:48,984   Randomized indices across days ...
+2020-11-04 16:19:51,244   Split data according to indices...
+2020-11-04 16:19:51,246   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-11-04 16:19:51,246   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-11-04 16:19:54,865   time/loss/accuracy (if enabled):
+2020-11-04 16:19:54,865   Stage 0, This growth start from input index 0
+2020-11-04 16:20:04,559   Finished training it 1024/613937 of epoch 0, -1.00 ms/it, loss 0.532759, accuracy 74.582 %
+2020-11-04 16:20:08,845   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 2, mode=sum)
+    (1): EmbeddingBag(583, 2, mode=sum)
+    (2): EmbeddingBag(10131227, 2, mode=sum)
+    (3): EmbeddingBag(2202608, 2, mode=sum)
+    (4): EmbeddingBag(305, 2, mode=sum)
+    (5): EmbeddingBag(24, 2, mode=sum)
+    (6): EmbeddingBag(12517, 2, mode=sum)
+    (7): EmbeddingBag(633, 2, mode=sum)
+    (8): EmbeddingBag(3, 2, mode=sum)
+    (9): EmbeddingBag(93145, 2, mode=sum)
+    (10): EmbeddingBag(5683, 2, mode=sum)
+    (11): EmbeddingBag(8351593, 2, mode=sum)
+    (12): EmbeddingBag(3194, 2, mode=sum)
+    (13): EmbeddingBag(27, 2, mode=sum)
+    (14): EmbeddingBag(14992, 2, mode=sum)
+    (15): EmbeddingBag(5461306, 2, mode=sum)
+    (16): EmbeddingBag(10, 2, mode=sum)
+    (17): EmbeddingBag(5652, 2, mode=sum)
+    (18): EmbeddingBag(2173, 2, mode=sum)
+    (19): EmbeddingBag(4, 2, mode=sum)
+    (20): EmbeddingBag(7046547, 2, mode=sum)
+    (21): EmbeddingBag(18, 2, mode=sum)
+    (22): EmbeddingBag(15, 2, mode=sum)
+    (23): EmbeddingBag(286181, 2, mode=sum)
+    (24): EmbeddingBag(105, 2, mode=sum)
+    (25): EmbeddingBag(142572, 2, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=2, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=353, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:20:08,845   Growth ID 0, Growing from 1X to 2X.....
+2020-11-04 16:20:08,845   m_spa=4, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66   4], ln_top=[355 128  64   1]
+2020-11-04 16:20:11,209   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-04 16:20:15,361   Finished training it 2048/613937 of epoch 0, -1.00 ms/it, loss 0.561077, accuracy 75.484 %
+2020-11-04 16:20:24,753   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 4, mode=sum)
+    (1): EmbeddingBag(583, 4, mode=sum)
+    (2): EmbeddingBag(10131227, 4, mode=sum)
+    (3): EmbeddingBag(2202608, 4, mode=sum)
+    (4): EmbeddingBag(305, 4, mode=sum)
+    (5): EmbeddingBag(24, 4, mode=sum)
+    (6): EmbeddingBag(12517, 4, mode=sum)
+    (7): EmbeddingBag(633, 4, mode=sum)
+    (8): EmbeddingBag(3, 4, mode=sum)
+    (9): EmbeddingBag(93145, 4, mode=sum)
+    (10): EmbeddingBag(5683, 4, mode=sum)
+    (11): EmbeddingBag(8351593, 4, mode=sum)
+    (12): EmbeddingBag(3194, 4, mode=sum)
+    (13): EmbeddingBag(27, 4, mode=sum)
+    (14): EmbeddingBag(14992, 4, mode=sum)
+    (15): EmbeddingBag(5461306, 4, mode=sum)
+    (16): EmbeddingBag(10, 4, mode=sum)
+    (17): EmbeddingBag(5652, 4, mode=sum)
+    (18): EmbeddingBag(2173, 4, mode=sum)
+    (19): EmbeddingBag(4, 4, mode=sum)
+    (20): EmbeddingBag(7046547, 4, mode=sum)
+    (21): EmbeddingBag(18, 4, mode=sum)
+    (22): EmbeddingBag(15, 4, mode=sum)
+    (23): EmbeddingBag(286181, 4, mode=sum)
+    (24): EmbeddingBag(105, 4, mode=sum)
+    (25): EmbeddingBag(142572, 4, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=66, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=66, out_features=4, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=355, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:20:24,754   Growth ID 1, Growing from 2X to 3X.....
+2020-11-04 16:20:24,754   m_spa=6, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 192  96  99   6], ln_top=[357 192  96   1]
+2020-11-04 16:20:28,423   load_model: Loading ./saved_model/model_after_growth1.pickle....
+2020-11-04 16:20:28,429   Finished training it 3072/613937 of epoch 0, -1.00 ms/it, loss 0.617357, accuracy 74.501 %
+2020-11-04 16:20:36,943   Finished training it 4096/613937 of epoch 0, -1.00 ms/it, loss 0.616632, accuracy 74.284 %
+2020-11-04 16:20:42,482   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 6, mode=sum)
+    (1): EmbeddingBag(583, 6, mode=sum)
+    (2): EmbeddingBag(10131227, 6, mode=sum)
+    (3): EmbeddingBag(2202608, 6, mode=sum)
+    (4): EmbeddingBag(305, 6, mode=sum)
+    (5): EmbeddingBag(24, 6, mode=sum)
+    (6): EmbeddingBag(12517, 6, mode=sum)
+    (7): EmbeddingBag(633, 6, mode=sum)
+    (8): EmbeddingBag(3, 6, mode=sum)
+    (9): EmbeddingBag(93145, 6, mode=sum)
+    (10): EmbeddingBag(5683, 6, mode=sum)
+    (11): EmbeddingBag(8351593, 6, mode=sum)
+    (12): EmbeddingBag(3194, 6, mode=sum)
+    (13): EmbeddingBag(27, 6, mode=sum)
+    (14): EmbeddingBag(14992, 6, mode=sum)
+    (15): EmbeddingBag(5461306, 6, mode=sum)
+    (16): EmbeddingBag(10, 6, mode=sum)
+    (17): EmbeddingBag(5652, 6, mode=sum)
+    (18): EmbeddingBag(2173, 6, mode=sum)
+    (19): EmbeddingBag(4, 6, mode=sum)
+    (20): EmbeddingBag(7046547, 6, mode=sum)
+    (21): EmbeddingBag(18, 6, mode=sum)
+    (22): EmbeddingBag(15, 6, mode=sum)
+    (23): EmbeddingBag(286181, 6, mode=sum)
+    (24): EmbeddingBag(105, 6, mode=sum)
+    (25): EmbeddingBag(142572, 6, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=99, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=99, out_features=6, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=357, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:20:42,482   Growth ID 2, Growing from 3X to 4X.....
+2020-11-04 16:20:42,483   m_spa=8, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 256 128 132   8], ln_top=[359 256 128   1]
+2020-11-04 16:20:47,419   load_model: Loading ./saved_model/model_after_growth2.pickle....
+2020-11-04 16:20:51,663   Finished training it 5120/613937 of epoch 0, -1.00 ms/it, loss 0.683026, accuracy 74.471 %
+2020-11-04 16:21:02,076   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 8, mode=sum)
+    (1): EmbeddingBag(583, 8, mode=sum)
+    (2): EmbeddingBag(10131227, 8, mode=sum)
+    (3): EmbeddingBag(2202608, 8, mode=sum)
+    (4): EmbeddingBag(305, 8, mode=sum)
+    (5): EmbeddingBag(24, 8, mode=sum)
+    (6): EmbeddingBag(12517, 8, mode=sum)
+    (7): EmbeddingBag(633, 8, mode=sum)
+    (8): EmbeddingBag(3, 8, mode=sum)
+    (9): EmbeddingBag(93145, 8, mode=sum)
+    (10): EmbeddingBag(5683, 8, mode=sum)
+    (11): EmbeddingBag(8351593, 8, mode=sum)
+    (12): EmbeddingBag(3194, 8, mode=sum)
+    (13): EmbeddingBag(27, 8, mode=sum)
+    (14): EmbeddingBag(14992, 8, mode=sum)
+    (15): EmbeddingBag(5461306, 8, mode=sum)
+    (16): EmbeddingBag(10, 8, mode=sum)
+    (17): EmbeddingBag(5652, 8, mode=sum)
+    (18): EmbeddingBag(2173, 8, mode=sum)
+    (19): EmbeddingBag(4, 8, mode=sum)
+    (20): EmbeddingBag(7046547, 8, mode=sum)
+    (21): EmbeddingBag(18, 8, mode=sum)
+    (22): EmbeddingBag(15, 8, mode=sum)
+    (23): EmbeddingBag(286181, 8, mode=sum)
+    (24): EmbeddingBag(105, 8, mode=sum)
+    (25): EmbeddingBag(142572, 8, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=132, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=132, out_features=8, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=359, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:21:02,077   Growth ID 3, Growing from 4X to 5X.....
+2020-11-04 16:21:02,077   m_spa=10, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 320 160 165  10], ln_top=[361 320 160   1]
+2020-11-04 16:21:08,293   load_model: Loading ./saved_model/model_after_growth3.pickle....
+2020-11-04 16:21:08,314   Finished training it 6144/613937 of epoch 0, -1.00 ms/it, loss 0.751208, accuracy 74.403 %
+2020-11-04 16:21:16,729   Finished training it 7168/613937 of epoch 0, -1.00 ms/it, loss 0.717219, accuracy 74.727 %
+2020-11-04 16:21:23,403   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 10, mode=sum)
+    (1): EmbeddingBag(583, 10, mode=sum)
+    (2): EmbeddingBag(10131227, 10, mode=sum)
+    (3): EmbeddingBag(2202608, 10, mode=sum)
+    (4): EmbeddingBag(305, 10, mode=sum)
+    (5): EmbeddingBag(24, 10, mode=sum)
+    (6): EmbeddingBag(12517, 10, mode=sum)
+    (7): EmbeddingBag(633, 10, mode=sum)
+    (8): EmbeddingBag(3, 10, mode=sum)
+    (9): EmbeddingBag(93145, 10, mode=sum)
+    (10): EmbeddingBag(5683, 10, mode=sum)
+    (11): EmbeddingBag(8351593, 10, mode=sum)
+    (12): EmbeddingBag(3194, 10, mode=sum)
+    (13): EmbeddingBag(27, 10, mode=sum)
+    (14): EmbeddingBag(14992, 10, mode=sum)
+    (15): EmbeddingBag(5461306, 10, mode=sum)
+    (16): EmbeddingBag(10, 10, mode=sum)
+    (17): EmbeddingBag(5652, 10, mode=sum)
+    (18): EmbeddingBag(2173, 10, mode=sum)
+    (19): EmbeddingBag(4, 10, mode=sum)
+    (20): EmbeddingBag(7046547, 10, mode=sum)
+    (21): EmbeddingBag(18, 10, mode=sum)
+    (22): EmbeddingBag(15, 10, mode=sum)
+    (23): EmbeddingBag(286181, 10, mode=sum)
+    (24): EmbeddingBag(105, 10, mode=sum)
+    (25): EmbeddingBag(142572, 10, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=165, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=165, out_features=10, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=361, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:21:23,403   Growth ID 4, Growing from 5X to 6X.....
+2020-11-04 16:21:23,403   m_spa=12, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 384 192 198  12], ln_top=[363 384 192   1]
+2020-11-04 16:21:30,922   load_model: Loading ./saved_model/model_after_growth4.pickle....
+2020-11-04 16:21:34,575   Finished training it 8192/613937 of epoch 0, -1.00 ms/it, loss 0.972350, accuracy 74.809 %
+2020-11-04 16:21:45,915   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 12, mode=sum)
+    (1): EmbeddingBag(583, 12, mode=sum)
+    (2): EmbeddingBag(10131227, 12, mode=sum)
+    (3): EmbeddingBag(2202608, 12, mode=sum)
+    (4): EmbeddingBag(305, 12, mode=sum)
+    (5): EmbeddingBag(24, 12, mode=sum)
+    (6): EmbeddingBag(12517, 12, mode=sum)
+    (7): EmbeddingBag(633, 12, mode=sum)
+    (8): EmbeddingBag(3, 12, mode=sum)
+    (9): EmbeddingBag(93145, 12, mode=sum)
+    (10): EmbeddingBag(5683, 12, mode=sum)
+    (11): EmbeddingBag(8351593, 12, mode=sum)
+    (12): EmbeddingBag(3194, 12, mode=sum)
+    (13): EmbeddingBag(27, 12, mode=sum)
+    (14): EmbeddingBag(14992, 12, mode=sum)
+    (15): EmbeddingBag(5461306, 12, mode=sum)
+    (16): EmbeddingBag(10, 12, mode=sum)
+    (17): EmbeddingBag(5652, 12, mode=sum)
+    (18): EmbeddingBag(2173, 12, mode=sum)
+    (19): EmbeddingBag(4, 12, mode=sum)
+    (20): EmbeddingBag(7046547, 12, mode=sum)
+    (21): EmbeddingBag(18, 12, mode=sum)
+    (22): EmbeddingBag(15, 12, mode=sum)
+    (23): EmbeddingBag(286181, 12, mode=sum)
+    (24): EmbeddingBag(105, 12, mode=sum)
+    (25): EmbeddingBag(142572, 12, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=198, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=198, out_features=12, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=363, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:21:45,915   Growth ID 5, Growing from 6X to 7X.....
+2020-11-04 16:21:45,915   m_spa=14, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 448 224 231  14], ln_top=[365 448 224   1]
+2020-11-04 16:21:54,751   load_model: Loading ./saved_model/model_after_growth5.pickle....
+2020-11-04 16:21:54,785   Finished training it 9216/613937 of epoch 0, -1.00 ms/it, loss 1.256762, accuracy 74.100 %
+2020-11-04 16:22:02,618   Finished training it 10240/613937 of epoch 0, -1.00 ms/it, loss 1.958644, accuracy 28.239 %
+2020-11-04 16:22:10,157   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 14, mode=sum)
+    (1): EmbeddingBag(583, 14, mode=sum)
+    (2): EmbeddingBag(10131227, 14, mode=sum)
+    (3): EmbeddingBag(2202608, 14, mode=sum)
+    (4): EmbeddingBag(305, 14, mode=sum)
+    (5): EmbeddingBag(24, 14, mode=sum)
+    (6): EmbeddingBag(12517, 14, mode=sum)
+    (7): EmbeddingBag(633, 14, mode=sum)
+    (8): EmbeddingBag(3, 14, mode=sum)
+    (9): EmbeddingBag(93145, 14, mode=sum)
+    (10): EmbeddingBag(5683, 14, mode=sum)
+    (11): EmbeddingBag(8351593, 14, mode=sum)
+    (12): EmbeddingBag(3194, 14, mode=sum)
+    (13): EmbeddingBag(27, 14, mode=sum)
+    (14): EmbeddingBag(14992, 14, mode=sum)
+    (15): EmbeddingBag(5461306, 14, mode=sum)
+    (16): EmbeddingBag(10, 14, mode=sum)
+    (17): EmbeddingBag(5652, 14, mode=sum)
+    (18): EmbeddingBag(2173, 14, mode=sum)
+    (19): EmbeddingBag(4, 14, mode=sum)
+    (20): EmbeddingBag(7046547, 14, mode=sum)
+    (21): EmbeddingBag(18, 14, mode=sum)
+    (22): EmbeddingBag(15, 14, mode=sum)
+    (23): EmbeddingBag(286181, 14, mode=sum)
+    (24): EmbeddingBag(105, 14, mode=sum)
+    (25): EmbeddingBag(142572, 14, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=231, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=231, out_features=14, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=365, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:22:10,157   Growth ID 6, Growing from 7X to 8X.....
+2020-11-04 16:22:10,158   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 512 256 264  16], ln_top=[367 512 256   1]
+2020-11-04 16:22:20,106   load_model: Loading ./saved_model/model_after_growth6.pickle....
+2020-11-04 16:22:24,338   Finished training it 11264/613937 of epoch 0, -1.00 ms/it, loss 1.944417, accuracy 30.688 %
+2020-11-04 16:22:36,527   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 16, mode=sum)
+    (1): EmbeddingBag(583, 16, mode=sum)
+    (2): EmbeddingBag(10131227, 16, mode=sum)
+    (3): EmbeddingBag(2202608, 16, mode=sum)
+    (4): EmbeddingBag(305, 16, mode=sum)
+    (5): EmbeddingBag(24, 16, mode=sum)
+    (6): EmbeddingBag(12517, 16, mode=sum)
+    (7): EmbeddingBag(633, 16, mode=sum)
+    (8): EmbeddingBag(3, 16, mode=sum)
+    (9): EmbeddingBag(93145, 16, mode=sum)
+    (10): EmbeddingBag(5683, 16, mode=sum)
+    (11): EmbeddingBag(8351593, 16, mode=sum)
+    (12): EmbeddingBag(3194, 16, mode=sum)
+    (13): EmbeddingBag(27, 16, mode=sum)
+    (14): EmbeddingBag(14992, 16, mode=sum)
+    (15): EmbeddingBag(5461306, 16, mode=sum)
+    (16): EmbeddingBag(10, 16, mode=sum)
+    (17): EmbeddingBag(5652, 16, mode=sum)
+    (18): EmbeddingBag(2173, 16, mode=sum)
+    (19): EmbeddingBag(4, 16, mode=sum)
+    (20): EmbeddingBag(7046547, 16, mode=sum)
+    (21): EmbeddingBag(18, 16, mode=sum)
+    (22): EmbeddingBag(15, 16, mode=sum)
+    (23): EmbeddingBag(286181, 16, mode=sum)
+    (24): EmbeddingBag(105, 16, mode=sum)
+    (25): EmbeddingBag(142572, 16, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=256, out_features=264, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=264, out_features=16, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=367, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=512, out_features=256, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=256, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:22:36,527   Growth ID 7, Growing from 8X to 9X.....
+2020-11-04 16:22:36,527   m_spa=18, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 576 288 297  18], ln_top=[369 576 288   1]
+2020-11-04 16:22:47,868   load_model: Loading ./saved_model/model_after_growth7.pickle....
+2020-11-04 16:22:47,917   Finished training it 12288/613937 of epoch 0, -1.00 ms/it, loss 1.926712, accuracy 33.167 %
+2020-11-04 16:22:56,078   Finished training it 13312/613937 of epoch 0, -1.00 ms/it, loss 1.710427, accuracy 31.186 %
+2020-11-04 16:23:04,811   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 18, mode=sum)
+    (1): EmbeddingBag(583, 18, mode=sum)
+    (2): EmbeddingBag(10131227, 18, mode=sum)
+    (3): EmbeddingBag(2202608, 18, mode=sum)
+    (4): EmbeddingBag(305, 18, mode=sum)
+    (5): EmbeddingBag(24, 18, mode=sum)
+    (6): EmbeddingBag(12517, 18, mode=sum)
+    (7): EmbeddingBag(633, 18, mode=sum)
+    (8): EmbeddingBag(3, 18, mode=sum)
+    (9): EmbeddingBag(93145, 18, mode=sum)
+    (10): EmbeddingBag(5683, 18, mode=sum)
+    (11): EmbeddingBag(8351593, 18, mode=sum)
+    (12): EmbeddingBag(3194, 18, mode=sum)
+    (13): EmbeddingBag(27, 18, mode=sum)
+    (14): EmbeddingBag(14992, 18, mode=sum)
+    (15): EmbeddingBag(5461306, 18, mode=sum)
+    (16): EmbeddingBag(10, 18, mode=sum)
+    (17): EmbeddingBag(5652, 18, mode=sum)
+    (18): EmbeddingBag(2173, 18, mode=sum)
+    (19): EmbeddingBag(4, 18, mode=sum)
+    (20): EmbeddingBag(7046547, 18, mode=sum)
+    (21): EmbeddingBag(18, 18, mode=sum)
+    (22): EmbeddingBag(15, 18, mode=sum)
+    (23): EmbeddingBag(286181, 18, mode=sum)
+    (24): EmbeddingBag(105, 18, mode=sum)
+    (25): EmbeddingBag(142572, 18, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=576, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=576, out_features=288, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=288, out_features=297, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=297, out_features=18, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=369, out_features=576, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=576, out_features=288, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=288, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:23:04,811   Growth ID 8, Growing from 9X to 10X.....
+2020-11-04 16:23:04,811   m_spa=20, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 640 320 330  20], ln_top=[371 640 320   1]
+2020-11-04 16:23:17,440   load_model: Loading ./saved_model/model_after_growth8.pickle....
+2020-11-04 16:23:21,783   Finished training it 14336/613937 of epoch 0, -1.00 ms/it, loss 4.029640, accuracy 28.464 %
+2020-11-04 16:23:33,246   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 20, mode=sum)
+    (1): EmbeddingBag(583, 20, mode=sum)
+    (2): EmbeddingBag(10131227, 20, mode=sum)
+    (3): EmbeddingBag(2202608, 20, mode=sum)
+    (4): EmbeddingBag(305, 20, mode=sum)
+    (5): EmbeddingBag(24, 20, mode=sum)
+    (6): EmbeddingBag(12517, 20, mode=sum)
+    (7): EmbeddingBag(633, 20, mode=sum)
+    (8): EmbeddingBag(3, 20, mode=sum)
+    (9): EmbeddingBag(93145, 20, mode=sum)
+    (10): EmbeddingBag(5683, 20, mode=sum)
+    (11): EmbeddingBag(8351593, 20, mode=sum)
+    (12): EmbeddingBag(3194, 20, mode=sum)
+    (13): EmbeddingBag(27, 20, mode=sum)
+    (14): EmbeddingBag(14992, 20, mode=sum)
+    (15): EmbeddingBag(5461306, 20, mode=sum)
+    (16): EmbeddingBag(10, 20, mode=sum)
+    (17): EmbeddingBag(5652, 20, mode=sum)
+    (18): EmbeddingBag(2173, 20, mode=sum)
+    (19): EmbeddingBag(4, 20, mode=sum)
+    (20): EmbeddingBag(7046547, 20, mode=sum)
+    (21): EmbeddingBag(18, 20, mode=sum)
+    (22): EmbeddingBag(15, 20, mode=sum)
+    (23): EmbeddingBag(286181, 20, mode=sum)
+    (24): EmbeddingBag(105, 20, mode=sum)
+    (25): EmbeddingBag(142572, 20, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=640, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=640, out_features=320, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=320, out_features=330, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=330, out_features=20, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=371, out_features=640, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=640, out_features=320, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=320, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:23:33,246   Growth ID 9, Growing from 10X to 11X.....
+2020-11-04 16:23:33,246   m_spa=22, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 704 352 363  22], ln_top=[373 704 352   1]
+2020-11-04 16:23:47,153   load_model: Loading ./saved_model/model_after_growth9.pickle....
+2020-11-04 16:23:47,231   Finished training it 15360/613937 of epoch 0, -1.00 ms/it, loss 6.322420, accuracy 25.941 %
+2020-11-04 16:23:55,453   Finished training it 16384/613937 of epoch 0, -1.00 ms/it, loss 13.392392, accuracy 25.624 %
+2020-11-04 16:24:03,105   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 22, mode=sum)
+    (1): EmbeddingBag(583, 22, mode=sum)
+    (2): EmbeddingBag(10131227, 22, mode=sum)
+    (3): EmbeddingBag(2202608, 22, mode=sum)
+    (4): EmbeddingBag(305, 22, mode=sum)
+    (5): EmbeddingBag(24, 22, mode=sum)
+    (6): EmbeddingBag(12517, 22, mode=sum)
+    (7): EmbeddingBag(633, 22, mode=sum)
+    (8): EmbeddingBag(3, 22, mode=sum)
+    (9): EmbeddingBag(93145, 22, mode=sum)
+    (10): EmbeddingBag(5683, 22, mode=sum)
+    (11): EmbeddingBag(8351593, 22, mode=sum)
+    (12): EmbeddingBag(3194, 22, mode=sum)
+    (13): EmbeddingBag(27, 22, mode=sum)
+    (14): EmbeddingBag(14992, 22, mode=sum)
+    (15): EmbeddingBag(5461306, 22, mode=sum)
+    (16): EmbeddingBag(10, 22, mode=sum)
+    (17): EmbeddingBag(5652, 22, mode=sum)
+    (18): EmbeddingBag(2173, 22, mode=sum)
+    (19): EmbeddingBag(4, 22, mode=sum)
+    (20): EmbeddingBag(7046547, 22, mode=sum)
+    (21): EmbeddingBag(18, 22, mode=sum)
+    (22): EmbeddingBag(15, 22, mode=sum)
+    (23): EmbeddingBag(286181, 22, mode=sum)
+    (24): EmbeddingBag(105, 22, mode=sum)
+    (25): EmbeddingBag(142572, 22, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=704, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=704, out_features=352, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=352, out_features=363, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=363, out_features=22, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=373, out_features=704, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=704, out_features=352, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=352, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:24:03,105   Growth ID 10, Growing from 11X to 12X.....
+2020-11-04 16:24:03,105   m_spa=24, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 768 384 396  24], ln_top=[375 768 384   1]
+2020-11-04 16:24:18,264   load_model: Loading ./saved_model/model_after_growth10.pickle....
+2020-11-04 16:24:21,684   Finished training it 17408/613937 of epoch 0, -1.00 ms/it, loss 11.582732, accuracy 25.467 %
+2020-11-04 16:24:33,356   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 24, mode=sum)
+    (1): EmbeddingBag(583, 24, mode=sum)
+    (2): EmbeddingBag(10131227, 24, mode=sum)
+    (3): EmbeddingBag(2202608, 24, mode=sum)
+    (4): EmbeddingBag(305, 24, mode=sum)
+    (5): EmbeddingBag(24, 24, mode=sum)
+    (6): EmbeddingBag(12517, 24, mode=sum)
+    (7): EmbeddingBag(633, 24, mode=sum)
+    (8): EmbeddingBag(3, 24, mode=sum)
+    (9): EmbeddingBag(93145, 24, mode=sum)
+    (10): EmbeddingBag(5683, 24, mode=sum)
+    (11): EmbeddingBag(8351593, 24, mode=sum)
+    (12): EmbeddingBag(3194, 24, mode=sum)
+    (13): EmbeddingBag(27, 24, mode=sum)
+    (14): EmbeddingBag(14992, 24, mode=sum)
+    (15): EmbeddingBag(5461306, 24, mode=sum)
+    (16): EmbeddingBag(10, 24, mode=sum)
+    (17): EmbeddingBag(5652, 24, mode=sum)
+    (18): EmbeddingBag(2173, 24, mode=sum)
+    (19): EmbeddingBag(4, 24, mode=sum)
+    (20): EmbeddingBag(7046547, 24, mode=sum)
+    (21): EmbeddingBag(18, 24, mode=sum)
+    (22): EmbeddingBag(15, 24, mode=sum)
+    (23): EmbeddingBag(286181, 24, mode=sum)
+    (24): EmbeddingBag(105, 24, mode=sum)
+    (25): EmbeddingBag(142572, 24, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=768, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=768, out_features=384, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=384, out_features=396, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=396, out_features=24, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=375, out_features=768, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=768, out_features=384, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=384, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-11-04 16:24:33,356   Growth ID 11, Growing from 12X to 13X.....
+2020-11-04 16:24:33,357   m_spa=26, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 832 416 429  26], ln_top=[377 832 416   1]

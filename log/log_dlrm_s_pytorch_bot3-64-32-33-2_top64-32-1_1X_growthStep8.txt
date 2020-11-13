@@ -1,0 +1,911 @@
+2020-10-31 01:45:21,029   ******************************************************
+2020-10-31 01:45:21,030                     dlrm_s_pytorch.py                   
+2020-10-31 01:45:21,030   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-2', arch_mlp_top='64-32-1', arch_sparse_feature_size=2, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', growth_step=8, inference_only=False, learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=128, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-10-31 01:45:21,674   dataset kaggle #day 2
+2020-10-31 01:45:21,674   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-10-31 01:45:39,377   Sparse fea = 26, Dense fea = 13
+2020-10-31 01:45:39,430   Defined train indices...
+2020-10-31 01:45:39,978   Randomized indices across days ...
+2020-10-31 01:45:51,948   Split data according to indices...
+2020-10-31 01:45:51,949   dataset kaggle #day 2
+2020-10-31 01:45:51,949   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-10-31 01:46:09,650   Sparse fea = 26, Dense fea = 13
+2020-10-31 01:46:09,703   Defined test indices...
+2020-10-31 01:46:10,251   Randomized indices across days ...
+2020-10-31 01:46:18,484   Split data according to indices...
+2020-10-31 01:46:18,485   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-10-31 01:46:18,485   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-10-31 01:46:24,831   time/loss/accuracy (if enabled):
+2020-10-31 01:46:24,831   Stage 0, This growth start from input index 0
+2020-10-31 01:46:37,670   Finished training it 1024/102323 of epoch 0, -1.00 ms/it, loss 0.517487, accuracy 75.589 %
+2020-10-31 01:46:50,473   Finished training it 2048/102323 of epoch 0, -1.00 ms/it, loss 0.501666, accuracy 76.434 %
+2020-10-31 01:47:03,231   Finished training it 3072/102323 of epoch 0, -1.00 ms/it, loss 0.496050, accuracy 76.768 %
+2020-10-31 01:47:16,570   Finished training it 4096/102323 of epoch 0, -1.00 ms/it, loss 0.484868, accuracy 77.378 %
+2020-10-31 01:47:29,391   Finished training it 5120/102323 of epoch 0, -1.00 ms/it, loss 0.480929, accuracy 77.591 %
+2020-10-31 01:47:42,212   Finished training it 6144/102323 of epoch 0, -1.00 ms/it, loss 0.477914, accuracy 77.920 %
+2020-10-31 01:47:55,014   Finished training it 7168/102323 of epoch 0, -1.00 ms/it, loss 0.475555, accuracy 77.802 %
+2020-10-31 01:48:07,820   Finished training it 8192/102323 of epoch 0, -1.00 ms/it, loss 0.474344, accuracy 77.985 %
+2020-10-31 01:48:20,620   Finished training it 9216/102323 of epoch 0, -1.00 ms/it, loss 0.472425, accuracy 78.120 %
+2020-10-31 01:48:32,479   Finished training it 10240/102323 of epoch 0, -1.00 ms/it, loss 0.473151, accuracy 77.894 %
+2020-10-31 01:48:44,091   Finished training it 11264/102323 of epoch 0, -1.00 ms/it, loss 0.470008, accuracy 78.144 %
+2020-10-31 01:48:56,887   Finished training it 12288/102323 of epoch 0, -1.00 ms/it, loss 0.469407, accuracy 78.184 %
+2020-10-31 01:49:05,954   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 2, mode=sum)
+    (1): EmbeddingBag(583, 2, mode=sum)
+    (2): EmbeddingBag(10131227, 2, mode=sum)
+    (3): EmbeddingBag(2202608, 2, mode=sum)
+    (4): EmbeddingBag(305, 2, mode=sum)
+    (5): EmbeddingBag(24, 2, mode=sum)
+    (6): EmbeddingBag(12517, 2, mode=sum)
+    (7): EmbeddingBag(633, 2, mode=sum)
+    (8): EmbeddingBag(3, 2, mode=sum)
+    (9): EmbeddingBag(93145, 2, mode=sum)
+    (10): EmbeddingBag(5683, 2, mode=sum)
+    (11): EmbeddingBag(8351593, 2, mode=sum)
+    (12): EmbeddingBag(3194, 2, mode=sum)
+    (13): EmbeddingBag(27, 2, mode=sum)
+    (14): EmbeddingBag(14992, 2, mode=sum)
+    (15): EmbeddingBag(5461306, 2, mode=sum)
+    (16): EmbeddingBag(10, 2, mode=sum)
+    (17): EmbeddingBag(5652, 2, mode=sum)
+    (18): EmbeddingBag(2173, 2, mode=sum)
+    (19): EmbeddingBag(4, 2, mode=sum)
+    (20): EmbeddingBag(7046547, 2, mode=sum)
+    (21): EmbeddingBag(18, 2, mode=sum)
+    (22): EmbeddingBag(15, 2, mode=sum)
+    (23): EmbeddingBag(286181, 2, mode=sum)
+    (24): EmbeddingBag(105, 2, mode=sum)
+    (25): EmbeddingBag(142572, 2, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=2, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=353, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 01:49:05,954   Growth ID 0, Growing from 1X to 2X.....
+2020-10-31 01:49:05,954   m_spa=4, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66   4], ln_top=[355 128  64   1]
+2020-10-31 01:49:08,600   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-10-31 01:49:14,391   Finished training it 13312/102323 of epoch 0, -1.00 ms/it, loss 0.518120, accuracy 76.270 %
+2020-10-31 01:49:25,821   Finished training it 14336/102323 of epoch 0, -1.00 ms/it, loss 0.567508, accuracy 74.181 %
+2020-10-31 01:49:37,241   Finished training it 15360/102323 of epoch 0, -1.00 ms/it, loss 0.564396, accuracy 74.564 %
+2020-10-31 01:49:48,604   Finished training it 16384/102323 of epoch 0, -1.00 ms/it, loss 0.566469, accuracy 74.445 %
+2020-10-31 01:49:59,936   Finished training it 17408/102323 of epoch 0, -1.00 ms/it, loss 0.566945, accuracy 74.355 %
+2020-10-31 01:50:11,286   Finished training it 18432/102323 of epoch 0, -1.00 ms/it, loss 0.566864, accuracy 74.368 %
+2020-10-31 01:50:22,830   Finished training it 19456/102323 of epoch 0, -1.00 ms/it, loss 0.566506, accuracy 74.366 %
+2020-10-31 01:50:34,705   Finished training it 20480/102323 of epoch 0, -1.00 ms/it, loss 0.567489, accuracy 74.265 %
+2020-10-31 01:50:47,188   Finished training it 21504/102323 of epoch 0, -1.00 ms/it, loss 0.566410, accuracy 74.350 %
+2020-10-31 01:51:00,276   Finished training it 22528/102323 of epoch 0, -1.00 ms/it, loss 0.565044, accuracy 74.509 %
+2020-10-31 01:51:13,938   Finished training it 23552/102323 of epoch 0, -1.00 ms/it, loss 0.568226, accuracy 74.246 %
+2020-10-31 01:51:28,002   Finished training it 24576/102323 of epoch 0, -1.00 ms/it, loss 0.567217, accuracy 74.254 %
+2020-10-31 01:51:47,930   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 4, mode=sum)
+    (1): EmbeddingBag(583, 4, mode=sum)
+    (2): EmbeddingBag(10131227, 4, mode=sum)
+    (3): EmbeddingBag(2202608, 4, mode=sum)
+    (4): EmbeddingBag(305, 4, mode=sum)
+    (5): EmbeddingBag(24, 4, mode=sum)
+    (6): EmbeddingBag(12517, 4, mode=sum)
+    (7): EmbeddingBag(633, 4, mode=sum)
+    (8): EmbeddingBag(3, 4, mode=sum)
+    (9): EmbeddingBag(93145, 4, mode=sum)
+    (10): EmbeddingBag(5683, 4, mode=sum)
+    (11): EmbeddingBag(8351593, 4, mode=sum)
+    (12): EmbeddingBag(3194, 4, mode=sum)
+    (13): EmbeddingBag(27, 4, mode=sum)
+    (14): EmbeddingBag(14992, 4, mode=sum)
+    (15): EmbeddingBag(5461306, 4, mode=sum)
+    (16): EmbeddingBag(10, 4, mode=sum)
+    (17): EmbeddingBag(5652, 4, mode=sum)
+    (18): EmbeddingBag(2173, 4, mode=sum)
+    (19): EmbeddingBag(4, 4, mode=sum)
+    (20): EmbeddingBag(7046547, 4, mode=sum)
+    (21): EmbeddingBag(18, 4, mode=sum)
+    (22): EmbeddingBag(15, 4, mode=sum)
+    (23): EmbeddingBag(286181, 4, mode=sum)
+    (24): EmbeddingBag(105, 4, mode=sum)
+    (25): EmbeddingBag(142572, 4, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=66, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=66, out_features=4, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=355, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 01:51:47,930   Growth ID 1, Growing from 2X to 3X.....
+2020-10-31 01:51:47,931   m_spa=6, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 192  96  99   6], ln_top=[357 192  96   1]
+2020-10-31 01:51:51,818   load_model: Loading ./saved_model/model_after_growth1.pickle....
+2020-10-31 01:51:51,993   Finished training it 25600/102323 of epoch 0, -1.00 ms/it, loss 0.568851, accuracy 74.203 %
+2020-10-31 01:52:03,383   Finished training it 26624/102323 of epoch 0, -1.00 ms/it, loss 0.622762, accuracy 73.239 %
+2020-10-31 01:52:14,761   Finished training it 27648/102323 of epoch 0, -1.00 ms/it, loss 0.622840, accuracy 73.210 %
+2020-10-31 01:52:26,204   Finished training it 28672/102323 of epoch 0, -1.00 ms/it, loss 0.623274, accuracy 73.233 %
+2020-10-31 01:52:37,696   Finished training it 29696/102323 of epoch 0, -1.00 ms/it, loss 0.622605, accuracy 73.299 %
+2020-10-31 01:52:49,515   Finished training it 30720/102323 of epoch 0, -1.00 ms/it, loss 0.621770, accuracy 73.244 %
+2020-10-31 01:53:01,927   Finished training it 31744/102323 of epoch 0, -1.00 ms/it, loss 0.620648, accuracy 73.330 %
+2020-10-31 01:53:14,893   Finished training it 32768/102323 of epoch 0, -1.00 ms/it, loss 0.621154, accuracy 73.417 %
+2020-10-31 01:53:28,616   Finished training it 33792/102323 of epoch 0, -1.00 ms/it, loss 0.619172, accuracy 73.448 %
+2020-10-31 01:53:43,055   Finished training it 34816/102323 of epoch 0, -1.00 ms/it, loss 0.620202, accuracy 73.340 %
+2020-10-31 01:53:58,108   Finished training it 35840/102323 of epoch 0, -1.00 ms/it, loss 0.623941, accuracy 73.161 %
+2020-10-31 01:54:13,810   Finished training it 36864/102323 of epoch 0, -1.00 ms/it, loss 0.621744, accuracy 73.264 %
+2020-10-31 01:54:30,307   Finished training it 37888/102323 of epoch 0, -1.00 ms/it, loss 0.620302, accuracy 73.396 %
+2020-10-31 01:54:46,877   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 6, mode=sum)
+    (1): EmbeddingBag(583, 6, mode=sum)
+    (2): EmbeddingBag(10131227, 6, mode=sum)
+    (3): EmbeddingBag(2202608, 6, mode=sum)
+    (4): EmbeddingBag(305, 6, mode=sum)
+    (5): EmbeddingBag(24, 6, mode=sum)
+    (6): EmbeddingBag(12517, 6, mode=sum)
+    (7): EmbeddingBag(633, 6, mode=sum)
+    (8): EmbeddingBag(3, 6, mode=sum)
+    (9): EmbeddingBag(93145, 6, mode=sum)
+    (10): EmbeddingBag(5683, 6, mode=sum)
+    (11): EmbeddingBag(8351593, 6, mode=sum)
+    (12): EmbeddingBag(3194, 6, mode=sum)
+    (13): EmbeddingBag(27, 6, mode=sum)
+    (14): EmbeddingBag(14992, 6, mode=sum)
+    (15): EmbeddingBag(5461306, 6, mode=sum)
+    (16): EmbeddingBag(10, 6, mode=sum)
+    (17): EmbeddingBag(5652, 6, mode=sum)
+    (18): EmbeddingBag(2173, 6, mode=sum)
+    (19): EmbeddingBag(4, 6, mode=sum)
+    (20): EmbeddingBag(7046547, 6, mode=sum)
+    (21): EmbeddingBag(18, 6, mode=sum)
+    (22): EmbeddingBag(15, 6, mode=sum)
+    (23): EmbeddingBag(286181, 6, mode=sum)
+    (24): EmbeddingBag(105, 6, mode=sum)
+    (25): EmbeddingBag(142572, 6, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=99, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=99, out_features=6, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=357, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 01:54:46,878   Growth ID 2, Growing from 3X to 4X.....
+2020-10-31 01:54:46,878   m_spa=8, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 256 128 132   8], ln_top=[359 256 128   1]
+2020-10-31 01:54:52,005   load_model: Loading ./saved_model/model_after_growth2.pickle....
+2020-10-31 01:54:57,978   Finished training it 38912/102323 of epoch 0, -1.00 ms/it, loss 0.725923, accuracy 74.073 %
+2020-10-31 01:55:09,441   Finished training it 39936/102323 of epoch 0, -1.00 ms/it, loss 0.815176, accuracy 74.813 %
+2020-10-31 01:55:20,852   Finished training it 40960/102323 of epoch 0, -1.00 ms/it, loss 0.823376, accuracy 74.557 %
+2020-10-31 01:55:32,409   Finished training it 41984/102323 of epoch 0, -1.00 ms/it, loss 0.816870, accuracy 74.804 %
+2020-10-31 01:55:44,578   Finished training it 43008/102323 of epoch 0, -1.00 ms/it, loss 0.816029, accuracy 74.797 %
+2020-10-31 01:55:57,470   Finished training it 44032/102323 of epoch 0, -1.00 ms/it, loss 0.823329, accuracy 74.625 %
+2020-10-31 01:56:11,218   Finished training it 45056/102323 of epoch 0, -1.00 ms/it, loss 0.818149, accuracy 74.746 %
+2020-10-31 01:56:25,859   Finished training it 46080/102323 of epoch 0, -1.00 ms/it, loss 0.821965, accuracy 74.686 %
+2020-10-31 01:56:41,258   Finished training it 47104/102323 of epoch 0, -1.00 ms/it, loss 0.819350, accuracy 74.780 %
+2020-10-31 01:56:57,668   Finished training it 48128/102323 of epoch 0, -1.00 ms/it, loss 0.818455, accuracy 74.790 %
+2020-10-31 01:57:14,848   Finished training it 49152/102323 of epoch 0, -1.00 ms/it, loss 0.818523, accuracy 74.707 %
+2020-10-31 01:57:32,418   Finished training it 50176/102323 of epoch 0, -1.00 ms/it, loss 0.820437, accuracy 74.683 %
+2020-10-31 01:58:01,117   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 8, mode=sum)
+    (1): EmbeddingBag(583, 8, mode=sum)
+    (2): EmbeddingBag(10131227, 8, mode=sum)
+    (3): EmbeddingBag(2202608, 8, mode=sum)
+    (4): EmbeddingBag(305, 8, mode=sum)
+    (5): EmbeddingBag(24, 8, mode=sum)
+    (6): EmbeddingBag(12517, 8, mode=sum)
+    (7): EmbeddingBag(633, 8, mode=sum)
+    (8): EmbeddingBag(3, 8, mode=sum)
+    (9): EmbeddingBag(93145, 8, mode=sum)
+    (10): EmbeddingBag(5683, 8, mode=sum)
+    (11): EmbeddingBag(8351593, 8, mode=sum)
+    (12): EmbeddingBag(3194, 8, mode=sum)
+    (13): EmbeddingBag(27, 8, mode=sum)
+    (14): EmbeddingBag(14992, 8, mode=sum)
+    (15): EmbeddingBag(5461306, 8, mode=sum)
+    (16): EmbeddingBag(10, 8, mode=sum)
+    (17): EmbeddingBag(5652, 8, mode=sum)
+    (18): EmbeddingBag(2173, 8, mode=sum)
+    (19): EmbeddingBag(4, 8, mode=sum)
+    (20): EmbeddingBag(7046547, 8, mode=sum)
+    (21): EmbeddingBag(18, 8, mode=sum)
+    (22): EmbeddingBag(15, 8, mode=sum)
+    (23): EmbeddingBag(286181, 8, mode=sum)
+    (24): EmbeddingBag(105, 8, mode=sum)
+    (25): EmbeddingBag(142572, 8, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=132, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=132, out_features=8, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=359, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 01:58:01,117   Growth ID 3, Growing from 4X to 5X.....
+2020-10-31 01:58:01,118   m_spa=10, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 320 160 165  10], ln_top=[361 320 160   1]
+2020-10-31 01:58:07,471   load_model: Loading ./saved_model/model_after_growth3.pickle....
+2020-10-31 01:58:07,862   Finished training it 51200/102323 of epoch 0, -1.00 ms/it, loss 0.823643, accuracy 74.306 %
+2020-10-31 01:58:18,893   Finished training it 52224/102323 of epoch 0, -1.00 ms/it, loss 0.943733, accuracy 65.454 %
+2020-10-31 01:58:29,883   Finished training it 53248/102323 of epoch 0, -1.00 ms/it, loss 0.948362, accuracy 65.236 %
+2020-10-31 01:58:41,130   Finished training it 54272/102323 of epoch 0, -1.00 ms/it, loss 0.937504, accuracy 65.600 %
+2020-10-31 01:58:53,274   Finished training it 55296/102323 of epoch 0, -1.00 ms/it, loss 0.939791, accuracy 65.450 %
+2020-10-31 01:59:06,300   Finished training it 56320/102323 of epoch 0, -1.00 ms/it, loss 0.933107, accuracy 65.618 %
+2020-10-31 01:59:20,618   Finished training it 57344/102323 of epoch 0, -1.00 ms/it, loss 0.937460, accuracy 65.404 %
+2020-10-31 01:59:36,035   Finished training it 58368/102323 of epoch 0, -1.00 ms/it, loss 0.938093, accuracy 65.573 %
+2020-10-31 01:59:52,282   Finished training it 59392/102323 of epoch 0, -1.00 ms/it, loss 0.940633, accuracy 65.468 %
+2020-10-31 02:00:09,773   Finished training it 60416/102323 of epoch 0, -1.00 ms/it, loss 0.941323, accuracy 65.343 %
+2020-10-31 02:00:28,387   Finished training it 61440/102323 of epoch 0, -1.00 ms/it, loss 0.937672, accuracy 65.527 %
+2020-10-31 02:00:48,088   Finished training it 62464/102323 of epoch 0, -1.00 ms/it, loss 0.937502, accuracy 65.464 %
+2020-10-31 02:01:08,443   Finished training it 63488/102323 of epoch 0, -1.00 ms/it, loss 0.938158, accuracy 65.322 %
+2020-10-31 02:01:19,193   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 10, mode=sum)
+    (1): EmbeddingBag(583, 10, mode=sum)
+    (2): EmbeddingBag(10131227, 10, mode=sum)
+    (3): EmbeddingBag(2202608, 10, mode=sum)
+    (4): EmbeddingBag(305, 10, mode=sum)
+    (5): EmbeddingBag(24, 10, mode=sum)
+    (6): EmbeddingBag(12517, 10, mode=sum)
+    (7): EmbeddingBag(633, 10, mode=sum)
+    (8): EmbeddingBag(3, 10, mode=sum)
+    (9): EmbeddingBag(93145, 10, mode=sum)
+    (10): EmbeddingBag(5683, 10, mode=sum)
+    (11): EmbeddingBag(8351593, 10, mode=sum)
+    (12): EmbeddingBag(3194, 10, mode=sum)
+    (13): EmbeddingBag(27, 10, mode=sum)
+    (14): EmbeddingBag(14992, 10, mode=sum)
+    (15): EmbeddingBag(5461306, 10, mode=sum)
+    (16): EmbeddingBag(10, 10, mode=sum)
+    (17): EmbeddingBag(5652, 10, mode=sum)
+    (18): EmbeddingBag(2173, 10, mode=sum)
+    (19): EmbeddingBag(4, 10, mode=sum)
+    (20): EmbeddingBag(7046547, 10, mode=sum)
+    (21): EmbeddingBag(18, 10, mode=sum)
+    (22): EmbeddingBag(15, 10, mode=sum)
+    (23): EmbeddingBag(286181, 10, mode=sum)
+    (24): EmbeddingBag(105, 10, mode=sum)
+    (25): EmbeddingBag(142572, 10, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=165, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=165, out_features=10, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=361, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 02:01:19,193   Growth ID 4, Growing from 5X to 6X.....
+2020-10-31 02:01:19,193   m_spa=12, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 384 192 198  12], ln_top=[363 384 192   1]
+2020-10-31 02:01:26,958   load_model: Loading ./saved_model/model_after_growth4.pickle....
+2020-10-31 02:01:33,120   Finished training it 64512/102323 of epoch 0, -1.00 ms/it, loss 1.629939, accuracy 67.551 %
+2020-10-31 02:01:44,401   Finished training it 65536/102323 of epoch 0, -1.00 ms/it, loss 2.182567, accuracy 69.653 %
+2020-10-31 02:01:55,814   Finished training it 66560/102323 of epoch 0, -1.00 ms/it, loss 2.208834, accuracy 69.132 %
+2020-10-31 02:02:07,931   Finished training it 67584/102323 of epoch 0, -1.00 ms/it, loss 2.201708, accuracy 69.200 %
+2020-10-31 02:02:21,222   Finished training it 68608/102323 of epoch 0, -1.00 ms/it, loss 2.209883, accuracy 69.370 %
+2020-10-31 02:02:35,802   Finished training it 69632/102323 of epoch 0, -1.00 ms/it, loss 2.219591, accuracy 69.170 %
+2020-10-31 02:02:51,969   Finished training it 70656/102323 of epoch 0, -1.00 ms/it, loss 2.211530, accuracy 69.167 %
+2020-10-31 02:03:09,165   Finished training it 71680/102323 of epoch 0, -1.00 ms/it, loss 2.209626, accuracy 69.228 %
+2020-10-31 02:03:27,711   Finished training it 72704/102323 of epoch 0, -1.00 ms/it, loss 2.181500, accuracy 69.322 %
+2020-10-31 02:03:47,512   Finished training it 73728/102323 of epoch 0, -1.00 ms/it, loss 2.208003, accuracy 69.318 %
+2020-10-31 02:04:08,029   Finished training it 74752/102323 of epoch 0, -1.00 ms/it, loss 2.214242, accuracy 69.252 %
+2020-10-31 02:04:29,385   Finished training it 75776/102323 of epoch 0, -1.00 ms/it, loss 2.193248, accuracy 69.501 %
+2020-10-31 02:04:52,586   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 12, mode=sum)
+    (1): EmbeddingBag(583, 12, mode=sum)
+    (2): EmbeddingBag(10131227, 12, mode=sum)
+    (3): EmbeddingBag(2202608, 12, mode=sum)
+    (4): EmbeddingBag(305, 12, mode=sum)
+    (5): EmbeddingBag(24, 12, mode=sum)
+    (6): EmbeddingBag(12517, 12, mode=sum)
+    (7): EmbeddingBag(633, 12, mode=sum)
+    (8): EmbeddingBag(3, 12, mode=sum)
+    (9): EmbeddingBag(93145, 12, mode=sum)
+    (10): EmbeddingBag(5683, 12, mode=sum)
+    (11): EmbeddingBag(8351593, 12, mode=sum)
+    (12): EmbeddingBag(3194, 12, mode=sum)
+    (13): EmbeddingBag(27, 12, mode=sum)
+    (14): EmbeddingBag(14992, 12, mode=sum)
+    (15): EmbeddingBag(5461306, 12, mode=sum)
+    (16): EmbeddingBag(10, 12, mode=sum)
+    (17): EmbeddingBag(5652, 12, mode=sum)
+    (18): EmbeddingBag(2173, 12, mode=sum)
+    (19): EmbeddingBag(4, 12, mode=sum)
+    (20): EmbeddingBag(7046547, 12, mode=sum)
+    (21): EmbeddingBag(18, 12, mode=sum)
+    (22): EmbeddingBag(15, 12, mode=sum)
+    (23): EmbeddingBag(286181, 12, mode=sum)
+    (24): EmbeddingBag(105, 12, mode=sum)
+    (25): EmbeddingBag(142572, 12, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=198, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=198, out_features=12, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=363, out_features=384, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=384, out_features=192, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=192, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 02:04:52,586   Growth ID 5, Growing from 6X to 7X.....
+2020-10-31 02:04:52,587   m_spa=14, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 448 224 231  14], ln_top=[365 448 224   1]
+2020-10-31 02:05:01,460   load_model: Loading ./saved_model/model_after_growth5.pickle....
+2020-10-31 02:05:02,065   Finished training it 76800/102323 of epoch 0, -1.00 ms/it, loss 2.364101, accuracy 69.415 %
+2020-10-31 02:05:13,458   Finished training it 77824/102323 of epoch 0, -1.00 ms/it, loss 5.052052, accuracy 74.689 %
+2020-10-31 02:05:24,465   Finished training it 78848/102323 of epoch 0, -1.00 ms/it, loss 5.024306, accuracy 74.714 %
+2020-10-31 02:05:36,245   Finished training it 79872/102323 of epoch 0, -1.00 ms/it, loss 5.055129, accuracy 74.595 %
+2020-10-31 02:05:37,796   Finished training it 80000/102323 of epoch 0, -1.00 ms/it, loss 4.974473, accuracy 75.116 %
+2020-10-31 02:08:50,791   Testing at - 80000/102323 of epoch 0, loss 5.147048, accuracy 74.311 %, best 74.311 %
+2020-10-31 02:09:02,536   Finished training it 80896/102323 of epoch 0, -1.00 ms/it, loss 5.047628, accuracy 74.669 %
+2020-10-31 02:09:16,833   Finished training it 81920/102323 of epoch 0, -1.00 ms/it, loss 4.991042, accuracy 74.955 %
+2020-10-31 02:09:32,531   Finished training it 82944/102323 of epoch 0, -1.00 ms/it, loss 5.039240, accuracy 74.708 %
+2020-10-31 02:09:49,660   Finished training it 83968/102323 of epoch 0, -1.00 ms/it, loss 5.016243, accuracy 74.864 %
+2020-10-31 02:10:08,188   Finished training it 84992/102323 of epoch 0, -1.00 ms/it, loss 5.018909, accuracy 74.754 %
+2020-10-31 02:10:28,020   Finished training it 86016/102323 of epoch 0, -1.00 ms/it, loss 5.046623, accuracy 74.690 %
+2020-10-31 02:10:48,964   Finished training it 87040/102323 of epoch 0, -1.00 ms/it, loss 5.040741, accuracy 74.719 %
+2020-10-31 02:11:11,643   Finished training it 88064/102323 of epoch 0, -1.00 ms/it, loss 5.071730, accuracy 74.570 %
+2020-10-31 02:11:35,573   Finished training it 89088/102323 of epoch 0, -1.00 ms/it, loss 5.020106, accuracy 74.814 %
+2020-10-31 02:11:48,807   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 14, mode=sum)
+    (1): EmbeddingBag(583, 14, mode=sum)
+    (2): EmbeddingBag(10131227, 14, mode=sum)
+    (3): EmbeddingBag(2202608, 14, mode=sum)
+    (4): EmbeddingBag(305, 14, mode=sum)
+    (5): EmbeddingBag(24, 14, mode=sum)
+    (6): EmbeddingBag(12517, 14, mode=sum)
+    (7): EmbeddingBag(633, 14, mode=sum)
+    (8): EmbeddingBag(3, 14, mode=sum)
+    (9): EmbeddingBag(93145, 14, mode=sum)
+    (10): EmbeddingBag(5683, 14, mode=sum)
+    (11): EmbeddingBag(8351593, 14, mode=sum)
+    (12): EmbeddingBag(3194, 14, mode=sum)
+    (13): EmbeddingBag(27, 14, mode=sum)
+    (14): EmbeddingBag(14992, 14, mode=sum)
+    (15): EmbeddingBag(5461306, 14, mode=sum)
+    (16): EmbeddingBag(10, 14, mode=sum)
+    (17): EmbeddingBag(5652, 14, mode=sum)
+    (18): EmbeddingBag(2173, 14, mode=sum)
+    (19): EmbeddingBag(4, 14, mode=sum)
+    (20): EmbeddingBag(7046547, 14, mode=sum)
+    (21): EmbeddingBag(18, 14, mode=sum)
+    (22): EmbeddingBag(15, 14, mode=sum)
+    (23): EmbeddingBag(286181, 14, mode=sum)
+    (24): EmbeddingBag(105, 14, mode=sum)
+    (25): EmbeddingBag(142572, 14, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=231, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=231, out_features=14, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=365, out_features=448, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=448, out_features=224, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=224, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 02:11:48,807   Growth ID 6, Growing from 7X to 8X.....
+2020-10-31 02:11:48,807   m_spa=16, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 512 256 264  16], ln_top=[367 512 256   1]
+2020-10-31 13:20:04,535   ******************************************************
+2020-10-31 13:20:04,535                     dlrm_s_pytorch.py                   
+2020-10-31 13:20:04,535   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='3-64-32-33-2', arch_mlp_top='64-32-1', arch_sparse_feature_size=2, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', growth_step=8, inference_only=False, learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-10-31 13:20:05,091   dataset kaggle #day 2
+2020-10-31 13:20:05,092   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-10-31 13:20:23,233   Sparse fea = 26, Dense fea = 13
+2020-10-31 13:20:23,286   Defined train indices...
+2020-10-31 13:20:23,835   Randomized indices across days ...
+2020-10-31 13:20:35,958   Split data according to indices...
+2020-10-31 13:20:35,959   dataset kaggle #day 2
+2020-10-31 13:20:35,959   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-10-31 13:20:53,678   Sparse fea = 26, Dense fea = 13
+2020-10-31 13:20:53,730   Defined test indices...
+2020-10-31 13:20:54,278   Randomized indices across days ...
+2020-10-31 13:21:02,662   Split data according to indices...
+2020-10-31 13:21:02,663   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-10-31 13:21:02,663   m_spa=2, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[13 64 32 33  2], ln_top=[353  64  32   1]
+2020-10-31 13:21:05,851   time/loss/accuracy (if enabled):
+2020-10-31 13:21:05,852   Stage 0, This growth start from input index 0
+2020-10-31 13:21:17,159   Finished training it 1024/204646 of epoch 0, -1.00 ms/it, loss 0.520605, accuracy 75.391 %
+2020-10-31 13:21:27,783   Finished training it 2048/204646 of epoch 0, -1.00 ms/it, loss 0.504571, accuracy 76.320 %
+2020-10-31 13:21:38,424   Finished training it 3072/204646 of epoch 0, -1.00 ms/it, loss 0.497797, accuracy 76.566 %
+2020-10-31 13:21:50,059   Finished training it 4096/204646 of epoch 0, -1.00 ms/it, loss 0.494226, accuracy 76.881 %
+2020-10-31 13:22:01,186   Finished training it 5120/204646 of epoch 0, -1.00 ms/it, loss 0.489821, accuracy 77.126 %
+2020-10-31 13:22:12,334   Finished training it 6144/204646 of epoch 0, -1.00 ms/it, loss 0.489381, accuracy 77.080 %
+2020-10-31 13:22:23,572   Finished training it 7168/204646 of epoch 0, -1.00 ms/it, loss 0.480487, accuracy 77.599 %
+2020-10-31 13:22:34,838   Finished training it 8192/204646 of epoch 0, -1.00 ms/it, loss 0.479286, accuracy 77.623 %
+2020-10-31 13:22:46,094   Finished training it 9216/204646 of epoch 0, -1.00 ms/it, loss 0.480090, accuracy 77.568 %
+2020-10-31 13:22:57,345   Finished training it 10240/204646 of epoch 0, -1.00 ms/it, loss 0.474355, accuracy 78.065 %
+2020-10-31 13:23:08,575   Finished training it 11264/204646 of epoch 0, -1.00 ms/it, loss 0.479410, accuracy 77.750 %
+2020-10-31 13:23:19,688   Finished training it 12288/204646 of epoch 0, -1.00 ms/it, loss 0.471012, accuracy 78.210 %
+2020-10-31 13:23:30,789   Finished training it 13312/204646 of epoch 0, -1.00 ms/it, loss 0.475272, accuracy 77.788 %
+2020-10-31 13:23:41,893   Finished training it 14336/204646 of epoch 0, -1.00 ms/it, loss 0.471013, accuracy 78.108 %
+2020-10-31 13:23:53,068   Finished training it 15360/204646 of epoch 0, -1.00 ms/it, loss 0.473647, accuracy 77.942 %
+2020-10-31 13:24:03,873   Finished training it 16384/204646 of epoch 0, -1.00 ms/it, loss 0.471536, accuracy 78.172 %
+2020-10-31 13:24:14,991   Finished training it 17408/204646 of epoch 0, -1.00 ms/it, loss 0.472106, accuracy 78.119 %
+2020-10-31 13:24:26,110   Finished training it 18432/204646 of epoch 0, -1.00 ms/it, loss 0.469433, accuracy 78.209 %
+2020-10-31 13:24:37,202   Finished training it 19456/204646 of epoch 0, -1.00 ms/it, loss 0.471633, accuracy 77.921 %
+2020-10-31 13:24:48,326   Finished training it 20480/204646 of epoch 0, -1.00 ms/it, loss 0.472062, accuracy 78.017 %
+2020-10-31 13:24:59,449   Finished training it 21504/204646 of epoch 0, -1.00 ms/it, loss 0.470339, accuracy 78.044 %
+2020-10-31 13:25:10,555   Finished training it 22528/204646 of epoch 0, -1.00 ms/it, loss 0.467497, accuracy 78.236 %
+2020-10-31 13:25:21,687   Finished training it 23552/204646 of epoch 0, -1.00 ms/it, loss 0.467560, accuracy 78.235 %
+2020-10-31 13:25:32,814   Finished training it 24576/204646 of epoch 0, -1.00 ms/it, loss 0.469463, accuracy 78.149 %
+2020-10-31 13:25:46,526   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 2, mode=sum)
+    (1): EmbeddingBag(583, 2, mode=sum)
+    (2): EmbeddingBag(10131227, 2, mode=sum)
+    (3): EmbeddingBag(2202608, 2, mode=sum)
+    (4): EmbeddingBag(305, 2, mode=sum)
+    (5): EmbeddingBag(24, 2, mode=sum)
+    (6): EmbeddingBag(12517, 2, mode=sum)
+    (7): EmbeddingBag(633, 2, mode=sum)
+    (8): EmbeddingBag(3, 2, mode=sum)
+    (9): EmbeddingBag(93145, 2, mode=sum)
+    (10): EmbeddingBag(5683, 2, mode=sum)
+    (11): EmbeddingBag(8351593, 2, mode=sum)
+    (12): EmbeddingBag(3194, 2, mode=sum)
+    (13): EmbeddingBag(27, 2, mode=sum)
+    (14): EmbeddingBag(14992, 2, mode=sum)
+    (15): EmbeddingBag(5461306, 2, mode=sum)
+    (16): EmbeddingBag(10, 2, mode=sum)
+    (17): EmbeddingBag(5652, 2, mode=sum)
+    (18): EmbeddingBag(2173, 2, mode=sum)
+    (19): EmbeddingBag(4, 2, mode=sum)
+    (20): EmbeddingBag(7046547, 2, mode=sum)
+    (21): EmbeddingBag(18, 2, mode=sum)
+    (22): EmbeddingBag(15, 2, mode=sum)
+    (23): EmbeddingBag(286181, 2, mode=sum)
+    (24): EmbeddingBag(105, 2, mode=sum)
+    (25): EmbeddingBag(142572, 2, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=33, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=33, out_features=2, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=353, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=32, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=32, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 13:25:46,526   Growth ID 0, Growing from 1X to 2X.....
+2020-10-31 13:25:46,527   m_spa=4, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 128  64  66   4], ln_top=[355 128  64   1]
+2020-10-31 13:25:49,149   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-10-31 13:25:49,334   Finished training it 25600/204646 of epoch 0, -1.00 ms/it, loss 0.468020, accuracy 78.323 %
+2020-10-31 13:25:59,859   Finished training it 26624/204646 of epoch 0, -1.00 ms/it, loss 0.556624, accuracy 74.605 %
+2020-10-31 13:26:10,475   Finished training it 27648/204646 of epoch 0, -1.00 ms/it, loss 0.560730, accuracy 74.359 %
+2020-10-31 13:26:21,109   Finished training it 28672/204646 of epoch 0, -1.00 ms/it, loss 0.555164, accuracy 74.663 %
+2020-10-31 13:26:31,758   Finished training it 29696/204646 of epoch 0, -1.00 ms/it, loss 0.552873, accuracy 74.931 %
+2020-10-31 13:26:42,417   Finished training it 30720/204646 of epoch 0, -1.00 ms/it, loss 0.553595, accuracy 74.774 %
+2020-10-31 13:26:53,075   Finished training it 31744/204646 of epoch 0, -1.00 ms/it, loss 0.557788, accuracy 74.577 %
+2020-10-31 13:27:03,744   Finished training it 32768/204646 of epoch 0, -1.00 ms/it, loss 0.553970, accuracy 74.837 %
+2020-10-31 13:27:14,430   Finished training it 33792/204646 of epoch 0, -1.00 ms/it, loss 0.555279, accuracy 74.727 %
+2020-10-31 13:27:25,142   Finished training it 34816/204646 of epoch 0, -1.00 ms/it, loss 0.556945, accuracy 74.600 %
+2020-10-31 13:27:35,849   Finished training it 35840/204646 of epoch 0, -1.00 ms/it, loss 0.558467, accuracy 74.474 %
+2020-10-31 13:27:46,599   Finished training it 36864/204646 of epoch 0, -1.00 ms/it, loss 0.554133, accuracy 74.889 %
+2020-10-31 13:27:57,430   Finished training it 37888/204646 of epoch 0, -1.00 ms/it, loss 0.555161, accuracy 74.670 %
+2020-10-31 13:28:08,358   Finished training it 38912/204646 of epoch 0, -1.00 ms/it, loss 0.556470, accuracy 74.579 %
+2020-10-31 13:28:19,385   Finished training it 39936/204646 of epoch 0, -1.00 ms/it, loss 0.558401, accuracy 74.496 %
+2020-10-31 13:28:30,569   Finished training it 40960/204646 of epoch 0, -1.00 ms/it, loss 0.556249, accuracy 74.710 %
+2020-10-31 13:28:41,991   Finished training it 41984/204646 of epoch 0, -1.00 ms/it, loss 0.556851, accuracy 74.577 %
+2020-10-31 13:28:53,679   Finished training it 43008/204646 of epoch 0, -1.00 ms/it, loss 0.554938, accuracy 74.728 %
+2020-10-31 13:29:05,670   Finished training it 44032/204646 of epoch 0, -1.00 ms/it, loss 0.554992, accuracy 74.747 %
+2020-10-31 13:29:18,055   Finished training it 45056/204646 of epoch 0, -1.00 ms/it, loss 0.553689, accuracy 74.901 %
+2020-10-31 13:29:30,715   Finished training it 46080/204646 of epoch 0, -1.00 ms/it, loss 0.559018, accuracy 74.500 %
+2020-10-31 13:29:43,456   Finished training it 47104/204646 of epoch 0, -1.00 ms/it, loss 0.556047, accuracy 74.710 %
+2020-10-31 13:29:56,467   Finished training it 48128/204646 of epoch 0, -1.00 ms/it, loss 0.557091, accuracy 74.588 %
+2020-10-31 13:30:09,768   Finished training it 49152/204646 of epoch 0, -1.00 ms/it, loss 0.557097, accuracy 74.585 %
+2020-10-31 13:30:23,208   Finished training it 50176/204646 of epoch 0, -1.00 ms/it, loss 0.557231, accuracy 74.658 %
+2020-10-31 13:30:42,130   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 4, mode=sum)
+    (1): EmbeddingBag(583, 4, mode=sum)
+    (2): EmbeddingBag(10131227, 4, mode=sum)
+    (3): EmbeddingBag(2202608, 4, mode=sum)
+    (4): EmbeddingBag(305, 4, mode=sum)
+    (5): EmbeddingBag(24, 4, mode=sum)
+    (6): EmbeddingBag(12517, 4, mode=sum)
+    (7): EmbeddingBag(633, 4, mode=sum)
+    (8): EmbeddingBag(3, 4, mode=sum)
+    (9): EmbeddingBag(93145, 4, mode=sum)
+    (10): EmbeddingBag(5683, 4, mode=sum)
+    (11): EmbeddingBag(8351593, 4, mode=sum)
+    (12): EmbeddingBag(3194, 4, mode=sum)
+    (13): EmbeddingBag(27, 4, mode=sum)
+    (14): EmbeddingBag(14992, 4, mode=sum)
+    (15): EmbeddingBag(5461306, 4, mode=sum)
+    (16): EmbeddingBag(10, 4, mode=sum)
+    (17): EmbeddingBag(5652, 4, mode=sum)
+    (18): EmbeddingBag(2173, 4, mode=sum)
+    (19): EmbeddingBag(4, 4, mode=sum)
+    (20): EmbeddingBag(7046547, 4, mode=sum)
+    (21): EmbeddingBag(18, 4, mode=sum)
+    (22): EmbeddingBag(15, 4, mode=sum)
+    (23): EmbeddingBag(286181, 4, mode=sum)
+    (24): EmbeddingBag(105, 4, mode=sum)
+    (25): EmbeddingBag(142572, 4, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=66, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=66, out_features=4, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=355, out_features=128, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=128, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 13:30:42,130   Growth ID 1, Growing from 2X to 3X.....
+2020-10-31 13:30:42,130   m_spa=6, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 192  96  99   6], ln_top=[357 192  96   1]
+2020-10-31 13:30:46,004   load_model: Loading ./saved_model/model_after_growth1.pickle....
+2020-10-31 13:30:46,448   Finished training it 51200/204646 of epoch 0, -1.00 ms/it, loss 0.562741, accuracy 74.313 %
+2020-10-31 13:30:57,139   Finished training it 52224/204646 of epoch 0, -1.00 ms/it, loss 0.640557, accuracy 74.237 %
+2020-10-31 13:31:07,387   Finished training it 53248/204646 of epoch 0, -1.00 ms/it, loss 0.631879, accuracy 74.498 %
+2020-10-31 13:31:17,553   Finished training it 54272/204646 of epoch 0, -1.00 ms/it, loss 0.638266, accuracy 74.309 %
+2020-10-31 13:31:27,946   Finished training it 55296/204646 of epoch 0, -1.00 ms/it, loss 0.634738, accuracy 74.442 %
+2020-10-31 13:31:38,746   Finished training it 56320/204646 of epoch 0, -1.00 ms/it, loss 0.636768, accuracy 74.342 %
+2020-10-31 13:31:49,550   Finished training it 57344/204646 of epoch 0, -1.00 ms/it, loss 0.637142, accuracy 74.368 %
+2020-10-31 13:32:00,379   Finished training it 58368/204646 of epoch 0, -1.00 ms/it, loss 0.631640, accuracy 74.646 %
+2020-10-31 13:32:11,181   Finished training it 59392/204646 of epoch 0, -1.00 ms/it, loss 0.640630, accuracy 74.159 %
+2020-10-31 13:32:21,719   Finished training it 60416/204646 of epoch 0, -1.00 ms/it, loss 0.635302, accuracy 74.420 %
+2020-10-31 13:32:32,551   Finished training it 61440/204646 of epoch 0, -1.00 ms/it, loss 0.635047, accuracy 74.329 %
+2020-10-31 13:32:43,692   Finished training it 62464/204646 of epoch 0, -1.00 ms/it, loss 0.634958, accuracy 74.480 %
+2020-10-31 13:32:55,160   Finished training it 63488/204646 of epoch 0, -1.00 ms/it, loss 0.632258, accuracy 74.544 %
+2020-10-31 13:33:07,030   Finished training it 64512/204646 of epoch 0, -1.00 ms/it, loss 0.637165, accuracy 74.388 %
+2020-10-31 13:33:19,370   Finished training it 65536/204646 of epoch 0, -1.00 ms/it, loss 0.632339, accuracy 74.640 %
+2020-10-31 13:33:31,994   Finished training it 66560/204646 of epoch 0, -1.00 ms/it, loss 0.631425, accuracy 74.594 %
+2020-10-31 13:33:44,931   Finished training it 67584/204646 of epoch 0, -1.00 ms/it, loss 0.633662, accuracy 74.509 %
+2020-10-31 13:33:58,358   Finished training it 68608/204646 of epoch 0, -1.00 ms/it, loss 0.630857, accuracy 74.677 %
+2020-10-31 13:34:11,691   Finished training it 69632/204646 of epoch 0, -1.00 ms/it, loss 0.636545, accuracy 74.326 %
+2020-10-31 13:34:25,238   Finished training it 70656/204646 of epoch 0, -1.00 ms/it, loss 0.640822, accuracy 74.118 %
+2020-10-31 13:34:39,118   Finished training it 71680/204646 of epoch 0, -1.00 ms/it, loss 0.635664, accuracy 74.318 %
+2020-10-31 13:34:53,278   Finished training it 72704/204646 of epoch 0, -1.00 ms/it, loss 0.632731, accuracy 74.556 %
+2020-10-31 13:35:07,842   Finished training it 73728/204646 of epoch 0, -1.00 ms/it, loss 0.639236, accuracy 74.150 %
+2020-10-31 13:35:22,745   Finished training it 74752/204646 of epoch 0, -1.00 ms/it, loss 0.635889, accuracy 74.414 %
+2020-10-31 13:35:37,965   Finished training it 75776/204646 of epoch 0, -1.00 ms/it, loss 0.631373, accuracy 74.625 %
+2020-10-31 13:36:01,570   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 6, mode=sum)
+    (1): EmbeddingBag(583, 6, mode=sum)
+    (2): EmbeddingBag(10131227, 6, mode=sum)
+    (3): EmbeddingBag(2202608, 6, mode=sum)
+    (4): EmbeddingBag(305, 6, mode=sum)
+    (5): EmbeddingBag(24, 6, mode=sum)
+    (6): EmbeddingBag(12517, 6, mode=sum)
+    (7): EmbeddingBag(633, 6, mode=sum)
+    (8): EmbeddingBag(3, 6, mode=sum)
+    (9): EmbeddingBag(93145, 6, mode=sum)
+    (10): EmbeddingBag(5683, 6, mode=sum)
+    (11): EmbeddingBag(8351593, 6, mode=sum)
+    (12): EmbeddingBag(3194, 6, mode=sum)
+    (13): EmbeddingBag(27, 6, mode=sum)
+    (14): EmbeddingBag(14992, 6, mode=sum)
+    (15): EmbeddingBag(5461306, 6, mode=sum)
+    (16): EmbeddingBag(10, 6, mode=sum)
+    (17): EmbeddingBag(5652, 6, mode=sum)
+    (18): EmbeddingBag(2173, 6, mode=sum)
+    (19): EmbeddingBag(4, 6, mode=sum)
+    (20): EmbeddingBag(7046547, 6, mode=sum)
+    (21): EmbeddingBag(18, 6, mode=sum)
+    (22): EmbeddingBag(15, 6, mode=sum)
+    (23): EmbeddingBag(286181, 6, mode=sum)
+    (24): EmbeddingBag(105, 6, mode=sum)
+    (25): EmbeddingBag(142572, 6, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=99, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=99, out_features=6, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=357, out_features=192, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=192, out_features=96, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=96, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 13:36:01,570   Growth ID 2, Growing from 3X to 4X.....
+2020-10-31 13:36:01,571   m_spa=8, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 256 128 132   8], ln_top=[359 256 128   1]
+2020-10-31 13:36:06,749   load_model: Loading ./saved_model/model_after_growth2.pickle....
+2020-10-31 13:36:07,491   Finished training it 76800/204646 of epoch 0, -1.00 ms/it, loss 0.649777, accuracy 74.480 %
+2020-10-31 13:36:18,179   Finished training it 77824/204646 of epoch 0, -1.00 ms/it, loss 0.909325, accuracy 74.634 %
+2020-10-31 13:36:28,794   Finished training it 78848/204646 of epoch 0, -1.00 ms/it, loss 0.906015, accuracy 74.669 %
+2020-10-31 13:36:39,455   Finished training it 79872/204646 of epoch 0, -1.00 ms/it, loss 0.899446, accuracy 74.915 %
+2020-10-31 13:36:40,788   Finished training it 80000/204646 of epoch 0, -1.00 ms/it, loss 0.874445, accuracy 75.208 %
+2020-10-31 13:39:53,229   Testing at - 80000/204646 of epoch 0, loss 0.919819, accuracy 74.300 %, best 74.300 %
+2020-10-31 13:40:02,661   Finished training it 80896/204646 of epoch 0, -1.00 ms/it, loss 0.924466, accuracy 74.257 %
+2020-10-31 13:40:12,936   Finished training it 81920/204646 of epoch 0, -1.00 ms/it, loss 0.906289, accuracy 74.721 %
+2020-10-31 13:40:23,611   Finished training it 82944/204646 of epoch 0, -1.00 ms/it, loss 0.907279, accuracy 74.794 %
+2020-10-31 13:40:34,404   Finished training it 83968/204646 of epoch 0, -1.00 ms/it, loss 0.905251, accuracy 74.785 %
+2020-10-31 13:40:45,191   Finished training it 84992/204646 of epoch 0, -1.00 ms/it, loss 0.898781, accuracy 74.866 %
+2020-10-31 13:40:56,848   Finished training it 86016/204646 of epoch 0, -1.00 ms/it, loss 0.907375, accuracy 74.786 %
+2020-10-31 13:41:08,370   Finished training it 87040/204646 of epoch 0, -1.00 ms/it, loss 0.904821, accuracy 74.850 %
+2020-10-31 13:41:20,394   Finished training it 88064/204646 of epoch 0, -1.00 ms/it, loss 0.920296, accuracy 74.390 %
+2020-10-31 13:41:32,902   Finished training it 89088/204646 of epoch 0, -1.00 ms/it, loss 0.901438, accuracy 75.003 %
+2020-10-31 13:41:45,919   Finished training it 90112/204646 of epoch 0, -1.00 ms/it, loss 0.911287, accuracy 74.481 %
+2020-10-31 13:41:59,552   Finished training it 91136/204646 of epoch 0, -1.00 ms/it, loss 0.911856, accuracy 74.628 %
+2020-10-31 13:42:13,038   Finished training it 92160/204646 of epoch 0, -1.00 ms/it, loss 0.910884, accuracy 74.699 %
+2020-10-31 13:42:26,930   Finished training it 93184/204646 of epoch 0, -1.00 ms/it, loss 0.908104, accuracy 74.762 %
+2020-10-31 13:42:41,271   Finished training it 94208/204646 of epoch 0, -1.00 ms/it, loss 0.908435, accuracy 74.767 %
+2020-10-31 13:42:55,994   Finished training it 95232/204646 of epoch 0, -1.00 ms/it, loss 0.909990, accuracy 74.564 %
+2020-10-31 13:43:11,209   Finished training it 96256/204646 of epoch 0, -1.00 ms/it, loss 0.902273, accuracy 75.009 %
+2020-10-31 13:43:26,894   Finished training it 97280/204646 of epoch 0, -1.00 ms/it, loss 0.912292, accuracy 74.493 %
+2020-10-31 13:43:42,969   Finished training it 98304/204646 of epoch 0, -1.00 ms/it, loss 0.898336, accuracy 74.902 %
+2020-10-31 13:43:59,554   Finished training it 99328/204646 of epoch 0, -1.00 ms/it, loss 0.912425, accuracy 74.532 %
+2020-10-31 13:44:17,565   Finished training it 100352/204646 of epoch 0, -1.00 ms/it, loss 0.905195, accuracy 74.846 %
+2020-10-31 13:44:35,934   Finished training it 101376/204646 of epoch 0, -1.00 ms/it, loss 0.911229, accuracy 74.571 %
+2020-10-31 13:45:03,650   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 8, mode=sum)
+    (1): EmbeddingBag(583, 8, mode=sum)
+    (2): EmbeddingBag(10131227, 8, mode=sum)
+    (3): EmbeddingBag(2202608, 8, mode=sum)
+    (4): EmbeddingBag(305, 8, mode=sum)
+    (5): EmbeddingBag(24, 8, mode=sum)
+    (6): EmbeddingBag(12517, 8, mode=sum)
+    (7): EmbeddingBag(633, 8, mode=sum)
+    (8): EmbeddingBag(3, 8, mode=sum)
+    (9): EmbeddingBag(93145, 8, mode=sum)
+    (10): EmbeddingBag(5683, 8, mode=sum)
+    (11): EmbeddingBag(8351593, 8, mode=sum)
+    (12): EmbeddingBag(3194, 8, mode=sum)
+    (13): EmbeddingBag(27, 8, mode=sum)
+    (14): EmbeddingBag(14992, 8, mode=sum)
+    (15): EmbeddingBag(5461306, 8, mode=sum)
+    (16): EmbeddingBag(10, 8, mode=sum)
+    (17): EmbeddingBag(5652, 8, mode=sum)
+    (18): EmbeddingBag(2173, 8, mode=sum)
+    (19): EmbeddingBag(4, 8, mode=sum)
+    (20): EmbeddingBag(7046547, 8, mode=sum)
+    (21): EmbeddingBag(18, 8, mode=sum)
+    (22): EmbeddingBag(15, 8, mode=sum)
+    (23): EmbeddingBag(286181, 8, mode=sum)
+    (24): EmbeddingBag(105, 8, mode=sum)
+    (25): EmbeddingBag(142572, 8, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=132, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=132, out_features=8, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=359, out_features=256, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=256, out_features=128, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=128, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 13:45:03,650   Growth ID 3, Growing from 4X to 5X.....
+2020-10-31 13:45:03,651   m_spa=10, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 320 160 165  10], ln_top=[361 320 160   1]
+2020-10-31 13:45:10,164   load_model: Loading ./saved_model/model_after_growth3.pickle....
+2020-10-31 13:45:11,097   Finished training it 102400/204646 of epoch 0, -1.00 ms/it, loss 1.003619, accuracy 72.479 %
+2020-10-31 13:45:21,882   Finished training it 103424/204646 of epoch 0, -1.00 ms/it, loss 2.247436, accuracy 44.104 %
+2020-10-31 13:45:32,654   Finished training it 104448/204646 of epoch 0, -1.00 ms/it, loss 2.263418, accuracy 44.041 %
+2020-10-31 13:45:43,160   Finished training it 105472/204646 of epoch 0, -1.00 ms/it, loss 2.237302, accuracy 44.211 %
+2020-10-31 13:45:53,318   Finished training it 106496/204646 of epoch 0, -1.00 ms/it, loss 2.274754, accuracy 43.761 %
+2020-10-31 13:46:03,509   Finished training it 107520/204646 of epoch 0, -1.00 ms/it, loss 2.256679, accuracy 44.002 %
+2020-10-31 13:46:13,983   Finished training it 108544/204646 of epoch 0, -1.00 ms/it, loss 2.249024, accuracy 44.305 %
+2020-10-31 13:46:24,938   Finished training it 109568/204646 of epoch 0, -1.00 ms/it, loss 2.256364, accuracy 44.048 %
+2020-10-31 13:46:36,353   Finished training it 110592/204646 of epoch 0, -1.00 ms/it, loss 2.249387, accuracy 44.072 %
+2020-10-31 13:46:48,253   Finished training it 111616/204646 of epoch 0, -1.00 ms/it, loss 2.252542, accuracy 43.929 %
+2020-10-31 13:47:00,555   Finished training it 112640/204646 of epoch 0, -1.00 ms/it, loss 2.237516, accuracy 44.441 %
+2020-10-31 13:47:13,351   Finished training it 113664/204646 of epoch 0, -1.00 ms/it, loss 2.258045, accuracy 43.961 %
+2020-10-31 13:47:26,601   Finished training it 114688/204646 of epoch 0, -1.00 ms/it, loss 2.250849, accuracy 44.043 %
+2020-10-31 13:47:40,336   Finished training it 115712/204646 of epoch 0, -1.00 ms/it, loss 2.246020, accuracy 44.260 %
+2020-10-31 13:47:54,772   Finished training it 116736/204646 of epoch 0, -1.00 ms/it, loss 2.254856, accuracy 44.180 %
+2020-10-31 13:48:09,897   Finished training it 117760/204646 of epoch 0, -1.00 ms/it, loss 2.252697, accuracy 44.176 %
+2020-10-31 13:48:25,514   Finished training it 118784/204646 of epoch 0, -1.00 ms/it, loss 2.254128, accuracy 44.081 %
+2020-10-31 13:48:41,823   Finished training it 119808/204646 of epoch 0, -1.00 ms/it, loss 2.262654, accuracy 44.020 %
+2020-10-31 13:48:58,812   Finished training it 120832/204646 of epoch 0, -1.00 ms/it, loss 2.262886, accuracy 44.081 %
+2020-10-31 13:49:16,482   Finished training it 121856/204646 of epoch 0, -1.00 ms/it, loss 2.254257, accuracy 44.290 %
+2020-10-31 13:49:34,732   Finished training it 122880/204646 of epoch 0, -1.00 ms/it, loss 2.264622, accuracy 43.651 %
+2020-10-31 13:49:53,321   Finished training it 123904/204646 of epoch 0, -1.00 ms/it, loss 2.249160, accuracy 44.145 %
+2020-10-31 13:50:12,516   Finished training it 124928/204646 of epoch 0, -1.00 ms/it, loss 2.238412, accuracy 44.360 %
+2020-10-31 13:50:32,216   Finished training it 125952/204646 of epoch 0, -1.00 ms/it, loss 2.249664, accuracy 43.901 %
+2020-10-31 13:50:52,381   Finished training it 126976/204646 of epoch 0, -1.00 ms/it, loss 2.263753, accuracy 43.945 %
+2020-10-31 13:51:24,860   save_model: DLRM_Net(
+  (emb_l): ModuleList(
+    (0): EmbeddingBag(1460, 10, mode=sum)
+    (1): EmbeddingBag(583, 10, mode=sum)
+    (2): EmbeddingBag(10131227, 10, mode=sum)
+    (3): EmbeddingBag(2202608, 10, mode=sum)
+    (4): EmbeddingBag(305, 10, mode=sum)
+    (5): EmbeddingBag(24, 10, mode=sum)
+    (6): EmbeddingBag(12517, 10, mode=sum)
+    (7): EmbeddingBag(633, 10, mode=sum)
+    (8): EmbeddingBag(3, 10, mode=sum)
+    (9): EmbeddingBag(93145, 10, mode=sum)
+    (10): EmbeddingBag(5683, 10, mode=sum)
+    (11): EmbeddingBag(8351593, 10, mode=sum)
+    (12): EmbeddingBag(3194, 10, mode=sum)
+    (13): EmbeddingBag(27, 10, mode=sum)
+    (14): EmbeddingBag(14992, 10, mode=sum)
+    (15): EmbeddingBag(5461306, 10, mode=sum)
+    (16): EmbeddingBag(10, 10, mode=sum)
+    (17): EmbeddingBag(5652, 10, mode=sum)
+    (18): EmbeddingBag(2173, 10, mode=sum)
+    (19): EmbeddingBag(4, 10, mode=sum)
+    (20): EmbeddingBag(7046547, 10, mode=sum)
+    (21): EmbeddingBag(18, 10, mode=sum)
+    (22): EmbeddingBag(15, 10, mode=sum)
+    (23): EmbeddingBag(286181, 10, mode=sum)
+    (24): EmbeddingBag(105, 10, mode=sum)
+    (25): EmbeddingBag(142572, 10, mode=sum)
+  )
+  (bot_l): Sequential(
+    (0): Linear(in_features=13, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=165, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=165, out_features=10, bias=True)
+    (7): ReLU()
+  )
+  (top_l): Sequential(
+    (0): Linear(in_features=361, out_features=320, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=320, out_features=160, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=160, out_features=1, bias=True)
+    (5): Sigmoid()
+  )
+)
+2020-10-31 13:51:24,861   Growth ID 4, Growing from 5X to 6X.....
+2020-10-31 13:51:24,861   m_spa=12, ln_emb=[    1460      583 10131227  2202608      305       24    12517      633
+        3    93145     5683  8351593     3194       27    14992  5461306
+       10     5652     2173        4  7046547       18       15   286181
+      105   142572], ln_bot=[ 13 384 192 198  12], ln_top=[363 384 192   1]
