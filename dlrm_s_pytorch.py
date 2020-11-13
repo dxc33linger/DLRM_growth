@@ -93,7 +93,7 @@ import sklearn.metrics
 # from torch.nn.parameter import Parameter
 
 from torch.optim.lr_scheduler import _LRScheduler
-
+import utils
 exc = getattr(builtins, "IOError", "FileNotFoundError")
 
 class LRPolicyScheduler(_LRScheduler):
@@ -517,17 +517,17 @@ if __name__ == "__main__":
         description="Train Deep Learning Recommendation Model (DLRM)"
     )
     # model related parameters
-    parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
     parser.add_argument(
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
-    # j will be replaced with the table number
-    parser.add_argument(
-        "--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-33-16")
-    parser.add_argument(
-        "--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
+
+    parser.add_argument("--arch-sparse-feature-size", type=int, default=2)
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-33-2")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
+
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
-    parser.add_argument("--arch-interaction-itself", action="store_true", default=False)
+    parser.add_argument(
+        "--arch-interaction-itself", action="store_true", default=False)
     # embedding table options
     parser.add_argument("--md-flag", action="store_true", default=False)
     parser.add_argument("--md-threshold", type=int, default=200)
@@ -605,7 +605,7 @@ if __name__ == "__main__":
     parser.add_argument("--lr-decay-start-step", type=int, default=0)
     parser.add_argument("--lr-num-decay-steps", type=int, default=0)
     ## added
-    parser.add_argument("--gpu-id", type= str, default='0')
+    parser.add_argument("--gpu-id", type= str, default='1')
     parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
     parser.add_argument("--size-scale", type=int, default="1")
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
@@ -619,8 +619,8 @@ if __name__ == "__main__":
     log_format = '%(asctime)s   %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M%p')
-    fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_{}X_growthStep{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.size_scale,
-                                                                                                                              args.growth_step, args.grow_embedding, args.initialization)))
+    fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_{}X_growthStep{}_Horizon{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.size_scale,
+                                                                                                                              args.growth_step, args.growth_stop_horizon, args.grow_embedding, args.initialization)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
     logging.info("******************************************************")
@@ -676,7 +676,6 @@ if __name__ == "__main__":
     def instance_dimension(size_scale, growth_scale, trainset):
         ### prepare training data ###
         ln_bot = np.fromstring(args.arch_mlp_bot, dtype=int, sep="-")
-        print('ln_bot', ln_bot)
         if args.grow_embedding:
             ln_bot = ln_bot *size_scale * growth_scale
         else:
@@ -719,7 +718,6 @@ if __name__ == "__main__":
                 + " is not supported"
             )
         arch_mlp_top_adjusted = str(num_int) + "-" + args.arch_mlp_top
-        print('arch_mlp_top_adjusted', arch_mlp_top_adjusted)
         ln_top = np.fromstring(arch_mlp_top_adjusted, dtype=int, sep="-")
         ln_top[1:-1] = ln_top[1:-1] * size_scale * growth_scale
 
@@ -824,7 +822,6 @@ if __name__ == "__main__":
                 print([S_i.detach().cpu().tolist() for S_i in lS_i])
                 print(T.detach().cpu().numpy())
         ndevices = min(ngpus, args.mini_batch_size, num_fea - 1) if use_gpu else -1
-        logging.info('m_spa={}, ln_emb={}, ln_bot={}, ln_top={}'.format(m_spa, ln_emb, ln_bot, ln_top))
 
         dimension_info = (m_spa, ln_emb,  ln_bot,  ln_top, num_fea, num_int)
 
@@ -856,11 +853,10 @@ if __name__ == "__main__":
             md_flag=args.md_flag,
             md_threshold=args.md_threshold,
         )
-        logging.info('dlrm: ', dlrm)
         # logging.info(dlrm.bot_l[0].weight)
         # logging.info(dlrm.bot_l[0].bias)
         # logging.info(dlrm.bot_l[0].weight.grad)
-
+        param = utils.count_parameters_in_MB(dlrm)
         # test prints
         if args.debug_mode:
             print("initial parameters (weights and bias):")
@@ -875,6 +871,9 @@ if __name__ == "__main__":
             dlrm = dlrm.to(device)  # .cuda()
             if dlrm.ndevices > 1:
                 dlrm.emb_l = dlrm.create_emb(m_spa, ln_emb)
+        logging.info('dlrm: {}'.format(dlrm))
+        logging.info('\nparam size = {0:.2f}M'.format(param))
+        logging.info('\nm_spa={}, ln_emb={}, ln_bot={}, ln_top={}'.format(m_spa, ln_emb, ln_bot, ln_top))
 
         return dlrm
     #---------------------
@@ -1011,7 +1010,6 @@ if __name__ == "__main__":
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
 
-    logging.info('m_spa={}, ln_emb={}, ln_bot={}, ln_top={}'.format(m_spa, ln_emb, ln_bot, ln_top))
     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
 
     def dlrm_wrap(dlrm_net, X, lS_o, lS_i, use_gpu, device):
@@ -1451,7 +1449,7 @@ if __name__ == "__main__":
                         break
 
                 ### locate growth
-                if args.growth_step != 0 and j == math.ceil(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1):
+                if args.growth_step != 0 and j == math.ceil(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon):
                     save_trained_model(dlrm, growth_id)
                     logging.info('Growth ID {}, Growing from {}X to {}X.....'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
