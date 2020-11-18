@@ -87,6 +87,8 @@ from tricks.qr_embedding_bag import QREmbeddingBag
 from tricks.md_embedding_bag import PrEmbeddingBag, md_solver
 
 import sklearn.metrics
+import scipy.io as scio
+import matplotlib.pyplot as plt
 
 # from torchviz import make_dot
 # import torch.nn.functional as Functional
@@ -520,9 +522,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
-    parser.add_argument("--arch-sparse-feature-size", type=int, default=2)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-33-2")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
+    parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-128-64-66-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="128-64-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -856,7 +858,7 @@ if __name__ == "__main__":
         # logging.info(dlrm.bot_l[0].weight)
         # logging.info(dlrm.bot_l[0].bias)
         # logging.info(dlrm.bot_l[0].weight.grad)
-        param = utils.count_parameters_in_MB(dlrm)
+
         # test prints
         if args.debug_mode:
             print("initial parameters (weights and bias):")
@@ -871,8 +873,11 @@ if __name__ == "__main__":
             dlrm = dlrm.to(device)  # .cuda()
             if dlrm.ndevices > 1:
                 dlrm.emb_l = dlrm.create_emb(m_spa, ln_emb)
+        param = utils.count_parameters_in_MB(dlrm)
+        param_FC = utils.count_parameters_in_FC(dlrm)
+
         logging.info('dlrm: {}'.format(dlrm))
-        logging.info('\nparam size = {0:.2f}M'.format(param))
+        logging.info('\n\nFC param size = {:.5f}M, param size = {:.2f}M \nFLOP = {:.5f}K\n\n'.format(param_FC, param, param_FC*2*1000))
         logging.info('\nm_spa={}, ln_emb={}, ln_bot={}, ln_top={}'.format(m_spa, ln_emb, ln_bot, ln_top))
 
         return dlrm
@@ -885,7 +890,7 @@ if __name__ == "__main__":
         file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         pickle.dump(current_net.state_dict(), open(path, 'wb'))
-        logging.info('save_model: {}'.format(current_net))
+        logging.info('save_model')
 
 
     def hook_fn_forward(module, input, output):
@@ -1147,6 +1152,10 @@ if __name__ == "__main__":
     time_start = time.time()
     ### train starts
     logging.info("time/loss/accuracy (if enabled):")
+    gL_log = []
+    gA_log = []
+    param_log = []
+    param_FC_log = []
     with torch.autograd.profiler.profile(args.enable_profiling, use_gpu) as prof:
         while k < args.nepochs:
             if k < skip_upto_epoch:
@@ -1255,7 +1264,12 @@ if __name__ == "__main__":
 
                     gL = total_loss / total_samp
                     total_loss = 0
-
+                    gL_log.append(gL)
+                    gA_log.append(gA*100)
+                    param = utils.count_parameters_in_MB(dlrm)
+                    param_FC = utils.count_parameters_in_FC(dlrm)
+                    param_log.append(param)
+                    param_FC_log.append(param_FC)
                     str_run_type = "inference" if args.inference_only else "training"
                     logging.info(
                         "Finished {} it {}/{} of epoch {}, {:.2f} ms/it, ".format(
@@ -1449,13 +1463,13 @@ if __name__ == "__main__":
                         break
 
                 ### locate growth
-                if args.growth_step != 0 and j == math.ceil(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon):
+                if args.growth_step != 0 and j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon) and growth_id < args.growth_step:
                     save_trained_model(dlrm, growth_id)
                     logging.info('Growth ID {}, Growing from {}X to {}X.....'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-                    print('growth_id pre', growth_id)
+                    logging.info('growth_id {}'.format(growth_id))
                     load_trained_model(dlrm, growth_id)
                     growth_id += 1
             torch.cuda.empty_cache()
@@ -1568,3 +1582,24 @@ if __name__ == "__main__":
         prediction = sess.run(output_names=["pred"], input_feed=dict_inputs)
         print("prediction", prediction)
         '''
+    scio.savemat('./log/savemat_loss{}.mat'.format(gL),
+                 {'gL_log': gL_log, 'gA_log': gA_log, 'args.growth_step': args.growth_step,
+                  'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
+                  'm_spa':m_spa, 'ln_emb':ln_emb, 'num_fea':num_fea, 'num_int':num_int,
+                  'ln_bot':ln_bot, 'ln_top':ln_top})
+
+    num_iteration = len(gL_log)
+    assert len(gL_log) == len(gA_log)
+    title_font = {'size': '8', 'color': 'black', 'weight': 'normal'}  # Bottom vertical alignment for more space
+    axis_font = {'size': '10'}
+    plt.figure()
+    x = np.linspace(0, num_iteration, num=num_iteration)
+    plt.xlim(0, num_iteration)
+    plt.xlabel('Iteration')
+    plt.ylabel('BCELoss')
+    plt.plot(gL_log, x, 'b-o', alpha=1.0, label='FC growth')
+    plt.yticks(np.arange(0.4, 0.6, step=0.1))
+    plt.xticks(np.arange(0, num_iteration + 1, step=20))
+    plt.legend(loc='best')
+    plt.savefig('./log/learning_curve_loss{:.4f}.png'.format(gL))
+    plt.title('Kaggle Display Advertising Challenge Dataset')

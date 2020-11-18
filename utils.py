@@ -8,11 +8,17 @@ import torch.nn.init as init
 import logging
 
 def count_parameters_in_MB(model):
-    # param = 0
-    # for name, v in model.named_parameters():
-    #     if "auxiliary" not in name:
-    #         logging.info('layer name {} param {:.3f}MB'.format(name, np.prod(v.size())/1e6))
-    return np.sum(np.prod(v.size()) for name, v in model.named_parameters() if "auxiliary" not in name)/1e6
+    return np.sum(np.prod(v.size()) for name, v in model.named_parameters() if "auxiliary" not in name) / 1e6
+
+def count_parameters_in_FC(model):
+    param = 0
+    for name, v in model.named_parameters():
+        if "emb_l" not in name:
+            param += np.sum(np.prod(v.size())) / 1e6
+            logging.info('layer name {} param {:.3f}MB'.format(name, np.prod(v.size()) / 1e6))
+
+    return param
+
 
 _, term_width = os.popen('stty size', 'r').read().split()
 term_width = int(term_width)
