@@ -895,10 +895,10 @@ if __name__ == "__main__":
 
     def hook_fn_forward(module, input, output):
         global growth_id
-        print('growth_id', growth_id)
-        print('output', output, output.shape)
+        logging.info('growth_id', growth_id)
+        logging.info('output', output, output.shape)
         output = output * growth_id / (growth_id+1)
-        print('output',output, output.shape)
+        logging.info('output',output, output.shape)
 
 
     def load_trained_model(to_net, growth_id):
@@ -1275,7 +1275,7 @@ if __name__ == "__main__":
                         "Finished {} it {}/{} of epoch {}, {:.2f} ms/it, ".format(
                             str_run_type, j+1, nbatches, k, gT
                         )
-                        + "loss {:.6f}, accuracy {:3.3f} %".format(gL, gA * 100)
+                        + "loss {:.6f}, accuracy {:3.3f} %,  lr = {:.3f}".format(gL, gA * 100, lr_scheduler.get_lr()[0])
                     )
                     # Uncomment the line below to print out the total time with overhead
                     # print("Accumulated time so far: {}" \
@@ -1283,6 +1283,9 @@ if __name__ == "__main__":
                     total_iter = 0
                     total_samp = 0
 
+                    for name, v in dlrm.named_parameters():
+                        if "bot_l.4" in name:
+                            logging.info(v.grad.data)
                 # testing
                 if should_test and not args.inference_only:
                     # don't measure training iter time in a test iteration
@@ -1470,7 +1473,7 @@ if __name__ == "__main__":
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                     logging.info('growth_id {}'.format(growth_id))
-                    load_trained_model(dlrm, growth_id)
+                    # load_trained_model(dlrm, growth_id)
                     growth_id += 1
             torch.cuda.empty_cache()
             k += 1  # nepochs
@@ -1582,7 +1585,7 @@ if __name__ == "__main__":
         prediction = sess.run(output_names=["pred"], input_feed=dict_inputs)
         print("prediction", prediction)
         '''
-    scio.savemat('./log/savemat_loss{}.mat'.format(gL),
+    scio.savemat('./log/savemat_loss{:.4f}_accu{:.4f}.mat'.format(gL, gA),
                  {'gL_log': gL_log, 'gA_log': gA_log, 'args.growth_step': args.growth_step,
                   'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
                   'm_spa':m_spa, 'ln_emb':ln_emb, 'num_fea':num_fea, 'num_int':num_int,
@@ -1593,13 +1596,13 @@ if __name__ == "__main__":
     title_font = {'size': '8', 'color': 'black', 'weight': 'normal'}  # Bottom vertical alignment for more space
     axis_font = {'size': '10'}
     plt.figure()
-    x = np.linspace(0, num_iteration, num=num_iteration)
+    x = np.linspace(0, nbatches, num=num_iteration)
     plt.xlim(0, num_iteration)
     plt.xlabel('Iteration')
     plt.ylabel('BCELoss')
-    plt.plot(gL_log, x, 'b-o', alpha=1.0, label='FC growth')
+    plt.plot(x, gL_log, 'b-o', alpha=1.0, label='FC growth')
     plt.yticks(np.arange(0.4, 0.6, step=0.1))
-    plt.xticks(np.arange(0, num_iteration + 1, step=20))
+    plt.xticks(np.arange(0, num_iteration + 1, step=20), rotation=45)
     plt.legend(loc='best')
-    plt.savefig('./log/learning_curve_loss{:.4f}.png'.format(gL))
+    plt.savefig('./log/learning_curve_loss{:.4f}_accu{:.4f}.png'.format(gL, gA))
     plt.title('Kaggle Display Advertising Challenge Dataset')
