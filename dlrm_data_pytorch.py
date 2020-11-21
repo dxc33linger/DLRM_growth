@@ -65,7 +65,7 @@ class CriteoDataset(Dataset):
         # tad_fea = tar_fea + den_fea
         # tot_fea = tad_fea + spa_fea
         if dataset == "kaggle":
-            days = 1
+            days = 7
             out_file = "kaggleAdDisplayChallenge_processed"
         elif dataset == "terabyte":
             days = 24

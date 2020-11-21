@@ -89,6 +89,8 @@ from tricks.md_embedding_bag import PrEmbeddingBag, md_solver
 import sklearn.metrics
 import scipy.io as scio
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('AGG')
 
 # from torchviz import make_dot
 # import torch.nn.functional as Functional
@@ -523,8 +525,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-128-64-66-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="128-64-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-4096-2048-2112-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="4096-2048-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -552,10 +554,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--data-generation", type=str, default="dataset"
     )  # synthetic or dataset
-    parser.add_argument("--data-trace-file", type=str, default="./input/dist_emb_j.log")
     parser.add_argument("--data-set", type=str, default="kaggle")  # or terabyte
+    parser.add_argument("--data-trace-file", type=str, default="./input/dist_emb_j.log")
     parser.add_argument("--raw-data-file", type=str, default="./input/train.txt")
-    parser.add_argument("--processed-data-file", type=str, default="./input/kaggleAdDisplayChallenge_processed.npz")
+    parser.add_argument("--processed-data-file", type=str, default="./input/kaggleAdDisplayChallenge_processed.npz") #
     parser.add_argument("--data-randomize", type=str, default="total")  # or day or none
     parser.add_argument("--data-trace-enable-padding", type=bool, default=False)
     parser.add_argument("--max-ind-range", type=int, default=-1)
@@ -621,8 +623,12 @@ if __name__ == "__main__":
     log_format = '%(asctime)s   %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M%p')
-    fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_{}X_growthStep{}_Horizon{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.size_scale,
-                                                                                                                              args.growth_step, args.growth_stop_horizon, args.grow_embedding, args.initialization)))
+    if args.growth_step == 0:
+        fh = logging.FileHandler(os.path.join(
+            './log/log_dlrm_s_pytorch_bot{}_top{}_Baseline.txt'.format(args.arch_mlp_bot, args.arch_mlp_top)))
+    else:
+        fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_growthStep{}_Horizon{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.growth_step,
+                                                                                                                                        args.growth_stop_horizon, args.grow_embedding, args.initialization)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
     logging.info("******************************************************")
@@ -875,10 +881,17 @@ if __name__ == "__main__":
                 dlrm.emb_l = dlrm.create_emb(m_spa, ln_emb)
         param = utils.count_parameters_in_MB(dlrm)
         param_FC = utils.count_parameters_in_FC(dlrm)
+        if not os.path.isdir('./saved_model'):
+            os.mkdir('./saved_model')
 
-        logging.info('dlrm: {}'.format(dlrm))
-        logging.info('\n\nFC param size = {:.5f}M, param size = {:.2f}M \nFLOP = {:.5f}K\n\n'.format(param_FC, param, param_FC*2*1000))
-        logging.info('\nm_spa={}, ln_emb={}, ln_bot={}, ln_top={}'.format(m_spa, ln_emb, ln_bot, ln_top))
+        file_name = "model_FCparam{:.1}K.pickle".format(param_FC)
+        path = os.path.join('./saved_model', file_name)
+        pickle.dump(dlrm.state_dict(), open(path, 'wb'))
+        logging.info('save_model to ' + path + '\n')
+
+        # logging.info('dlrm: {}'.format(dlrm))
+        logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2*1000))
+        logging.info('m_spa={}, ln_bot={}, ln_top={} \n'.format(m_spa, ln_bot, ln_top))
 
         return dlrm
     #---------------------
@@ -890,7 +903,7 @@ if __name__ == "__main__":
         file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         pickle.dump(current_net.state_dict(), open(path, 'wb'))
-        logging.info('save_model')
+        logging.info('save_model to ' + path + '\n')
 
 
     def hook_fn_forward(module, input, output):
@@ -904,16 +917,15 @@ if __name__ == "__main__":
     def load_trained_model(to_net, growth_id):
         file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
-
+        logging.info('Reading and loading pre-trained weights............')
         old_param_dict = pickle.load(open(path, "rb"))
         new_param_dict = OrderedDict([(k, None) for k in to_net.state_dict().keys()])
 
         for layer_name, param_new in to_net.state_dict().items():
             param_old = old_param_dict[layer_name].type(torch.cuda.FloatTensor)
             std = param_old.std().item()
-
-
-            if args.initialization == 'random':
+            if args.initialization == "random":
+                logging.info('Random initialization')
                 if re.search('emb', layer_name):
                     if args.grow_embedding:
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
@@ -922,6 +934,7 @@ if __name__ == "__main__":
                     else:
                         param_new = Variable(param_old.clone(), requires_grad=True)
                 elif layer_name == 'bot_l.6.weight':
+                    logging.info('bot_l.6.weight', param_old, param_old.shape)
                     if args.grow_embedding:
                         param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
                         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
@@ -932,6 +945,9 @@ if __name__ == "__main__":
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
                         random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
                         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
+                    logging.info('bot_l.6.weight', param_new, param_new.shape)
+
+
                 elif layer_name == 'bot_l.0.weight':
                     param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
                     random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
@@ -958,6 +974,7 @@ if __name__ == "__main__":
                         random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad=True)
             elif args.initialization == 'zero':
+                logging.info('zero initialization')
                 if re.search( 'emb', layer_name):
                     param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
                     zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
@@ -1283,12 +1300,15 @@ if __name__ == "__main__":
                     total_iter = 0
                     total_samp = 0
 
-                    for name, v in dlrm.named_parameters():
-                        if "bot_l.4" in name:
-                            logging.info(v.grad.data)
+                    # for name, v in dlrm.named_parameters():
+                    #     if "bot_l.4" in name:
+                    #         logging.info('weight', v.data)
+                    #         logging.info('gradient', v.grad.data)
+                    #         logging.info('\n\n')
                 # testing
                 if should_test and not args.inference_only:
                     # don't measure training iter time in a test iteration
+                    logging.info('Testing.....')
                     if args.mlperf_logging:
                         previous_iteration_time = None
 
@@ -1465,16 +1485,153 @@ if __name__ == "__main__":
                               + " reached, stop training")
                         break
 
-                ### locate growth
+                # ### locate growth
                 if args.growth_step != 0 and j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon) and growth_id < args.growth_step:
+                    logging.info('Testing.....')
+                    test_accu = 0
+                    test_loss = 0
+                    test_samp = 0
+
+                    accum_test_time_begin = time_wrap(use_gpu)
+
+                    for i, (X_test, lS_o_test, lS_i_test, T_test) in enumerate(test_ld):
+                        # early exit if nbatches was set by the user and was exceeded
+                        if nbatches > 0 and i >= nbatches:
+                            break
+
+                        t1_test = time_wrap(use_gpu)
+
+                        # forward pass
+                        Z_test = dlrm_wrap(dlrm,
+                                           X_test, lS_o_test, lS_i_test, use_gpu, device
+                                           )
+                        # loss
+                        E_test = loss_fn_wrap(Z_test, T_test, use_gpu, device)
+
+                        # compute loss and accuracy
+                        L_test = E_test.detach().cpu().numpy()  # numpy array
+                        S_test = Z_test.detach().cpu().numpy()  # numpy array
+                        T_test = T_test.detach().cpu().numpy()  # numpy array
+                        mbs_test = T_test.shape[0]  # = mini_batch_size except last
+                        A_test = np.sum((np.round(S_test, 0) == T_test).astype(np.uint8))
+                        test_accu += A_test
+                        test_loss += L_test * mbs_test
+                        test_samp += mbs_test
+
+                        t2_test = time_wrap(use_gpu)
+
+                    gA_test = test_accu / test_samp
+                    gL_test = test_loss / test_samp
+
+                    is_best = gA_test > best_gA_test
+                    if is_best:
+                        best_gA_test = gA_test
+                        if not (args.save_model == ""):
+                            logging.info("Saving model to {}".format(args.save_model))
+                            torch.save(
+                                {
+                                    "epoch": k,
+                                    "nepochs": args.nepochs,
+                                    "nbatches": nbatches,
+                                    "nbatches_test": nbatches_test,
+                                    "iter": j + 1,
+                                    "state_dict": dlrm.state_dict(),
+                                    "train_acc": gA,
+                                    "train_loss": gL,
+                                    "test_acc": gA_test,
+                                    "test_loss": gL_test,
+                                    "total_loss": total_loss,
+                                    "total_accu": total_accu,
+                                    "opt_state_dict": optimizer.state_dict(),
+                                },
+                                args.save_model,
+                            )
+
+                    logging.info(
+                        "Testing at - {}/{} of epoch {},".format(j + 1, nbatches, 0)
+                        + " loss {:.6f}, accuracy {:3.3f} %, best {:3.3f} %".format(
+                            gL_test, gA_test * 100, best_gA_test * 100
+                        )
+                    )
+
+                    logging.info('------------------Growth starts---------------------')
                     save_trained_model(dlrm, growth_id)
-                    logging.info('Growth ID {}, Growing from {}X to {}X.....'.format(growth_id, growth_id+1, growth_id+2))
+                    logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-                    logging.info('growth_id {}'.format(growth_id))
-                    # load_trained_model(dlrm, growth_id)
+                    load_trained_model(dlrm, growth_id)
                     growth_id += 1
+                    save_trained_model(dlrm, growth_id)
+                    logging.info('------------------Growth finishes---------------------')
+                    # test
+                    logging.info('Testing.....')
+                    test_accu = 0
+                    test_loss = 0
+                    test_samp = 0
+
+                    accum_test_time_begin = time_wrap(use_gpu)
+
+                    for i, (X_test, lS_o_test, lS_i_test, T_test) in enumerate(test_ld):
+                        # early exit if nbatches was set by the user and was exceeded
+                        if nbatches > 0 and i >= nbatches:
+                            break
+
+                        t1_test = time_wrap(use_gpu)
+
+                        # forward pass
+                        Z_test = dlrm_wrap(dlrm,
+                            X_test, lS_o_test, lS_i_test, use_gpu, device
+                        )
+                        # loss
+                        E_test = loss_fn_wrap(Z_test, T_test, use_gpu, device)
+
+                        # compute loss and accuracy
+                        L_test = E_test.detach().cpu().numpy()  # numpy array
+                        S_test = Z_test.detach().cpu().numpy()  # numpy array
+                        T_test = T_test.detach().cpu().numpy()  # numpy array
+                        mbs_test = T_test.shape[0]  # = mini_batch_size except last
+                        A_test = np.sum((np.round(S_test, 0) == T_test).astype(np.uint8))
+                        test_accu += A_test
+                        test_loss += L_test * mbs_test
+                        test_samp += mbs_test
+
+                        t2_test = time_wrap(use_gpu)
+
+
+                    gA_test = test_accu / test_samp
+                    gL_test = test_loss / test_samp
+
+                    is_best = gA_test > best_gA_test
+                    if is_best:
+                        best_gA_test = gA_test
+                        if not (args.save_model == ""):
+                            logging.info("Saving model to {}".format(args.save_model))
+                            torch.save(
+                                {
+                                    "epoch": k,
+                                    "nepochs": args.nepochs,
+                                    "nbatches": nbatches,
+                                    "nbatches_test": nbatches_test,
+                                    "iter": j + 1,
+                                    "state_dict": dlrm.state_dict(),
+                                    "train_acc": gA,
+                                    "train_loss": gL,
+                                    "test_acc": gA_test,
+                                    "test_loss": gL_test,
+                                    "total_loss": total_loss,
+                                    "total_accu": total_accu,
+                                    "opt_state_dict": optimizer.state_dict(),
+                                },
+                                args.save_model,
+                            )
+
+                    logging.info(
+                        "Testing at - {}/{} of epoch {},".format(j + 1, nbatches, 0)
+                        + " loss {:.6f}, accuracy {:3.3f} %, best {:3.3f} %".format(
+                            gL_test, gA_test * 100, best_gA_test * 100
+                        )
+                    )
             torch.cuda.empty_cache()
             k += 1  # nepochs
 
@@ -1595,14 +1752,28 @@ if __name__ == "__main__":
     assert len(gL_log) == len(gA_log)
     title_font = {'size': '8', 'color': 'black', 'weight': 'normal'}  # Bottom vertical alignment for more space
     axis_font = {'size': '10'}
-    plt.figure()
-    x = np.linspace(0, nbatches, num=num_iteration)
+
+    plt.figure(figsize=(10, 5.5))
+    plt.subplot(121)
+    # plt.figure()
+    x = np.linspace(0, num_iteration, num=num_iteration)
     plt.xlim(0, num_iteration)
-    plt.xlabel('Iteration')
+    plt.xlabel("Num of Iterations")
     plt.ylabel('BCELoss')
-    plt.plot(x, gL_log, 'b-o', alpha=1.0, label='FC growth')
+    plt.plot(x, gL_log, 'b-o', alpha=1.0, label='Loss - FC growth')
     plt.yticks(np.arange(0.4, 0.6, step=0.1))
     plt.xticks(np.arange(0, num_iteration + 1, step=20), rotation=45)
     plt.legend(loc='best')
-    plt.savefig('./log/learning_curve_loss{:.4f}_accu{:.4f}.png'.format(gL, gA))
     plt.title('Kaggle Display Advertising Challenge Dataset')
+
+    plt.subplot(122)
+    x = np.linspace(0, num_iteration, num=num_iteration)
+    plt.xlim(0, num_iteration)
+    plt.xlabel("Num of Iterations")
+    plt.ylabel('Accuracy %')
+    plt.plot(x, gA_log, 'g-', alpha=1.0, label='Accuracy - FC growth')
+    plt.yticks(np.arange(70, 80, step=1))
+    plt.xticks(np.arange(0, num_iteration + 1, step=20), rotation=45)
+    plt.legend(loc='best')
+    plt.title('Kaggle Display Advertising Challenge Dataset')
+    plt.savefig('./log/learning_curve_loss{:.4f}_Accu{:.4f}.png'.format(gL_log[-1], gA_log[-1]))
