@@ -1,0 +1,85 @@
+2020-11-20 21:38:27,247   ******************************************************
+2020-11-20 21:38:27,247                     dlrm_s_pytorch.py                   
+2020-11-20 21:38:27,247   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='13-32-16-15-16', arch_mlp_top='32-16-1', arch_sparse_feature_size=16, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, enable_profiling=False, gpu_id='0', grow_embedding=False, growth_step=5, growth_stop_horizon=0.1, inference_only=False, initialization='zero', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=1, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-20 21:38:27,272   dataset kaggle #day 1
+2020-11-20 21:38:27,272   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-20 21:38:55,280   Sparse fea = 26, Dense fea = 13
+2020-11-20 21:38:55,335   Defined train indices...
+2020-11-20 21:38:55,549   Randomized indices across days ...
+2020-11-20 21:39:00,440   Split data according to indices...
+2020-11-20 21:39:00,441   dataset kaggle #day 1
+2020-11-20 21:39:00,441   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-20 21:39:28,529   Sparse fea = 26, Dense fea = 13
+2020-11-20 21:39:28,584   Defined test indices...
+2020-11-20 21:39:28,800   Randomized indices across days ...
+2020-11-20 21:39:42,550   Split data according to indices...
+2020-11-20 21:39:56,533   save_model to ./saved_model/model_FCparam1e+01K.pickle
+
+2020-11-20 21:39:56,533   FC param size = 13.81K, param size = 540.22M,  FLOP = 27616.00K
+2020-11-20 21:39:56,533   m_spa=16, ln_bot=[13 32 16 15 16], ln_top=[367  32  16   1] 
+
+2020-11-20 21:39:56,534   time/loss/accuracy (if enabled):
+2020-11-20 21:39:56,534   Stage 0, This growth start from input index 0
+2020-11-20 21:40:05,427   Finished training it 1024/102323 of epoch 0, -1.00 ms/it, loss 0.512687, accuracy 75.954 %,  lr = 0.100
+2020-11-20 21:40:13,691   Testing.....
+2020-11-20 21:47:22,726   Testing at - 2047/102323 of epoch 0, loss 0.509447, accuracy 76.157 %, best 76.157 %
+2020-11-20 21:47:22,726   ------------------Growth starts---------------------
+2020-11-20 21:47:26,794   save_model to ./saved_model/model_after_growth0.pickle
+
+2020-11-20 21:47:26,795   Growth ID 0, Growing size from 1X to 2X.....
+
+2020-11-20 21:47:42,981   save_model to ./saved_model/model_FCparam3e+01K.pickle
+
+2020-11-20 21:47:42,982   FC param size = 30.13K, param size = 540.23M,  FLOP = 60254.00K
+2020-11-20 21:47:42,982   m_spa=16, ln_bot=[13 64 32 30 16], ln_top=[367  64  32   1] 
+
+2020-11-20 21:47:42,982   Reading and loading pre-trained weights............
+2020-11-20 21:47:45,253   zero initialization
+2020-11-20 21:47:45,254   zero initialization
+2020-11-20 21:47:45,255   zero initialization
+2020-11-20 21:47:45,261   zero initialization
+2020-11-20 21:47:45,262   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,263   zero initialization
+2020-11-20 21:47:45,265   zero initialization
+2020-11-20 21:47:45,269   zero initialization
+2020-11-20 21:47:45,269   zero initialization
+2020-11-20 21:47:45,269   zero initialization
+2020-11-20 21:47:45,270   zero initialization
+2020-11-20 21:47:45,273   zero initialization
+2020-11-20 21:47:45,274   zero initialization
+2020-11-20 21:47:45,274   zero initialization
+2020-11-20 21:47:45,274   zero initialization
+2020-11-20 21:47:45,275   zero initialization
+2020-11-20 21:47:45,279   zero initialization
+2020-11-20 21:47:45,279   zero initialization
+2020-11-20 21:47:45,279   zero initialization
+2020-11-20 21:47:45,279   zero initialization
+2020-11-20 21:47:45,279   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,280   zero initialization
+2020-11-20 21:47:45,281   zero initialization
+2020-11-20 21:47:45,281   zero initialization
+2020-11-20 21:47:45,281   zero initialization
+2020-11-20 21:47:45,281   zero initialization
+2020-11-20 21:47:45,281   zero initialization
+2020-11-20 21:47:45,282   zero initialization
+2020-11-20 21:47:45,282   zero initialization
+2020-11-20 21:47:45,282   zero initialization
+2020-11-20 21:47:45,283   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-20 21:47:49,630   save_model to ./saved_model/model_after_growth1.pickle
+
+2020-11-20 21:47:49,630   ------------------Growth finishes---------------------
+2020-11-20 21:47:49,630   Testing.....
+2020-11-20 21:54:58,806   Testing at - 2047/102323 of epoch 0, loss 0.525538, accuracy 75.045 %, best 76.157 %
+2020-11-20 21:54:58,813   Finished training it 2048/102323 of epoch 0, -1.00 ms/it, loss 0.496530, accuracy 76.932 %,  lr = 0.100
+2020-11-20 21:55:07,233   Finished training it 3072/102323 of epoch 0, -1.00 ms/it, loss 0.516422, accuracy 75.656 %,  lr = 0.100
+2020-11-20 21:55:15,522   Testing.....
