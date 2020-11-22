@@ -525,8 +525,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-4096-2048-2112-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="4096-2048-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-128-64-66-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="128-64-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -616,6 +616,7 @@ if __name__ == "__main__":
     parser.add_argument("--grow-embedding", action='store_true',  default=False)
     parser.add_argument("--growth-stop-horizon", type=float, default=0.5)
 
+    parser.add_argument("--debuglog", type= str, default='')
 
 
     args = parser.parse_args()
@@ -627,8 +628,8 @@ if __name__ == "__main__":
         fh = logging.FileHandler(os.path.join(
             './log/log_dlrm_s_pytorch_bot{}_top{}_Baseline.txt'.format(args.arch_mlp_bot, args.arch_mlp_top)))
     else:
-        fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_growthStep{}_Horizon{}_GrowEmb{}_Init{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.growth_step,
-                                                                                                                                        args.growth_stop_horizon, args.grow_embedding, args.initialization)))
+        fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_growthStep{}_Horizon{}_GrowEmb{}_Init{}_{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.growth_step,
+                                                                                                                                        args.growth_stop_horizon, args.grow_embedding, args.initialization, args.debuglog)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
     logging.info("******************************************************")
@@ -636,30 +637,6 @@ if __name__ == "__main__":
     logging.info("args = %s", args)
     if args.mlperf_logging:
         print('command line args: ', json.dumps(vars(args)))
-
-    ### some basic setup ###
-    np.random.seed(args.numpy_rand_seed)
-    np.set_printoptions(precision=args.print_precision)
-    torch.set_printoptions(precision=args.print_precision)
-    torch.manual_seed(args.numpy_rand_seed)
-
-    if (args.test_mini_batch_size < 0):
-        # if the parameter is not set, use the training batch size
-        args.test_mini_batch_size = args.mini_batch_size
-    if (args.test_num_workers < 0):
-        # if the parameter is not set, use the same parameter for training
-        args.test_num_workers = args.num_workers
-
-    use_gpu = args.use_gpu and torch.cuda.is_available()
-    if use_gpu:
-        torch.cuda.manual_seed_all(args.numpy_rand_seed)
-        torch.backends.cudnn.deterministic = True
-        device = torch.device("cuda", 0)
-        ngpus = torch.cuda.device_count()  # 1
-        print("Using {} GPU(s)...".format(ngpus))
-    else:
-        device = torch.device("cpu")
-        print("Using CPU...")
 
 
     def prepare_dataset():
@@ -879,6 +856,8 @@ if __name__ == "__main__":
             dlrm = dlrm.to(device)  # .cuda()
             if dlrm.ndevices > 1:
                 dlrm.emb_l = dlrm.create_emb(m_spa, ln_emb)
+
+
         param = utils.count_parameters_in_MB(dlrm)
         param_FC = utils.count_parameters_in_FC(dlrm)
         if not os.path.isdir('./saved_model'):
@@ -893,14 +872,20 @@ if __name__ == "__main__":
         logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2*1000))
         logging.info('m_spa={}, ln_bot={}, ln_top={} \n'.format(m_spa, ln_bot, ln_top))
 
-        return dlrm
+        if not args.inference_only:
+            # specify the optimizer algorithm
+            optimizer = torch.optim.SGD(dlrm.parameters(), lr=args.learning_rate)
+            lr_scheduler = LRPolicyScheduler(optimizer, args.lr_num_warmup_steps, args.lr_decay_start_step,
+                                             args.lr_num_decay_steps)
+
+        return dlrm, optimizer, lr_scheduler
     #---------------------
 
-    def save_trained_model(current_net, growth_id):
+    def save_trained_model(current_net, growth_id, pre):
         if not os.path.isdir('./saved_model'):
             os.mkdir('./saved_model')
 
-        file_name = "model_after_growth{}.pickle".format(growth_id)
+        file_name = pre + "model_growthID{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         pickle.dump(current_net.state_dict(), open(path, 'wb'))
         logging.info('save_model to ' + path + '\n')
@@ -1023,17 +1008,6 @@ if __name__ == "__main__":
 
         logging.info('load_model: Loading {}....'.format(path))
 
-
-    trainset, testset = prepare_dataset()
-    train_data, train_ld, nbatches  = trainset
-    test_data, test_ld, nbatches_test = testset
-    dimension_info, ndevices   = instance_dimension(size_scale= args.size_scale, growth_scale = 1, trainset = trainset)
-    m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-    train_data, train_ld, nbatches = trainset
-    test_data, test_ld, nbatches_test = testset
-
-    dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-
     def dlrm_wrap(dlrm_net, X, lS_o, lS_i, use_gpu, device):
         if use_gpu:  # .cuda()
             # lS_i can be either a list of tensors or a stacked tensor.
@@ -1050,24 +1024,6 @@ if __name__ == "__main__":
         else:
             return dlrm_net(X, lS_o, lS_i)
 
-    if not args.inference_only:
-        # specify the optimizer algorithm
-        optimizer = torch.optim.SGD(dlrm.parameters(), lr=args.learning_rate)
-        lr_scheduler = LRPolicyScheduler(optimizer, args.lr_num_warmup_steps, args.lr_decay_start_step,
-                                         args.lr_num_decay_steps)
-
-
-    # specify the loss function
-    if args.loss_function == "mse":
-        loss_fn = torch.nn.MSELoss(reduction="mean")
-    elif args.loss_function == "bce":
-        loss_fn = torch.nn.BCELoss(reduction="mean")
-    elif args.loss_function == "wbce":
-        loss_ws = torch.tensor(np.fromstring(args.loss_weights, dtype=float, sep="-"))
-        loss_fn = torch.nn.BCELoss(reduction="none")
-    else:
-        sys.exit("ERROR: --loss-function=" + args.loss_function + " is not supported")
-
 
     ### main loop ###
     def time_wrap(use_gpu):
@@ -1076,8 +1032,18 @@ if __name__ == "__main__":
         return time.time()
 
 
-
     def loss_fn_wrap(Z, T, use_gpu, device):
+        # specify the loss function
+        if args.loss_function == "mse":
+            loss_fn = torch.nn.MSELoss(reduction="mean")
+        elif args.loss_function == "bce":
+            loss_fn = torch.nn.BCELoss(reduction="mean")
+        elif args.loss_function == "wbce":
+            loss_ws = torch.tensor(np.fromstring(args.loss_weights, dtype=float, sep="-"))
+            loss_fn = torch.nn.BCELoss(reduction="none")
+        else:
+            sys.exit("ERROR: --loss-function=" + args.loss_function + " is not supported")
+
         if args.loss_function == "mse" or args.loss_function == "bce":
             if use_gpu:
                 return loss_fn(Z, T.to(device))
@@ -1095,6 +1061,42 @@ if __name__ == "__main__":
             # print(loss_ws_)
             # print(loss_fn_)
             return loss_sc_.mean()
+
+    ### some basic setup ###
+    np.random.seed(args.numpy_rand_seed)
+    np.set_printoptions(precision=args.print_precision)
+    torch.set_printoptions(precision=args.print_precision)
+    torch.manual_seed(args.numpy_rand_seed)
+
+    if (args.test_mini_batch_size < 0):
+        # if the parameter is not set, use the training batch size
+        args.test_mini_batch_size = args.mini_batch_size
+    if (args.test_num_workers < 0):
+        # if the parameter is not set, use the same parameter for training
+        args.test_num_workers = args.num_workers
+
+    use_gpu = args.use_gpu and torch.cuda.is_available()
+    if use_gpu:
+        torch.cuda.manual_seed_all(args.numpy_rand_seed)
+        torch.backends.cudnn.deterministic = True
+        device = torch.device("cuda", 0)
+        ngpus = torch.cuda.device_count()  # 1
+        print("Using {} GPU(s)...".format(ngpus))
+    else:
+        device = torch.device("cpu")
+        print("Using CPU...")
+
+    trainset, testset = prepare_dataset()
+    train_data, train_ld, nbatches  = trainset
+    test_data, test_ld, nbatches_test = testset
+    dimension_info, ndevices   = instance_dimension(size_scale= args.size_scale, growth_scale = 1, trainset = trainset)
+    m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
+    train_data, train_ld, nbatches = trainset
+    test_data, test_ld, nbatches_test = testset
+
+    dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+
+
 
     # training or inference
     best_gA_test = 0
@@ -1555,14 +1557,16 @@ if __name__ == "__main__":
                     )
 
                     logging.info('------------------Growth starts---------------------')
-                    save_trained_model(dlrm, growth_id)
+                    save_trained_model(dlrm, growth_id, pre = 'pre-growth')
                     logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-                    dlrm = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                    dlrm, optimizer, lr_scheduler  = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+
                     load_trained_model(dlrm, growth_id)
+
+                    save_trained_model(dlrm, growth_id, pre = 'post-growth')
                     growth_id += 1
-                    save_trained_model(dlrm, growth_id)
                     logging.info('------------------Growth finishes---------------------')
                     # test
                     logging.info('Testing.....')
