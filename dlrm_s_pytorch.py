@@ -525,8 +525,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-128-64-66-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="128-64-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-2048-1024-1056-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="2048-1024-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -881,11 +881,11 @@ if __name__ == "__main__":
         return dlrm, optimizer, lr_scheduler
     #---------------------
 
-    def save_trained_model(current_net, growth_id, pre):
+    def save_trained_model(current_net, growth_id, prefix):
         if not os.path.isdir('./saved_model'):
             os.mkdir('./saved_model')
 
-        file_name = pre + "model_growthID{}.pickle".format(growth_id)
+        file_name = prefix + "model_growthID{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         pickle.dump(current_net.state_dict(), open(path, 'wb'))
         logging.info('save_model to ' + path + '\n')
@@ -1489,153 +1489,17 @@ if __name__ == "__main__":
 
                 # ### locate growth
                 if args.growth_step != 0 and j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon) and growth_id < args.growth_step:
-                    logging.info('Testing.....')
-                    test_accu = 0
-                    test_loss = 0
-                    test_samp = 0
-
-                    accum_test_time_begin = time_wrap(use_gpu)
-
-                    for i, (X_test, lS_o_test, lS_i_test, T_test) in enumerate(test_ld):
-                        # early exit if nbatches was set by the user and was exceeded
-                        if nbatches > 0 and i >= nbatches:
-                            break
-
-                        t1_test = time_wrap(use_gpu)
-
-                        # forward pass
-                        Z_test = dlrm_wrap(dlrm,
-                                           X_test, lS_o_test, lS_i_test, use_gpu, device
-                                           )
-                        # loss
-                        E_test = loss_fn_wrap(Z_test, T_test, use_gpu, device)
-
-                        # compute loss and accuracy
-                        L_test = E_test.detach().cpu().numpy()  # numpy array
-                        S_test = Z_test.detach().cpu().numpy()  # numpy array
-                        T_test = T_test.detach().cpu().numpy()  # numpy array
-                        mbs_test = T_test.shape[0]  # = mini_batch_size except last
-                        A_test = np.sum((np.round(S_test, 0) == T_test).astype(np.uint8))
-                        test_accu += A_test
-                        test_loss += L_test * mbs_test
-                        test_samp += mbs_test
-
-                        t2_test = time_wrap(use_gpu)
-
-                    gA_test = test_accu / test_samp
-                    gL_test = test_loss / test_samp
-
-                    is_best = gA_test > best_gA_test
-                    if is_best:
-                        best_gA_test = gA_test
-                        if not (args.save_model == ""):
-                            logging.info("Saving model to {}".format(args.save_model))
-                            torch.save(
-                                {
-                                    "epoch": k,
-                                    "nepochs": args.nepochs,
-                                    "nbatches": nbatches,
-                                    "nbatches_test": nbatches_test,
-                                    "iter": j + 1,
-                                    "state_dict": dlrm.state_dict(),
-                                    "train_acc": gA,
-                                    "train_loss": gL,
-                                    "test_acc": gA_test,
-                                    "test_loss": gL_test,
-                                    "total_loss": total_loss,
-                                    "total_accu": total_accu,
-                                    "opt_state_dict": optimizer.state_dict(),
-                                },
-                                args.save_model,
-                            )
-
-                    logging.info(
-                        "Testing at - {}/{} of epoch {},".format(j + 1, nbatches, 0)
-                        + " loss {:.6f}, accuracy {:3.3f} %, best {:3.3f} %".format(
-                            gL_test, gA_test * 100, best_gA_test * 100
-                        )
-                    )
-
                     logging.info('------------------Growth starts---------------------')
-                    save_trained_model(dlrm, growth_id, pre = 'pre-growth')
+                    save_trained_model(dlrm, growth_id, prefix = 'pre-growth')
                     logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm, optimizer, lr_scheduler  = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-
                     load_trained_model(dlrm, growth_id)
-
-                    save_trained_model(dlrm, growth_id, pre = 'post-growth')
+                    save_trained_model(dlrm, growth_id, prefix = 'post-growth')
                     growth_id += 1
                     logging.info('------------------Growth finishes---------------------')
-                    # test
-                    logging.info('Testing.....')
-                    test_accu = 0
-                    test_loss = 0
-                    test_samp = 0
 
-                    accum_test_time_begin = time_wrap(use_gpu)
-
-                    for i, (X_test, lS_o_test, lS_i_test, T_test) in enumerate(test_ld):
-                        # early exit if nbatches was set by the user and was exceeded
-                        if nbatches > 0 and i >= nbatches:
-                            break
-
-                        t1_test = time_wrap(use_gpu)
-
-                        # forward pass
-                        Z_test = dlrm_wrap(dlrm,
-                            X_test, lS_o_test, lS_i_test, use_gpu, device
-                        )
-                        # loss
-                        E_test = loss_fn_wrap(Z_test, T_test, use_gpu, device)
-
-                        # compute loss and accuracy
-                        L_test = E_test.detach().cpu().numpy()  # numpy array
-                        S_test = Z_test.detach().cpu().numpy()  # numpy array
-                        T_test = T_test.detach().cpu().numpy()  # numpy array
-                        mbs_test = T_test.shape[0]  # = mini_batch_size except last
-                        A_test = np.sum((np.round(S_test, 0) == T_test).astype(np.uint8))
-                        test_accu += A_test
-                        test_loss += L_test * mbs_test
-                        test_samp += mbs_test
-
-                        t2_test = time_wrap(use_gpu)
-
-
-                    gA_test = test_accu / test_samp
-                    gL_test = test_loss / test_samp
-
-                    is_best = gA_test > best_gA_test
-                    if is_best:
-                        best_gA_test = gA_test
-                        if not (args.save_model == ""):
-                            logging.info("Saving model to {}".format(args.save_model))
-                            torch.save(
-                                {
-                                    "epoch": k,
-                                    "nepochs": args.nepochs,
-                                    "nbatches": nbatches,
-                                    "nbatches_test": nbatches_test,
-                                    "iter": j + 1,
-                                    "state_dict": dlrm.state_dict(),
-                                    "train_acc": gA,
-                                    "train_loss": gL,
-                                    "test_acc": gA_test,
-                                    "test_loss": gL_test,
-                                    "total_loss": total_loss,
-                                    "total_accu": total_accu,
-                                    "opt_state_dict": optimizer.state_dict(),
-                                },
-                                args.save_model,
-                            )
-
-                    logging.info(
-                        "Testing at - {}/{} of epoch {},".format(j + 1, nbatches, 0)
-                        + " loss {:.6f}, accuracy {:3.3f} %, best {:3.3f} %".format(
-                            gL_test, gA_test * 100, best_gA_test * 100
-                        )
-                    )
             torch.cuda.empty_cache()
             k += 1  # nepochs
 
