@@ -525,8 +525,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-2048-1024-1056-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="2048-1024-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-1024-512-528-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="1024-512-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -862,11 +862,11 @@ if __name__ == "__main__":
         param_FC = utils.count_parameters_in_FC(dlrm)
         if not os.path.isdir('./saved_model'):
             os.mkdir('./saved_model')
-
-        file_name = "model_FCparam{:.1}K.pickle".format(param_FC)
-        path = os.path.join('./saved_model', file_name)
-        pickle.dump(dlrm.state_dict(), open(path, 'wb'))
-        logging.info('save_model to ' + path + '\n')
+        #
+        # file_name = "model_FCparam{:.1}K.pickle".format(param_FC)
+        # path = os.path.join('./saved_model', file_name)
+        # pickle.dump(dlrm.state_dict(), open(path, 'wb'))
+        # logging.info('save_model to ' + path + '\n')
 
         # logging.info('dlrm: {}'.format(dlrm))
         logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2*1000))
@@ -881,11 +881,11 @@ if __name__ == "__main__":
         return dlrm, optimizer, lr_scheduler
     #---------------------
 
-    def save_trained_model(current_net, growth_id, prefix):
+    def save_trained_model(current_net, growth_id):
         if not os.path.isdir('./saved_model'):
             os.mkdir('./saved_model')
 
-        file_name = prefix + "model_growthID{}.pickle".format(growth_id)
+        file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         pickle.dump(current_net.state_dict(), open(path, 'wb'))
         logging.info('save_model to ' + path + '\n')
@@ -981,13 +981,13 @@ if __name__ == "__main__":
                 else:
                     if len(param_old.shape) == 2: # weight
                         param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        zero_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
                         param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(zero_initialization, requires_grad=True)
-                        zero_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().type(torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:, :] = Variable(zero_initialization, requires_grad=True)
                     else:
                         param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                        zero_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad=True)
 
             new_param_dict[layer_name] = Variable(param_new.type(torch.cuda.FloatTensor), requires_grad=True)
@@ -1175,6 +1175,7 @@ if __name__ == "__main__":
     gA_log = []
     param_log = []
     param_FC_log = []
+    dimension_info_dict  = {}
     with torch.autograd.profiler.profile(args.enable_profiling, use_gpu) as prof:
         while k < args.nepochs:
             if k < skip_upto_epoch:
@@ -1224,6 +1225,10 @@ if __name__ == "__main__":
                 print([S_i.detach().cpu().numpy().tolist() for S_i in lS_i])
                 print(T.detach().cpu().numpy())
                 '''
+                param = utils.count_parameters_in_MB(dlrm)
+                param_FC = utils.count_parameters_in_FC(dlrm)
+                param_log.append(param)
+                param_FC_log.append(param_FC)
                 # forward pass
                 Z = dlrm_wrap(dlrm, X, lS_o, lS_i, use_gpu, device)
                 # loss
@@ -1285,10 +1290,7 @@ if __name__ == "__main__":
                     total_loss = 0
                     gL_log.append(gL)
                     gA_log.append(gA*100)
-                    param = utils.count_parameters_in_MB(dlrm)
-                    param_FC = utils.count_parameters_in_FC(dlrm)
-                    param_log.append(param)
-                    param_FC_log.append(param_FC)
+
                     str_run_type = "inference" if args.inference_only else "training"
                     logging.info(
                         "Finished {} it {}/{} of epoch {}, {:.2f} ms/it, ".format(
@@ -1488,19 +1490,23 @@ if __name__ == "__main__":
                         break
 
                 # ### locate growth
-                if args.growth_step != 0 and j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and j <= math.ceil(nbatches * args.growth_stop_horizon) and growth_id < args.growth_step:
+                if args.growth_step != 0 and\
+                        j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and \
+                        j < math.ceil(nbatches * args.growth_stop_horizon) and \
+                        growth_id < args.growth_step - 1:
                     logging.info('------------------Growth starts---------------------')
-                    save_trained_model(dlrm, growth_id, prefix = 'pre-growth')
+                    save_trained_model(dlrm, growth_id)
                     logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, growth_id+1, growth_id+2))
                     dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
+                    dimension_info_dict['Growth{}'.format(growth_id)] = dimension_info
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                     dlrm, optimizer, lr_scheduler  = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                     load_trained_model(dlrm, growth_id)
-                    save_trained_model(dlrm, growth_id, prefix = 'post-growth')
                     growth_id += 1
-                    logging.info('------------------Growth finishes---------------------')
+                    save_trained_model(dlrm, growth_id)
 
-            torch.cuda.empty_cache()
+                    logging.info('------------------Growth finishes---------------------')
+                torch.cuda.empty_cache()
             k += 1  # nepochs
 
             #### train ends
@@ -1614,7 +1620,7 @@ if __name__ == "__main__":
                  {'gL_log': gL_log, 'gA_log': gA_log, 'args.growth_step': args.growth_step,
                   'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
                   'm_spa':m_spa, 'ln_emb':ln_emb, 'num_fea':num_fea, 'num_int':num_int,
-                  'ln_bot':ln_bot, 'ln_top':ln_top})
+                  'ln_bot':ln_bot, 'ln_top':ln_top, 'nbatches':nbatches, 'dimension_info_dict': dimension_info_dict})
 
     num_iteration = len(gL_log)
     assert len(gL_log) == len(gA_log)
@@ -1645,3 +1651,4 @@ if __name__ == "__main__":
     plt.legend(loc='best')
     plt.title('Kaggle Display Advertising Challenge Dataset')
     plt.savefig('./log/learning_curve_loss{:.4f}_Accu{:.4f}.png'.format(gL_log[-1], gA_log[-1]))
+
