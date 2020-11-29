@@ -1,0 +1,803 @@
+2020-11-28 12:12:04,888   ******************************************************
+2020-11-28 12:12:04,889                     dlrm_s_pytorch.py                   
+2020-11-28 12:12:04,889   args = Namespace(activation_function='relu', arch_embedding_size='4-3-2', arch_interaction_itself=False, arch_interaction_op='dot', arch_mlp_bot='13-512-256-64-16', arch_mlp_top='512-256-1', arch_sparse_feature_size=16, data_generation='dataset', data_randomize='total', data_set='kaggle', data_size=1, data_sub_sample_rate=0.0, data_trace_enable_padding=False, data_trace_file='./input/dist_emb_j.log', dataset_multiprocessing=False, debug_mode=False, debuglog='', enable_profiling=False, gpu_id='1', grow_embedding=False, growth_step=4, growth_stop_horizon=1.0, inference_only=False, initialization='zero', learning_rate=0.1, load_model='', loss_function='bce', loss_threshold=0.0, loss_weights='1.0-1.0', lr_decay_start_step=0, lr_num_decay_steps=0, lr_num_warmup_steps=0, max_ind_range=-1, md_flag=False, md_round_dims=False, md_temperature=0.3, md_threshold=200, memory_map=False, mini_batch_size=64, mlperf_acc_threshold=0.0, mlperf_auc_threshold=0.0, mlperf_bin_loader=False, mlperf_bin_shuffle=False, mlperf_logging=False, nepochs=1, num_batches=0, num_indices_per_lookup=10, num_indices_per_lookup_fixed=False, num_workers=0, numpy_rand_seed=123, plot_compute_graph=False, print_freq=1024, print_precision=5, print_time=False, processed_data_file='./input/kaggleAdDisplayChallenge_processed.npz', qr_collisions=4, qr_flag=False, qr_operation='mult', qr_threshold=200, raw_data_file='./input/train.txt', round_targets=True, save_model='', save_onnx=False, size_scale=0.25, sync_dense_params=True, test_freq=80000, test_mini_batch_size=16384, test_num_workers=-16, use_gpu=True)
+2020-11-28 12:12:04,914   dataset kaggle #day 7
+2020-11-28 12:12:04,915   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-28 12:12:33,134   Sparse fea = 26, Dense fea = 13
+2020-11-28 12:12:33,221   Defined train indices...
+2020-11-28 12:12:34,943   Randomized indices across days ...
+2020-11-28 12:13:05,163   Split data according to indices...
+2020-11-28 12:13:05,164   dataset kaggle #day 7
+2020-11-28 12:13:05,164   Reading pre-processed data=./input/kaggleAdDisplayChallenge_processed.npz
+2020-11-28 12:13:33,272   Sparse fea = 26, Dense fea = 13
+2020-11-28 12:13:33,359   Defined test indices...
+2020-11-28 12:13:35,081   Randomized indices across days ...
+2020-11-28 12:13:37,355   Split data according to indices...
+2020-11-28 12:13:46,907   FC param size = 66.78K, param size = 540.27M,  FLOP = 133.57K
+2020-11-28 12:13:46,907   m_spa=16, ln_bot=[ 13 128  64  16  16], ln_top=[367 128  64   1] 
+
+2020-11-28 12:13:46,908   time/loss/accuracy (if enabled):
+2020-11-28 12:13:46,908   Stage 0, This growth start from input index 0
+2020-11-28 12:13:59,085   Finished training it 1024/613937 of epoch 0, -1.00 ms/it, loss 0.522065, accuracy 75.238 %,  lr = 0.100
+2020-11-28 12:14:09,295   Finished training it 2048/613937 of epoch 0, -1.00 ms/it, loss 0.501613, accuracy 76.772 %,  lr = 0.100
+2020-11-28 12:14:19,494   Finished training it 3072/613937 of epoch 0, -1.00 ms/it, loss 0.498334, accuracy 76.727 %,  lr = 0.100
+2020-11-28 12:14:29,710   Finished training it 4096/613937 of epoch 0, -1.00 ms/it, loss 0.491195, accuracy 77.058 %,  lr = 0.100
+2020-11-28 12:14:39,877   Finished training it 5120/613937 of epoch 0, -1.00 ms/it, loss 0.490911, accuracy 76.996 %,  lr = 0.100
+2020-11-28 12:14:50,071   Finished training it 6144/613937 of epoch 0, -1.00 ms/it, loss 0.485025, accuracy 77.245 %,  lr = 0.100
+2020-11-28 12:15:00,285   Finished training it 7168/613937 of epoch 0, -1.00 ms/it, loss 0.479485, accuracy 77.809 %,  lr = 0.100
+2020-11-28 12:15:10,471   Finished training it 8192/613937 of epoch 0, -1.00 ms/it, loss 0.477519, accuracy 77.856 %,  lr = 0.100
+2020-11-28 12:15:20,749   Finished training it 9216/613937 of epoch 0, -1.00 ms/it, loss 0.482022, accuracy 77.419 %,  lr = 0.100
+2020-11-28 12:15:30,977   Finished training it 10240/613937 of epoch 0, -1.00 ms/it, loss 0.478000, accuracy 77.586 %,  lr = 0.100
+2020-11-28 12:15:41,180   Finished training it 11264/613937 of epoch 0, -1.00 ms/it, loss 0.477191, accuracy 77.812 %,  lr = 0.100
+2020-11-28 12:15:51,399   Finished training it 12288/613937 of epoch 0, -1.00 ms/it, loss 0.475810, accuracy 77.818 %,  lr = 0.100
+2020-11-28 12:16:01,560   Finished training it 13312/613937 of epoch 0, -1.00 ms/it, loss 0.473160, accuracy 78.059 %,  lr = 0.100
+2020-11-28 12:16:11,721   Finished training it 14336/613937 of epoch 0, -1.00 ms/it, loss 0.472310, accuracy 77.884 %,  lr = 0.100
+2020-11-28 12:16:21,927   Finished training it 15360/613937 of epoch 0, -1.00 ms/it, loss 0.476155, accuracy 77.736 %,  lr = 0.100
+2020-11-28 12:16:32,130   Finished training it 16384/613937 of epoch 0, -1.00 ms/it, loss 0.471022, accuracy 78.186 %,  lr = 0.100
+2020-11-28 12:16:42,357   Finished training it 17408/613937 of epoch 0, -1.00 ms/it, loss 0.473742, accuracy 77.948 %,  lr = 0.100
+2020-11-28 12:16:52,556   Finished training it 18432/613937 of epoch 0, -1.00 ms/it, loss 0.469068, accuracy 78.186 %,  lr = 0.100
+2020-11-28 12:17:02,755   Finished training it 19456/613937 of epoch 0, -1.00 ms/it, loss 0.468215, accuracy 78.146 %,  lr = 0.100
+2020-11-28 12:17:12,937   Finished training it 20480/613937 of epoch 0, -1.00 ms/it, loss 0.471138, accuracy 77.824 %,  lr = 0.100
+2020-11-28 12:17:23,100   Finished training it 21504/613937 of epoch 0, -1.00 ms/it, loss 0.468124, accuracy 78.119 %,  lr = 0.100
+2020-11-28 12:17:33,325   Finished training it 22528/613937 of epoch 0, -1.00 ms/it, loss 0.469505, accuracy 78.072 %,  lr = 0.100
+2020-11-28 12:17:43,519   Finished training it 23552/613937 of epoch 0, -1.00 ms/it, loss 0.462797, accuracy 78.426 %,  lr = 0.100
+2020-11-28 12:17:53,688   Finished training it 24576/613937 of epoch 0, -1.00 ms/it, loss 0.466602, accuracy 78.279 %,  lr = 0.100
+2020-11-28 12:18:03,856   Finished training it 25600/613937 of epoch 0, -1.00 ms/it, loss 0.471788, accuracy 78.082 %,  lr = 0.100
+2020-11-28 12:18:14,053   Finished training it 26624/613937 of epoch 0, -1.00 ms/it, loss 0.469385, accuracy 78.050 %,  lr = 0.100
+2020-11-28 12:18:24,238   Finished training it 27648/613937 of epoch 0, -1.00 ms/it, loss 0.466884, accuracy 78.300 %,  lr = 0.100
+2020-11-28 12:18:34,437   Finished training it 28672/613937 of epoch 0, -1.00 ms/it, loss 0.467935, accuracy 78.148 %,  lr = 0.100
+2020-11-28 12:18:44,638   Finished training it 29696/613937 of epoch 0, -1.00 ms/it, loss 0.467480, accuracy 78.038 %,  lr = 0.100
+2020-11-28 12:18:54,821   Finished training it 30720/613937 of epoch 0, -1.00 ms/it, loss 0.463430, accuracy 78.482 %,  lr = 0.100
+2020-11-28 12:19:04,988   Finished training it 31744/613937 of epoch 0, -1.00 ms/it, loss 0.465218, accuracy 78.310 %,  lr = 0.100
+2020-11-28 12:19:15,251   Finished training it 32768/613937 of epoch 0, -1.00 ms/it, loss 0.466242, accuracy 78.226 %,  lr = 0.100
+2020-11-28 12:19:25,436   Finished training it 33792/613937 of epoch 0, -1.00 ms/it, loss 0.463449, accuracy 78.333 %,  lr = 0.100
+2020-11-28 12:19:35,700   Finished training it 34816/613937 of epoch 0, -1.00 ms/it, loss 0.465043, accuracy 78.188 %,  lr = 0.100
+2020-11-28 12:19:45,853   Finished training it 35840/613937 of epoch 0, -1.00 ms/it, loss 0.464580, accuracy 78.506 %,  lr = 0.100
+2020-11-28 12:19:56,067   Finished training it 36864/613937 of epoch 0, -1.00 ms/it, loss 0.468350, accuracy 78.110 %,  lr = 0.100
+2020-11-28 12:20:06,292   Finished training it 37888/613937 of epoch 0, -1.00 ms/it, loss 0.463613, accuracy 78.462 %,  lr = 0.100
+2020-11-28 12:20:16,505   Finished training it 38912/613937 of epoch 0, -1.00 ms/it, loss 0.466177, accuracy 78.317 %,  lr = 0.100
+2020-11-28 12:20:26,676   Finished training it 39936/613937 of epoch 0, -1.00 ms/it, loss 0.464811, accuracy 78.375 %,  lr = 0.100
+2020-11-28 12:20:36,871   Finished training it 40960/613937 of epoch 0, -1.00 ms/it, loss 0.464680, accuracy 78.270 %,  lr = 0.100
+2020-11-28 12:20:47,068   Finished training it 41984/613937 of epoch 0, -1.00 ms/it, loss 0.463839, accuracy 78.368 %,  lr = 0.100
+2020-11-28 12:20:57,296   Finished training it 43008/613937 of epoch 0, -1.00 ms/it, loss 0.466437, accuracy 78.123 %,  lr = 0.100
+2020-11-28 12:21:07,489   Finished training it 44032/613937 of epoch 0, -1.00 ms/it, loss 0.463713, accuracy 78.360 %,  lr = 0.100
+2020-11-28 12:21:17,674   Finished training it 45056/613937 of epoch 0, -1.00 ms/it, loss 0.463774, accuracy 78.246 %,  lr = 0.100
+2020-11-28 12:21:27,891   Finished training it 46080/613937 of epoch 0, -1.00 ms/it, loss 0.464731, accuracy 78.313 %,  lr = 0.100
+2020-11-28 12:21:38,059   Finished training it 47104/613937 of epoch 0, -1.00 ms/it, loss 0.468624, accuracy 78.229 %,  lr = 0.100
+2020-11-28 12:21:48,283   Finished training it 48128/613937 of epoch 0, -1.00 ms/it, loss 0.463896, accuracy 78.317 %,  lr = 0.100
+2020-11-28 12:21:58,493   Finished training it 49152/613937 of epoch 0, -1.00 ms/it, loss 0.459761, accuracy 78.625 %,  lr = 0.100
+2020-11-28 12:22:08,647   Finished training it 50176/613937 of epoch 0, -1.00 ms/it, loss 0.460505, accuracy 78.693 %,  lr = 0.100
+2020-11-28 12:22:18,814   Finished training it 51200/613937 of epoch 0, -1.00 ms/it, loss 0.461282, accuracy 78.471 %,  lr = 0.100
+2020-11-28 12:22:29,001   Finished training it 52224/613937 of epoch 0, -1.00 ms/it, loss 0.462759, accuracy 78.494 %,  lr = 0.100
+2020-11-28 12:22:39,162   Finished training it 53248/613937 of epoch 0, -1.00 ms/it, loss 0.460086, accuracy 78.693 %,  lr = 0.100
+2020-11-28 12:22:49,311   Finished training it 54272/613937 of epoch 0, -1.00 ms/it, loss 0.458421, accuracy 78.674 %,  lr = 0.100
+2020-11-28 12:22:59,486   Finished training it 55296/613937 of epoch 0, -1.00 ms/it, loss 0.460458, accuracy 78.638 %,  lr = 0.100
+2020-11-28 12:23:09,676   Finished training it 56320/613937 of epoch 0, -1.00 ms/it, loss 0.464118, accuracy 78.326 %,  lr = 0.100
+2020-11-28 12:23:19,862   Finished training it 57344/613937 of epoch 0, -1.00 ms/it, loss 0.459621, accuracy 78.621 %,  lr = 0.100
+2020-11-28 12:23:30,069   Finished training it 58368/613937 of epoch 0, -1.00 ms/it, loss 0.460857, accuracy 78.493 %,  lr = 0.100
+2020-11-28 12:23:40,277   Finished training it 59392/613937 of epoch 0, -1.00 ms/it, loss 0.466498, accuracy 78.055 %,  lr = 0.100
+2020-11-28 12:23:50,490   Finished training it 60416/613937 of epoch 0, -1.00 ms/it, loss 0.460500, accuracy 78.700 %,  lr = 0.100
+2020-11-28 12:24:00,668   Finished training it 61440/613937 of epoch 0, -1.00 ms/it, loss 0.462737, accuracy 78.384 %,  lr = 0.100
+2020-11-28 12:24:10,857   Finished training it 62464/613937 of epoch 0, -1.00 ms/it, loss 0.461366, accuracy 78.511 %,  lr = 0.100
+2020-11-28 12:24:20,865   Finished training it 63488/613937 of epoch 0, -1.00 ms/it, loss 0.464531, accuracy 78.275 %,  lr = 0.100
+2020-11-28 12:24:31,023   Finished training it 64512/613937 of epoch 0, -1.00 ms/it, loss 0.460023, accuracy 78.549 %,  lr = 0.100
+2020-11-28 12:24:41,195   Finished training it 65536/613937 of epoch 0, -1.00 ms/it, loss 0.464036, accuracy 78.275 %,  lr = 0.100
+2020-11-28 12:24:51,405   Finished training it 66560/613937 of epoch 0, -1.00 ms/it, loss 0.459633, accuracy 78.645 %,  lr = 0.100
+2020-11-28 12:25:01,605   Finished training it 67584/613937 of epoch 0, -1.00 ms/it, loss 0.460464, accuracy 78.409 %,  lr = 0.100
+2020-11-28 12:25:11,745   Finished training it 68608/613937 of epoch 0, -1.00 ms/it, loss 0.458015, accuracy 78.697 %,  lr = 0.100
+2020-11-28 12:25:21,900   Finished training it 69632/613937 of epoch 0, -1.00 ms/it, loss 0.458817, accuracy 78.587 %,  lr = 0.100
+2020-11-28 12:25:32,122   Finished training it 70656/613937 of epoch 0, -1.00 ms/it, loss 0.463309, accuracy 78.546 %,  lr = 0.100
+2020-11-28 12:25:42,370   Finished training it 71680/613937 of epoch 0, -1.00 ms/it, loss 0.462163, accuracy 78.290 %,  lr = 0.100
+2020-11-28 12:25:52,645   Finished training it 72704/613937 of epoch 0, -1.00 ms/it, loss 0.457065, accuracy 78.812 %,  lr = 0.100
+2020-11-28 12:26:03,066   Finished training it 73728/613937 of epoch 0, -1.00 ms/it, loss 0.461808, accuracy 78.531 %,  lr = 0.100
+2020-11-28 12:26:13,557   Finished training it 74752/613937 of epoch 0, -1.00 ms/it, loss 0.458893, accuracy 78.650 %,  lr = 0.100
+2020-11-28 12:26:24,042   Finished training it 75776/613937 of epoch 0, -1.00 ms/it, loss 0.458048, accuracy 78.696 %,  lr = 0.100
+2020-11-28 12:26:34,541   Finished training it 76800/613937 of epoch 0, -1.00 ms/it, loss 0.462186, accuracy 78.517 %,  lr = 0.100
+2020-11-28 12:26:45,029   Finished training it 77824/613937 of epoch 0, -1.00 ms/it, loss 0.461055, accuracy 78.438 %,  lr = 0.100
+2020-11-28 12:26:55,444   Finished training it 78848/613937 of epoch 0, -1.00 ms/it, loss 0.460795, accuracy 78.528 %,  lr = 0.100
+2020-11-28 12:27:04,172   Finished training it 79872/613937 of epoch 0, -1.00 ms/it, loss 0.459272, accuracy 78.581 %,  lr = 0.100
+2020-11-28 12:27:05,252   Finished training it 80000/613937 of epoch 0, -1.00 ms/it, loss 0.455921, accuracy 78.784 %,  lr = 0.100
+2020-11-28 12:27:05,253   Testing.....
+2020-11-28 12:28:36,203   Testing at - 80000/613937 of epoch 0, loss 0.464774, accuracy 78.253 %, best 78.253 %
+2020-11-28 12:28:45,285   Finished training it 80896/613937 of epoch 0, -1.00 ms/it, loss 0.458647, accuracy 78.707 %,  lr = 0.100
+2020-11-28 12:28:56,467   Finished training it 81920/613937 of epoch 0, -1.00 ms/it, loss 0.460474, accuracy 78.546 %,  lr = 0.100
+2020-11-28 12:29:06,684   Finished training it 82944/613937 of epoch 0, -1.00 ms/it, loss 0.460130, accuracy 78.745 %,  lr = 0.100
+2020-11-28 12:29:16,905   Finished training it 83968/613937 of epoch 0, -1.00 ms/it, loss 0.458014, accuracy 78.648 %,  lr = 0.100
+2020-11-28 12:29:27,138   Finished training it 84992/613937 of epoch 0, -1.00 ms/it, loss 0.458283, accuracy 78.719 %,  lr = 0.100
+2020-11-28 12:29:37,342   Finished training it 86016/613937 of epoch 0, -1.00 ms/it, loss 0.458945, accuracy 78.571 %,  lr = 0.100
+2020-11-28 12:29:47,560   Finished training it 87040/613937 of epoch 0, -1.00 ms/it, loss 0.460614, accuracy 78.542 %,  lr = 0.100
+2020-11-28 12:29:57,843   Finished training it 88064/613937 of epoch 0, -1.00 ms/it, loss 0.458740, accuracy 78.575 %,  lr = 0.100
+2020-11-28 12:30:08,064   Finished training it 89088/613937 of epoch 0, -1.00 ms/it, loss 0.458983, accuracy 78.560 %,  lr = 0.100
+2020-11-28 12:30:18,297   Finished training it 90112/613937 of epoch 0, -1.00 ms/it, loss 0.461509, accuracy 78.458 %,  lr = 0.100
+2020-11-28 12:30:28,539   Finished training it 91136/613937 of epoch 0, -1.00 ms/it, loss 0.456648, accuracy 78.789 %,  lr = 0.100
+2020-11-28 12:30:38,781   Finished training it 92160/613937 of epoch 0, -1.00 ms/it, loss 0.461396, accuracy 78.438 %,  lr = 0.100
+2020-11-28 12:30:49,051   Finished training it 93184/613937 of epoch 0, -1.00 ms/it, loss 0.460502, accuracy 78.506 %,  lr = 0.100
+2020-11-28 12:30:59,327   Finished training it 94208/613937 of epoch 0, -1.00 ms/it, loss 0.461677, accuracy 78.456 %,  lr = 0.100
+2020-11-28 12:31:09,592   Finished training it 95232/613937 of epoch 0, -1.00 ms/it, loss 0.459973, accuracy 78.522 %,  lr = 0.100
+2020-11-28 12:31:19,860   Finished training it 96256/613937 of epoch 0, -1.00 ms/it, loss 0.459394, accuracy 78.487 %,  lr = 0.100
+2020-11-28 12:31:30,131   Finished training it 97280/613937 of epoch 0, -1.00 ms/it, loss 0.454568, accuracy 78.937 %,  lr = 0.100
+2020-11-28 12:31:40,397   Finished training it 98304/613937 of epoch 0, -1.00 ms/it, loss 0.457135, accuracy 78.717 %,  lr = 0.100
+2020-11-28 12:31:50,671   Finished training it 99328/613937 of epoch 0, -1.00 ms/it, loss 0.457400, accuracy 78.673 %,  lr = 0.100
+2020-11-28 12:32:00,942   Finished training it 100352/613937 of epoch 0, -1.00 ms/it, loss 0.458479, accuracy 78.613 %,  lr = 0.100
+2020-11-28 12:32:11,170   Finished training it 101376/613937 of epoch 0, -1.00 ms/it, loss 0.460206, accuracy 78.613 %,  lr = 0.100
+2020-11-28 12:32:21,383   Finished training it 102400/613937 of epoch 0, -1.00 ms/it, loss 0.458205, accuracy 78.624 %,  lr = 0.100
+2020-11-28 12:32:31,622   Finished training it 103424/613937 of epoch 0, -1.00 ms/it, loss 0.461527, accuracy 78.563 %,  lr = 0.100
+2020-11-28 12:32:41,865   Finished training it 104448/613937 of epoch 0, -1.00 ms/it, loss 0.458656, accuracy 78.677 %,  lr = 0.100
+2020-11-28 12:32:52,108   Finished training it 105472/613937 of epoch 0, -1.00 ms/it, loss 0.458090, accuracy 78.870 %,  lr = 0.100
+2020-11-28 12:33:02,284   Finished training it 106496/613937 of epoch 0, -1.00 ms/it, loss 0.459597, accuracy 78.720 %,  lr = 0.100
+2020-11-28 12:33:12,542   Finished training it 107520/613937 of epoch 0, -1.00 ms/it, loss 0.457686, accuracy 78.680 %,  lr = 0.100
+2020-11-28 12:33:22,804   Finished training it 108544/613937 of epoch 0, -1.00 ms/it, loss 0.459404, accuracy 78.540 %,  lr = 0.100
+2020-11-28 12:33:33,079   Finished training it 109568/613937 of epoch 0, -1.00 ms/it, loss 0.453614, accuracy 79.042 %,  lr = 0.100
+2020-11-28 12:33:43,299   Finished training it 110592/613937 of epoch 0, -1.00 ms/it, loss 0.462421, accuracy 78.348 %,  lr = 0.100
+2020-11-28 12:33:53,551   Finished training it 111616/613937 of epoch 0, -1.00 ms/it, loss 0.457857, accuracy 78.819 %,  lr = 0.100
+2020-11-28 12:34:03,829   Finished training it 112640/613937 of epoch 0, -1.00 ms/it, loss 0.457335, accuracy 78.561 %,  lr = 0.100
+2020-11-28 12:34:14,064   Finished training it 113664/613937 of epoch 0, -1.00 ms/it, loss 0.456538, accuracy 78.676 %,  lr = 0.100
+2020-11-28 12:34:24,312   Finished training it 114688/613937 of epoch 0, -1.00 ms/it, loss 0.454054, accuracy 78.806 %,  lr = 0.100
+2020-11-28 12:34:34,499   Finished training it 115712/613937 of epoch 0, -1.00 ms/it, loss 0.453327, accuracy 78.981 %,  lr = 0.100
+2020-11-28 12:34:44,762   Finished training it 116736/613937 of epoch 0, -1.00 ms/it, loss 0.457697, accuracy 78.845 %,  lr = 0.100
+2020-11-28 12:34:54,993   Finished training it 117760/613937 of epoch 0, -1.00 ms/it, loss 0.459440, accuracy 78.586 %,  lr = 0.100
+2020-11-28 12:35:05,236   Finished training it 118784/613937 of epoch 0, -1.00 ms/it, loss 0.455077, accuracy 78.775 %,  lr = 0.100
+2020-11-28 12:35:15,482   Finished training it 119808/613937 of epoch 0, -1.00 ms/it, loss 0.456893, accuracy 78.671 %,  lr = 0.100
+2020-11-28 12:35:25,743   Finished training it 120832/613937 of epoch 0, -1.00 ms/it, loss 0.457275, accuracy 78.812 %,  lr = 0.100
+2020-11-28 12:35:35,997   Finished training it 121856/613937 of epoch 0, -1.00 ms/it, loss 0.460078, accuracy 78.535 %,  lr = 0.100
+2020-11-28 12:35:46,224   Finished training it 122880/613937 of epoch 0, -1.00 ms/it, loss 0.459201, accuracy 78.658 %,  lr = 0.100
+2020-11-28 12:35:56,487   Finished training it 123904/613937 of epoch 0, -1.00 ms/it, loss 0.456848, accuracy 78.844 %,  lr = 0.100
+2020-11-28 12:36:06,743   Finished training it 124928/613937 of epoch 0, -1.00 ms/it, loss 0.457427, accuracy 78.720 %,  lr = 0.100
+2020-11-28 12:36:16,968   Finished training it 125952/613937 of epoch 0, -1.00 ms/it, loss 0.457296, accuracy 78.506 %,  lr = 0.100
+2020-11-28 12:36:27,196   Finished training it 126976/613937 of epoch 0, -1.00 ms/it, loss 0.456174, accuracy 78.825 %,  lr = 0.100
+2020-11-28 12:36:37,470   Finished training it 128000/613937 of epoch 0, -1.00 ms/it, loss 0.458472, accuracy 78.680 %,  lr = 0.100
+2020-11-28 12:36:47,734   Finished training it 129024/613937 of epoch 0, -1.00 ms/it, loss 0.458914, accuracy 78.435 %,  lr = 0.100
+2020-11-28 12:36:58,002   Finished training it 130048/613937 of epoch 0, -1.00 ms/it, loss 0.458959, accuracy 78.642 %,  lr = 0.100
+2020-11-28 12:37:08,189   Finished training it 131072/613937 of epoch 0, -1.00 ms/it, loss 0.460001, accuracy 78.545 %,  lr = 0.100
+2020-11-28 12:37:18,421   Finished training it 132096/613937 of epoch 0, -1.00 ms/it, loss 0.455901, accuracy 78.876 %,  lr = 0.100
+2020-11-28 12:37:28,670   Finished training it 133120/613937 of epoch 0, -1.00 ms/it, loss 0.458115, accuracy 78.853 %,  lr = 0.100
+2020-11-28 12:37:38,889   Finished training it 134144/613937 of epoch 0, -1.00 ms/it, loss 0.459538, accuracy 78.589 %,  lr = 0.100
+2020-11-28 12:37:49,110   Finished training it 135168/613937 of epoch 0, -1.00 ms/it, loss 0.451311, accuracy 78.981 %,  lr = 0.100
+2020-11-28 12:37:59,328   Finished training it 136192/613937 of epoch 0, -1.00 ms/it, loss 0.454737, accuracy 78.870 %,  lr = 0.100
+2020-11-28 12:38:09,549   Finished training it 137216/613937 of epoch 0, -1.00 ms/it, loss 0.458404, accuracy 78.706 %,  lr = 0.100
+2020-11-28 12:38:19,792   Finished training it 138240/613937 of epoch 0, -1.00 ms/it, loss 0.454266, accuracy 78.847 %,  lr = 0.100
+2020-11-28 12:38:29,991   Finished training it 139264/613937 of epoch 0, -1.00 ms/it, loss 0.458626, accuracy 78.546 %,  lr = 0.100
+2020-11-28 12:38:40,200   Finished training it 140288/613937 of epoch 0, -1.00 ms/it, loss 0.455777, accuracy 78.857 %,  lr = 0.100
+2020-11-28 12:38:50,422   Finished training it 141312/613937 of epoch 0, -1.00 ms/it, loss 0.456511, accuracy 78.778 %,  lr = 0.100
+2020-11-28 12:39:00,636   Finished training it 142336/613937 of epoch 0, -1.00 ms/it, loss 0.456914, accuracy 78.773 %,  lr = 0.100
+2020-11-28 12:39:10,866   Finished training it 143360/613937 of epoch 0, -1.00 ms/it, loss 0.458976, accuracy 78.508 %,  lr = 0.100
+2020-11-28 12:39:21,099   Finished training it 144384/613937 of epoch 0, -1.00 ms/it, loss 0.454045, accuracy 78.876 %,  lr = 0.100
+2020-11-28 12:39:31,298   Finished training it 145408/613937 of epoch 0, -1.00 ms/it, loss 0.454070, accuracy 78.720 %,  lr = 0.100
+2020-11-28 12:39:41,507   Finished training it 146432/613937 of epoch 0, -1.00 ms/it, loss 0.455835, accuracy 78.909 %,  lr = 0.100
+2020-11-28 12:39:51,717   Finished training it 147456/613937 of epoch 0, -1.00 ms/it, loss 0.456511, accuracy 78.806 %,  lr = 0.100
+2020-11-28 12:40:01,989   Finished training it 148480/613937 of epoch 0, -1.00 ms/it, loss 0.455731, accuracy 78.908 %,  lr = 0.100
+2020-11-28 12:40:12,192   Finished training it 149504/613937 of epoch 0, -1.00 ms/it, loss 0.454873, accuracy 78.725 %,  lr = 0.100
+2020-11-28 12:40:22,384   Finished training it 150528/613937 of epoch 0, -1.00 ms/it, loss 0.456523, accuracy 78.687 %,  lr = 0.100
+2020-11-28 12:40:32,592   Finished training it 151552/613937 of epoch 0, -1.00 ms/it, loss 0.454550, accuracy 78.841 %,  lr = 0.100
+2020-11-28 12:40:42,781   Finished training it 152576/613937 of epoch 0, -1.00 ms/it, loss 0.454666, accuracy 78.894 %,  lr = 0.100
+2020-11-28 12:40:51,864   ------------------Growth starts---------------------
+2020-11-28 12:40:56,015   save_model to ./saved_model/model_after_growth0.pickle
+
+2020-11-28 12:40:56,015   Growth ID 0, Growing size from 1X to 2X.....
+
+2020-11-28 12:41:04,064   FC param size = 168.37K, param size = 540.37M,  FLOP = 336.74K
+2020-11-28 12:41:04,065   m_spa=16, ln_bot=[ 13 256 128  32  16], ln_top=[367 256 128   1] 
+
+2020-11-28 12:41:04,065   Reading and loading pre-trained weights............
+2020-11-28 12:41:06,292   zero initialization
+2020-11-28 12:41:06,292   zero initialization
+2020-11-28 12:41:06,293   zero initialization
+2020-11-28 12:41:06,299   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,301   zero initialization
+2020-11-28 12:41:06,302   zero initialization
+2020-11-28 12:41:06,303   zero initialization
+2020-11-28 12:41:06,307   zero initialization
+2020-11-28 12:41:06,307   zero initialization
+2020-11-28 12:41:06,308   zero initialization
+2020-11-28 12:41:06,308   zero initialization
+2020-11-28 12:41:06,311   zero initialization
+2020-11-28 12:41:06,312   zero initialization
+2020-11-28 12:41:06,312   zero initialization
+2020-11-28 12:41:06,312   zero initialization
+2020-11-28 12:41:06,313   zero initialization
+2020-11-28 12:41:06,317   zero initialization
+2020-11-28 12:41:06,317   zero initialization
+2020-11-28 12:41:06,317   zero initialization
+2020-11-28 12:41:06,317   zero initialization
+2020-11-28 12:41:06,317   zero initialization
+2020-11-28 12:41:06,318   zero initialization
+2020-11-28 12:41:06,318   zero initialization
+2020-11-28 12:41:06,318   zero initialization
+2020-11-28 12:41:06,318   zero initialization
+2020-11-28 12:41:06,318   zero initialization
+2020-11-28 12:41:06,319   zero initialization
+2020-11-28 12:41:06,319   zero initialization
+2020-11-28 12:41:06,319   zero initialization
+2020-11-28 12:41:06,319   zero initialization
+2020-11-28 12:41:06,320   zero initialization
+2020-11-28 12:41:06,320   zero initialization
+2020-11-28 12:41:06,320   zero initialization
+2020-11-28 12:41:06,321   zero initialization
+2020-11-28 12:41:06,321   zero initialization
+2020-11-28 12:41:06,322   load_model: Loading ./saved_model/model_after_growth0.pickle....
+2020-11-28 12:41:10,421   save_model to ./saved_model/model_after_growth1.pickle
+
+2020-11-28 12:41:10,421   ------------------Growth finishes---------------------
+2020-11-28 12:41:11,587   Finished training it 153600/613937 of epoch 0, -1.00 ms/it, loss 0.456922, accuracy 78.769 %,  lr = 0.100
+2020-11-28 12:41:21,819   Finished training it 154624/613937 of epoch 0, -1.00 ms/it, loss 0.457560, accuracy 78.789 %,  lr = 0.100
+2020-11-28 12:41:32,038   Finished training it 155648/613937 of epoch 0, -1.00 ms/it, loss 0.453958, accuracy 78.992 %,  lr = 0.100
+2020-11-28 12:41:42,258   Finished training it 156672/613937 of epoch 0, -1.00 ms/it, loss 0.454786, accuracy 78.777 %,  lr = 0.100
+2020-11-28 12:41:52,503   Finished training it 157696/613937 of epoch 0, -1.00 ms/it, loss 0.455085, accuracy 78.880 %,  lr = 0.100
+2020-11-28 12:42:02,731   Finished training it 158720/613937 of epoch 0, -1.00 ms/it, loss 0.453675, accuracy 78.867 %,  lr = 0.100
+2020-11-28 12:42:12,962   Finished training it 159744/613937 of epoch 0, -1.00 ms/it, loss 0.455468, accuracy 78.824 %,  lr = 0.100
+2020-11-28 12:42:15,529   Finished training it 160000/613937 of epoch 0, -1.00 ms/it, loss 0.453600, accuracy 78.882 %,  lr = 0.100
+2020-11-28 12:42:15,529   Testing.....
+2020-11-28 12:43:46,269   Testing at - 160000/613937 of epoch 0, loss 0.461118, accuracy 78.440 %, best 78.440 %
+2020-11-28 12:43:53,841   Finished training it 160768/613937 of epoch 0, -1.00 ms/it, loss 0.455019, accuracy 78.923 %,  lr = 0.100
+2020-11-28 12:44:04,094   Finished training it 161792/613937 of epoch 0, -1.00 ms/it, loss 0.455687, accuracy 78.825 %,  lr = 0.100
+2020-11-28 12:44:14,328   Finished training it 162816/613937 of epoch 0, -1.00 ms/it, loss 0.455214, accuracy 78.786 %,  lr = 0.100
+2020-11-28 12:44:24,616   Finished training it 163840/613937 of epoch 0, -1.00 ms/it, loss 0.456730, accuracy 78.793 %,  lr = 0.100
+2020-11-28 12:44:34,907   Finished training it 164864/613937 of epoch 0, -1.00 ms/it, loss 0.455504, accuracy 78.769 %,  lr = 0.100
+2020-11-28 12:44:45,173   Finished training it 165888/613937 of epoch 0, -1.00 ms/it, loss 0.453346, accuracy 79.013 %,  lr = 0.100
+2020-11-28 12:44:55,406   Finished training it 166912/613937 of epoch 0, -1.00 ms/it, loss 0.455515, accuracy 78.804 %,  lr = 0.100
+2020-11-28 12:45:05,663   Finished training it 167936/613937 of epoch 0, -1.00 ms/it, loss 0.451475, accuracy 78.928 %,  lr = 0.100
+2020-11-28 12:45:15,876   Finished training it 168960/613937 of epoch 0, -1.00 ms/it, loss 0.455511, accuracy 78.854 %,  lr = 0.100
+2020-11-28 12:45:26,102   Finished training it 169984/613937 of epoch 0, -1.00 ms/it, loss 0.452530, accuracy 79.073 %,  lr = 0.100
+2020-11-28 12:45:36,318   Finished training it 171008/613937 of epoch 0, -1.00 ms/it, loss 0.455800, accuracy 78.787 %,  lr = 0.100
+2020-11-28 12:45:46,624   Finished training it 172032/613937 of epoch 0, -1.00 ms/it, loss 0.457002, accuracy 78.729 %,  lr = 0.100
+2020-11-28 12:45:56,846   Finished training it 173056/613937 of epoch 0, -1.00 ms/it, loss 0.454363, accuracy 78.886 %,  lr = 0.100
+2020-11-28 12:46:07,077   Finished training it 174080/613937 of epoch 0, -1.00 ms/it, loss 0.454885, accuracy 78.938 %,  lr = 0.100
+2020-11-28 12:46:17,327   Finished training it 175104/613937 of epoch 0, -1.00 ms/it, loss 0.453878, accuracy 78.975 %,  lr = 0.100
+2020-11-28 12:46:27,633   Finished training it 176128/613937 of epoch 0, -1.00 ms/it, loss 0.452173, accuracy 78.883 %,  lr = 0.100
+2020-11-28 12:46:37,857   Finished training it 177152/613937 of epoch 0, -1.00 ms/it, loss 0.454705, accuracy 78.841 %,  lr = 0.100
+2020-11-28 12:46:48,099   Finished training it 178176/613937 of epoch 0, -1.00 ms/it, loss 0.454223, accuracy 79.012 %,  lr = 0.100
+2020-11-28 12:46:58,412   Finished training it 179200/613937 of epoch 0, -1.00 ms/it, loss 0.454984, accuracy 78.986 %,  lr = 0.100
+2020-11-28 12:47:08,660   Finished training it 180224/613937 of epoch 0, -1.00 ms/it, loss 0.452532, accuracy 79.013 %,  lr = 0.100
+2020-11-28 12:47:18,891   Finished training it 181248/613937 of epoch 0, -1.00 ms/it, loss 0.452832, accuracy 78.960 %,  lr = 0.100
+2020-11-28 12:47:29,188   Finished training it 182272/613937 of epoch 0, -1.00 ms/it, loss 0.455642, accuracy 78.578 %,  lr = 0.100
+2020-11-28 12:47:39,439   Finished training it 183296/613937 of epoch 0, -1.00 ms/it, loss 0.456181, accuracy 78.716 %,  lr = 0.100
+2020-11-28 12:47:49,673   Finished training it 184320/613937 of epoch 0, -1.00 ms/it, loss 0.455288, accuracy 78.906 %,  lr = 0.100
+2020-11-28 12:47:59,931   Finished training it 185344/613937 of epoch 0, -1.00 ms/it, loss 0.454257, accuracy 78.842 %,  lr = 0.100
+2020-11-28 12:48:10,210   Finished training it 186368/613937 of epoch 0, -1.00 ms/it, loss 0.455131, accuracy 78.665 %,  lr = 0.100
+2020-11-28 12:48:20,458   Finished training it 187392/613937 of epoch 0, -1.00 ms/it, loss 0.452869, accuracy 78.958 %,  lr = 0.100
+2020-11-28 12:48:30,707   Finished training it 188416/613937 of epoch 0, -1.00 ms/it, loss 0.456093, accuracy 78.783 %,  lr = 0.100
+2020-11-28 12:48:40,985   Finished training it 189440/613937 of epoch 0, -1.00 ms/it, loss 0.449294, accuracy 79.050 %,  lr = 0.100
+2020-11-28 12:48:51,328   Finished training it 190464/613937 of epoch 0, -1.00 ms/it, loss 0.455451, accuracy 78.783 %,  lr = 0.100
+2020-11-28 12:49:01,586   Finished training it 191488/613937 of epoch 0, -1.00 ms/it, loss 0.453660, accuracy 78.865 %,  lr = 0.100
+2020-11-28 12:49:11,824   Finished training it 192512/613937 of epoch 0, -1.00 ms/it, loss 0.451959, accuracy 79.056 %,  lr = 0.100
+2020-11-28 12:49:22,113   Finished training it 193536/613937 of epoch 0, -1.00 ms/it, loss 0.453100, accuracy 78.969 %,  lr = 0.100
+2020-11-28 12:49:32,375   Finished training it 194560/613937 of epoch 0, -1.00 ms/it, loss 0.452286, accuracy 79.106 %,  lr = 0.100
+2020-11-28 12:49:42,592   Finished training it 195584/613937 of epoch 0, -1.00 ms/it, loss 0.451640, accuracy 79.005 %,  lr = 0.100
+2020-11-28 12:49:52,828   Finished training it 196608/613937 of epoch 0, -1.00 ms/it, loss 0.452335, accuracy 78.957 %,  lr = 0.100
+2020-11-28 12:50:03,123   Finished training it 197632/613937 of epoch 0, -1.00 ms/it, loss 0.455139, accuracy 78.955 %,  lr = 0.100
+2020-11-28 12:50:13,422   Finished training it 198656/613937 of epoch 0, -1.00 ms/it, loss 0.454166, accuracy 79.105 %,  lr = 0.100
+2020-11-28 12:50:23,662   Finished training it 199680/613937 of epoch 0, -1.00 ms/it, loss 0.452627, accuracy 79.041 %,  lr = 0.100
+2020-11-28 12:50:33,892   Finished training it 200704/613937 of epoch 0, -1.00 ms/it, loss 0.453933, accuracy 78.819 %,  lr = 0.100
+2020-11-28 12:50:44,177   Finished training it 201728/613937 of epoch 0, -1.00 ms/it, loss 0.453097, accuracy 78.981 %,  lr = 0.100
+2020-11-28 12:50:54,396   Finished training it 202752/613937 of epoch 0, -1.00 ms/it, loss 0.453145, accuracy 78.934 %,  lr = 0.100
+2020-11-28 12:51:04,602   Finished training it 203776/613937 of epoch 0, -1.00 ms/it, loss 0.450851, accuracy 79.056 %,  lr = 0.100
+2020-11-28 12:51:14,901   Finished training it 204800/613937 of epoch 0, -1.00 ms/it, loss 0.457630, accuracy 78.601 %,  lr = 0.100
+2020-11-28 12:51:25,152   Finished training it 205824/613937 of epoch 0, -1.00 ms/it, loss 0.455949, accuracy 78.745 %,  lr = 0.100
+2020-11-28 12:51:35,389   Finished training it 206848/613937 of epoch 0, -1.00 ms/it, loss 0.453826, accuracy 78.995 %,  lr = 0.100
+2020-11-28 12:51:45,609   Finished training it 207872/613937 of epoch 0, -1.00 ms/it, loss 0.452595, accuracy 78.979 %,  lr = 0.100
+2020-11-28 12:51:55,923   Finished training it 208896/613937 of epoch 0, -1.00 ms/it, loss 0.456564, accuracy 78.679 %,  lr = 0.100
+2020-11-28 12:52:06,147   Finished training it 209920/613937 of epoch 0, -1.00 ms/it, loss 0.454985, accuracy 78.734 %,  lr = 0.100
+2020-11-28 12:52:16,393   Finished training it 210944/613937 of epoch 0, -1.00 ms/it, loss 0.453906, accuracy 78.949 %,  lr = 0.100
+2020-11-28 12:52:26,630   Finished training it 211968/613937 of epoch 0, -1.00 ms/it, loss 0.451204, accuracy 78.967 %,  lr = 0.100
+2020-11-28 12:52:36,901   Finished training it 212992/613937 of epoch 0, -1.00 ms/it, loss 0.453677, accuracy 78.845 %,  lr = 0.100
+2020-11-28 12:52:47,183   Finished training it 214016/613937 of epoch 0, -1.00 ms/it, loss 0.453696, accuracy 79.021 %,  lr = 0.100
+2020-11-28 12:52:57,439   Finished training it 215040/613937 of epoch 0, -1.00 ms/it, loss 0.451818, accuracy 79.013 %,  lr = 0.100
+2020-11-28 12:53:07,711   Finished training it 216064/613937 of epoch 0, -1.00 ms/it, loss 0.454560, accuracy 78.674 %,  lr = 0.100
+2020-11-28 12:53:17,982   Finished training it 217088/613937 of epoch 0, -1.00 ms/it, loss 0.451253, accuracy 78.925 %,  lr = 0.100
+2020-11-28 12:53:28,218   Finished training it 218112/613937 of epoch 0, -1.00 ms/it, loss 0.451772, accuracy 79.019 %,  lr = 0.100
+2020-11-28 12:53:38,466   Finished training it 219136/613937 of epoch 0, -1.00 ms/it, loss 0.453874, accuracy 78.886 %,  lr = 0.100
+2020-11-28 12:53:48,794   Finished training it 220160/613937 of epoch 0, -1.00 ms/it, loss 0.453929, accuracy 79.030 %,  lr = 0.100
+2020-11-28 12:53:59,054   Finished training it 221184/613937 of epoch 0, -1.00 ms/it, loss 0.452511, accuracy 78.876 %,  lr = 0.100
+2020-11-28 12:54:09,278   Finished training it 222208/613937 of epoch 0, -1.00 ms/it, loss 0.454959, accuracy 78.714 %,  lr = 0.100
+2020-11-28 12:54:19,464   Finished training it 223232/613937 of epoch 0, -1.00 ms/it, loss 0.456196, accuracy 78.867 %,  lr = 0.100
+2020-11-28 12:54:29,711   Finished training it 224256/613937 of epoch 0, -1.00 ms/it, loss 0.454853, accuracy 78.749 %,  lr = 0.100
+2020-11-28 12:54:39,955   Finished training it 225280/613937 of epoch 0, -1.00 ms/it, loss 0.454393, accuracy 78.989 %,  lr = 0.100
+2020-11-28 12:54:50,190   Finished training it 226304/613937 of epoch 0, -1.00 ms/it, loss 0.453548, accuracy 78.934 %,  lr = 0.100
+2020-11-28 12:55:00,476   Finished training it 227328/613937 of epoch 0, -1.00 ms/it, loss 0.454372, accuracy 78.795 %,  lr = 0.100
+2020-11-28 12:55:10,681   Finished training it 228352/613937 of epoch 0, -1.00 ms/it, loss 0.452575, accuracy 78.865 %,  lr = 0.100
+2020-11-28 12:55:20,863   Finished training it 229376/613937 of epoch 0, -1.00 ms/it, loss 0.451809, accuracy 78.894 %,  lr = 0.100
+2020-11-28 12:55:31,084   Finished training it 230400/613937 of epoch 0, -1.00 ms/it, loss 0.450363, accuracy 78.938 %,  lr = 0.100
+2020-11-28 12:55:41,306   Finished training it 231424/613937 of epoch 0, -1.00 ms/it, loss 0.452744, accuracy 78.964 %,  lr = 0.100
+2020-11-28 12:55:51,523   Finished training it 232448/613937 of epoch 0, -1.00 ms/it, loss 0.453851, accuracy 79.016 %,  lr = 0.100
+2020-11-28 12:56:01,721   Finished training it 233472/613937 of epoch 0, -1.00 ms/it, loss 0.454432, accuracy 78.868 %,  lr = 0.100
+2020-11-28 12:56:11,945   Finished training it 234496/613937 of epoch 0, -1.00 ms/it, loss 0.450080, accuracy 79.152 %,  lr = 0.100
+2020-11-28 12:56:22,222   Finished training it 235520/613937 of epoch 0, -1.00 ms/it, loss 0.452478, accuracy 78.978 %,  lr = 0.100
+2020-11-28 12:56:32,466   Finished training it 236544/613937 of epoch 0, -1.00 ms/it, loss 0.455027, accuracy 78.685 %,  lr = 0.100
+2020-11-28 12:56:42,686   Finished training it 237568/613937 of epoch 0, -1.00 ms/it, loss 0.451290, accuracy 78.943 %,  lr = 0.100
+2020-11-28 12:56:52,982   Finished training it 238592/613937 of epoch 0, -1.00 ms/it, loss 0.457817, accuracy 78.723 %,  lr = 0.100
+2020-11-28 12:57:03,241   Finished training it 239616/613937 of epoch 0, -1.00 ms/it, loss 0.452841, accuracy 78.754 %,  lr = 0.100
+2020-11-28 12:57:07,093   Finished training it 240000/613937 of epoch 0, -1.00 ms/it, loss 0.448302, accuracy 79.065 %,  lr = 0.100
+2020-11-28 12:57:07,093   Testing.....
+2020-11-28 12:58:38,940   Testing at - 240000/613937 of epoch 0, loss 0.458738, accuracy 78.554 %, best 78.554 %
+2020-11-28 12:58:45,388   Finished training it 240640/613937 of epoch 0, -1.00 ms/it, loss 0.453278, accuracy 79.053 %,  lr = 0.100
+2020-11-28 12:58:55,611   Finished training it 241664/613937 of epoch 0, -1.00 ms/it, loss 0.448592, accuracy 79.169 %,  lr = 0.100
+2020-11-28 12:59:05,867   Finished training it 242688/613937 of epoch 0, -1.00 ms/it, loss 0.452566, accuracy 78.954 %,  lr = 0.100
+2020-11-28 12:59:16,125   Finished training it 243712/613937 of epoch 0, -1.00 ms/it, loss 0.451954, accuracy 78.963 %,  lr = 0.100
+2020-11-28 12:59:26,387   Finished training it 244736/613937 of epoch 0, -1.00 ms/it, loss 0.454597, accuracy 78.687 %,  lr = 0.100
+2020-11-28 12:59:36,624   Finished training it 245760/613937 of epoch 0, -1.00 ms/it, loss 0.450978, accuracy 78.958 %,  lr = 0.100
+2020-11-28 12:59:46,835   Finished training it 246784/613937 of epoch 0, -1.00 ms/it, loss 0.454941, accuracy 78.716 %,  lr = 0.100
+2020-11-28 12:59:57,103   Finished training it 247808/613937 of epoch 0, -1.00 ms/it, loss 0.455600, accuracy 78.781 %,  lr = 0.100
+2020-11-28 13:00:07,337   Finished training it 248832/613937 of epoch 0, -1.00 ms/it, loss 0.454077, accuracy 78.854 %,  lr = 0.100
+2020-11-28 13:00:17,541   Finished training it 249856/613937 of epoch 0, -1.00 ms/it, loss 0.449316, accuracy 79.030 %,  lr = 0.100
+2020-11-28 13:00:27,763   Finished training it 250880/613937 of epoch 0, -1.00 ms/it, loss 0.456232, accuracy 78.691 %,  lr = 0.100
+2020-11-28 13:00:38,022   Finished training it 251904/613937 of epoch 0, -1.00 ms/it, loss 0.452285, accuracy 79.155 %,  lr = 0.100
+2020-11-28 13:00:48,235   Finished training it 252928/613937 of epoch 0, -1.00 ms/it, loss 0.456613, accuracy 78.708 %,  lr = 0.100
+2020-11-28 13:00:58,433   Finished training it 253952/613937 of epoch 0, -1.00 ms/it, loss 0.453339, accuracy 78.845 %,  lr = 0.100
+2020-11-28 13:01:08,682   Finished training it 254976/613937 of epoch 0, -1.00 ms/it, loss 0.452273, accuracy 78.979 %,  lr = 0.100
+2020-11-28 13:01:18,948   Finished training it 256000/613937 of epoch 0, -1.00 ms/it, loss 0.450186, accuracy 79.149 %,  lr = 0.100
+2020-11-28 13:01:29,129   Finished training it 257024/613937 of epoch 0, -1.00 ms/it, loss 0.451241, accuracy 79.033 %,  lr = 0.100
+2020-11-28 13:01:39,347   Finished training it 258048/613937 of epoch 0, -1.00 ms/it, loss 0.454135, accuracy 78.836 %,  lr = 0.100
+2020-11-28 13:01:49,627   Finished training it 259072/613937 of epoch 0, -1.00 ms/it, loss 0.452949, accuracy 78.775 %,  lr = 0.100
+2020-11-28 13:01:59,880   Finished training it 260096/613937 of epoch 0, -1.00 ms/it, loss 0.456205, accuracy 78.802 %,  lr = 0.100
+2020-11-28 13:02:10,112   Finished training it 261120/613937 of epoch 0, -1.00 ms/it, loss 0.454741, accuracy 78.687 %,  lr = 0.100
+2020-11-28 13:02:20,417   Finished training it 262144/613937 of epoch 0, -1.00 ms/it, loss 0.452608, accuracy 79.008 %,  lr = 0.100
+2020-11-28 13:02:30,644   Finished training it 263168/613937 of epoch 0, -1.00 ms/it, loss 0.452751, accuracy 78.860 %,  lr = 0.100
+2020-11-28 13:02:40,813   Finished training it 264192/613937 of epoch 0, -1.00 ms/it, loss 0.454104, accuracy 78.967 %,  lr = 0.100
+2020-11-28 13:02:51,042   Finished training it 265216/613937 of epoch 0, -1.00 ms/it, loss 0.449059, accuracy 79.063 %,  lr = 0.100
+2020-11-28 13:03:01,320   Finished training it 266240/613937 of epoch 0, -1.00 ms/it, loss 0.453111, accuracy 79.066 %,  lr = 0.100
+2020-11-28 13:03:11,553   Finished training it 267264/613937 of epoch 0, -1.00 ms/it, loss 0.449824, accuracy 79.097 %,  lr = 0.100
+2020-11-28 13:03:21,840   Finished training it 268288/613937 of epoch 0, -1.00 ms/it, loss 0.452819, accuracy 78.819 %,  lr = 0.100
+2020-11-28 13:03:32,136   Finished training it 269312/613937 of epoch 0, -1.00 ms/it, loss 0.452044, accuracy 78.928 %,  lr = 0.100
+2020-11-28 13:03:42,412   Finished training it 270336/613937 of epoch 0, -1.00 ms/it, loss 0.446267, accuracy 79.224 %,  lr = 0.100
+2020-11-28 13:03:52,648   Finished training it 271360/613937 of epoch 0, -1.00 ms/it, loss 0.455051, accuracy 78.888 %,  lr = 0.100
+2020-11-28 13:04:02,835   Finished training it 272384/613937 of epoch 0, -1.00 ms/it, loss 0.449987, accuracy 79.117 %,  lr = 0.100
+2020-11-28 13:04:13,111   Finished training it 273408/613937 of epoch 0, -1.00 ms/it, loss 0.453480, accuracy 78.929 %,  lr = 0.100
+2020-11-28 13:04:23,353   Finished training it 274432/613937 of epoch 0, -1.00 ms/it, loss 0.451262, accuracy 79.172 %,  lr = 0.100
+2020-11-28 13:04:33,555   Finished training it 275456/613937 of epoch 0, -1.00 ms/it, loss 0.454872, accuracy 78.716 %,  lr = 0.100
+2020-11-28 13:04:43,764   Finished training it 276480/613937 of epoch 0, -1.00 ms/it, loss 0.451478, accuracy 79.077 %,  lr = 0.100
+2020-11-28 13:04:54,025   Finished training it 277504/613937 of epoch 0, -1.00 ms/it, loss 0.451040, accuracy 78.778 %,  lr = 0.100
+2020-11-28 13:05:04,277   Finished training it 278528/613937 of epoch 0, -1.00 ms/it, loss 0.453090, accuracy 78.964 %,  lr = 0.100
+2020-11-28 13:05:14,505   Finished training it 279552/613937 of epoch 0, -1.00 ms/it, loss 0.449449, accuracy 78.989 %,  lr = 0.100
+2020-11-28 13:05:24,710   Finished training it 280576/613937 of epoch 0, -1.00 ms/it, loss 0.447568, accuracy 79.315 %,  lr = 0.100
+2020-11-28 13:05:34,994   Finished training it 281600/613937 of epoch 0, -1.00 ms/it, loss 0.454635, accuracy 78.772 %,  lr = 0.100
+2020-11-28 13:05:45,194   Finished training it 282624/613937 of epoch 0, -1.00 ms/it, loss 0.448727, accuracy 79.135 %,  lr = 0.100
+2020-11-28 13:05:55,412   Finished training it 283648/613937 of epoch 0, -1.00 ms/it, loss 0.451354, accuracy 78.999 %,  lr = 0.100
+2020-11-28 13:06:05,742   Finished training it 284672/613937 of epoch 0, -1.00 ms/it, loss 0.446928, accuracy 79.289 %,  lr = 0.100
+2020-11-28 13:06:15,966   Finished training it 285696/613937 of epoch 0, -1.00 ms/it, loss 0.451609, accuracy 78.931 %,  lr = 0.100
+2020-11-28 13:06:26,172   Finished training it 286720/613937 of epoch 0, -1.00 ms/it, loss 0.449954, accuracy 79.193 %,  lr = 0.100
+2020-11-28 13:06:36,431   Finished training it 287744/613937 of epoch 0, -1.00 ms/it, loss 0.452072, accuracy 78.839 %,  lr = 0.100
+2020-11-28 13:06:46,688   Finished training it 288768/613937 of epoch 0, -1.00 ms/it, loss 0.450233, accuracy 79.195 %,  lr = 0.100
+2020-11-28 13:06:56,891   Finished training it 289792/613937 of epoch 0, -1.00 ms/it, loss 0.452618, accuracy 78.868 %,  lr = 0.100
+2020-11-28 13:07:07,127   Finished training it 290816/613937 of epoch 0, -1.00 ms/it, loss 0.454982, accuracy 78.822 %,  lr = 0.100
+2020-11-28 13:07:17,417   Finished training it 291840/613937 of epoch 0, -1.00 ms/it, loss 0.449892, accuracy 79.091 %,  lr = 0.100
+2020-11-28 13:07:27,654   Finished training it 292864/613937 of epoch 0, -1.00 ms/it, loss 0.448773, accuracy 79.164 %,  lr = 0.100
+2020-11-28 13:07:37,893   Finished training it 293888/613937 of epoch 0, -1.00 ms/it, loss 0.450377, accuracy 78.935 %,  lr = 0.100
+2020-11-28 13:07:48,072   Finished training it 294912/613937 of epoch 0, -1.00 ms/it, loss 0.449484, accuracy 79.121 %,  lr = 0.100
+2020-11-28 13:07:58,322   Finished training it 295936/613937 of epoch 0, -1.00 ms/it, loss 0.448160, accuracy 79.176 %,  lr = 0.100
+2020-11-28 13:08:08,544   Finished training it 296960/613937 of epoch 0, -1.00 ms/it, loss 0.448296, accuracy 79.106 %,  lr = 0.100
+2020-11-28 13:08:18,794   Finished training it 297984/613937 of epoch 0, -1.00 ms/it, loss 0.449200, accuracy 79.201 %,  lr = 0.100
+2020-11-28 13:08:28,998   Finished training it 299008/613937 of epoch 0, -1.00 ms/it, loss 0.449378, accuracy 79.109 %,  lr = 0.100
+2020-11-28 13:08:39,228   Finished training it 300032/613937 of epoch 0, -1.00 ms/it, loss 0.452506, accuracy 78.876 %,  lr = 0.100
+2020-11-28 13:08:49,450   Finished training it 301056/613937 of epoch 0, -1.00 ms/it, loss 0.449024, accuracy 79.214 %,  lr = 0.100
+2020-11-28 13:08:59,694   Finished training it 302080/613937 of epoch 0, -1.00 ms/it, loss 0.449176, accuracy 79.216 %,  lr = 0.100
+2020-11-28 13:09:09,996   Finished training it 303104/613937 of epoch 0, -1.00 ms/it, loss 0.446553, accuracy 79.332 %,  lr = 0.100
+2020-11-28 13:09:20,241   Finished training it 304128/613937 of epoch 0, -1.00 ms/it, loss 0.448595, accuracy 79.161 %,  lr = 0.100
+2020-11-28 13:09:30,487   Finished training it 305152/613937 of epoch 0, -1.00 ms/it, loss 0.448793, accuracy 79.131 %,  lr = 0.100
+2020-11-28 13:09:40,735   Finished training it 306176/613937 of epoch 0, -1.00 ms/it, loss 0.452648, accuracy 78.902 %,  lr = 0.100
+2020-11-28 13:09:48,640   ------------------Growth starts---------------------
+2020-11-28 13:09:52,757   save_model to ./saved_model/model_after_growth1.pickle
+
+2020-11-28 13:09:52,757   Growth ID 1, Growing size from 2X to 3X.....
+
+2020-11-28 13:10:00,798   FC param size = 304.77K, param size = 540.51M,  FLOP = 609.54K
+2020-11-28 13:10:00,798   m_spa=16, ln_bot=[ 13 384 192  48  16], ln_top=[367 384 192   1] 
+
+2020-11-28 13:10:00,799   Reading and loading pre-trained weights............
+2020-11-28 13:10:03,189   zero initialization
+2020-11-28 13:10:03,189   zero initialization
+2020-11-28 13:10:03,191   zero initialization
+2020-11-28 13:10:03,197   zero initialization
+2020-11-28 13:10:03,198   zero initialization
+2020-11-28 13:10:03,198   zero initialization
+2020-11-28 13:10:03,198   zero initialization
+2020-11-28 13:10:03,198   zero initialization
+2020-11-28 13:10:03,198   zero initialization
+2020-11-28 13:10:03,199   zero initialization
+2020-11-28 13:10:03,199   zero initialization
+2020-11-28 13:10:03,200   zero initialization
+2020-11-28 13:10:03,205   zero initialization
+2020-11-28 13:10:03,205   zero initialization
+2020-11-28 13:10:03,205   zero initialization
+2020-11-28 13:10:03,206   zero initialization
+2020-11-28 13:10:03,209   zero initialization
+2020-11-28 13:10:03,209   zero initialization
+2020-11-28 13:10:03,209   zero initialization
+2020-11-28 13:10:03,209   zero initialization
+2020-11-28 13:10:03,210   zero initialization
+2020-11-28 13:10:03,214   zero initialization
+2020-11-28 13:10:03,214   zero initialization
+2020-11-28 13:10:03,214   zero initialization
+2020-11-28 13:10:03,215   zero initialization
+2020-11-28 13:10:03,215   zero initialization
+2020-11-28 13:10:03,215   zero initialization
+2020-11-28 13:10:03,215   zero initialization
+2020-11-28 13:10:03,215   zero initialization
+2020-11-28 13:10:03,216   zero initialization
+2020-11-28 13:10:03,216   zero initialization
+2020-11-28 13:10:03,216   zero initialization
+2020-11-28 13:10:03,216   zero initialization
+2020-11-28 13:10:03,216   zero initialization
+2020-11-28 13:10:03,217   zero initialization
+2020-11-28 13:10:03,217   zero initialization
+2020-11-28 13:10:03,217   zero initialization
+2020-11-28 13:10:03,218   zero initialization
+2020-11-28 13:10:03,218   zero initialization
+2020-11-28 13:10:03,218   zero initialization
+2020-11-28 13:10:03,219   load_model: Loading ./saved_model/model_after_growth1.pickle....
+2020-11-28 13:10:06,106   save_model to ./saved_model/model_after_growth2.pickle
+
+2020-11-28 13:10:06,106   ------------------Growth finishes---------------------
+2020-11-28 13:10:08,348   Finished training it 307200/613937 of epoch 0, -1.00 ms/it, loss 0.449172, accuracy 79.001 %,  lr = 0.100
+2020-11-28 13:10:18,769   Finished training it 308224/613937 of epoch 0, -1.00 ms/it, loss 0.449349, accuracy 79.193 %,  lr = 0.100
+2020-11-28 13:10:28,411   Finished training it 309248/613937 of epoch 0, -1.00 ms/it, loss 0.450332, accuracy 78.983 %,  lr = 0.100
+2020-11-28 13:10:37,245   Finished training it 310272/613937 of epoch 0, -1.00 ms/it, loss 0.449340, accuracy 79.041 %,  lr = 0.100
+2020-11-28 13:10:45,847   Finished training it 311296/613937 of epoch 0, -1.00 ms/it, loss 0.450320, accuracy 78.941 %,  lr = 0.100
+2020-11-28 13:10:54,353   Finished training it 312320/613937 of epoch 0, -1.00 ms/it, loss 0.449229, accuracy 79.120 %,  lr = 0.100
+2020-11-28 13:11:02,698   Finished training it 313344/613937 of epoch 0, -1.00 ms/it, loss 0.450243, accuracy 78.995 %,  lr = 0.100
+2020-11-28 13:11:11,378   Finished training it 314368/613937 of epoch 0, -1.00 ms/it, loss 0.448485, accuracy 79.272 %,  lr = 0.100
+2020-11-28 13:11:19,963   Finished training it 315392/613937 of epoch 0, -1.00 ms/it, loss 0.447311, accuracy 79.337 %,  lr = 0.100
+2020-11-28 13:11:28,267   Finished training it 316416/613937 of epoch 0, -1.00 ms/it, loss 0.450652, accuracy 79.170 %,  lr = 0.100
+2020-11-28 13:11:37,304   Finished training it 317440/613937 of epoch 0, -1.00 ms/it, loss 0.451191, accuracy 79.037 %,  lr = 0.100
+2020-11-28 13:11:47,762   Finished training it 318464/613937 of epoch 0, -1.00 ms/it, loss 0.449630, accuracy 79.179 %,  lr = 0.100
+2020-11-28 13:11:58,044   Finished training it 319488/613937 of epoch 0, -1.00 ms/it, loss 0.450918, accuracy 79.111 %,  lr = 0.100
+2020-11-28 13:12:03,156   Finished training it 320000/613937 of epoch 0, -1.00 ms/it, loss 0.450879, accuracy 79.037 %,  lr = 0.100
+2020-11-28 13:12:03,156   Testing.....
+2020-11-28 13:13:34,352   Testing at - 320000/613937 of epoch 0, loss 0.457274, accuracy 78.588 %, best 78.588 %
+2020-11-28 13:13:39,531   Finished training it 320512/613937 of epoch 0, -1.00 ms/it, loss 0.451870, accuracy 79.214 %,  lr = 0.100
+2020-11-28 13:13:49,828   Finished training it 321536/613937 of epoch 0, -1.00 ms/it, loss 0.450386, accuracy 79.147 %,  lr = 0.100
+2020-11-28 13:14:01,121   Finished training it 322560/613937 of epoch 0, -1.00 ms/it, loss 0.452649, accuracy 78.865 %,  lr = 0.100
+2020-11-28 13:14:11,546   Finished training it 323584/613937 of epoch 0, -1.00 ms/it, loss 0.450835, accuracy 78.935 %,  lr = 0.100
+2020-11-28 13:14:21,861   Finished training it 324608/613937 of epoch 0, -1.00 ms/it, loss 0.453632, accuracy 78.920 %,  lr = 0.100
+2020-11-28 13:14:32,095   Finished training it 325632/613937 of epoch 0, -1.00 ms/it, loss 0.450420, accuracy 79.099 %,  lr = 0.100
+2020-11-28 13:14:42,524   Finished training it 326656/613937 of epoch 0, -1.00 ms/it, loss 0.450744, accuracy 79.100 %,  lr = 0.100
+2020-11-28 13:14:52,830   Finished training it 327680/613937 of epoch 0, -1.00 ms/it, loss 0.452500, accuracy 79.007 %,  lr = 0.100
+2020-11-28 13:15:03,181   Finished training it 328704/613937 of epoch 0, -1.00 ms/it, loss 0.451325, accuracy 78.931 %,  lr = 0.100
+2020-11-28 13:15:13,526   Finished training it 329728/613937 of epoch 0, -1.00 ms/it, loss 0.450253, accuracy 79.083 %,  lr = 0.100
+2020-11-28 13:15:23,964   Finished training it 330752/613937 of epoch 0, -1.00 ms/it, loss 0.450079, accuracy 79.128 %,  lr = 0.100
+2020-11-28 13:15:34,332   Finished training it 331776/613937 of epoch 0, -1.00 ms/it, loss 0.451534, accuracy 79.153 %,  lr = 0.100
+2020-11-28 13:15:44,652   Finished training it 332800/613937 of epoch 0, -1.00 ms/it, loss 0.450725, accuracy 79.016 %,  lr = 0.100
+2020-11-28 13:15:55,063   Finished training it 333824/613937 of epoch 0, -1.00 ms/it, loss 0.452785, accuracy 78.915 %,  lr = 0.100
+2020-11-28 13:16:05,445   Finished training it 334848/613937 of epoch 0, -1.00 ms/it, loss 0.453284, accuracy 78.827 %,  lr = 0.100
+2020-11-28 13:16:15,812   Finished training it 335872/613937 of epoch 0, -1.00 ms/it, loss 0.450651, accuracy 79.100 %,  lr = 0.100
+2020-11-28 13:16:26,147   Finished training it 336896/613937 of epoch 0, -1.00 ms/it, loss 0.452487, accuracy 78.790 %,  lr = 0.100
+2020-11-28 13:16:36,496   Finished training it 337920/613937 of epoch 0, -1.00 ms/it, loss 0.446335, accuracy 79.234 %,  lr = 0.100
+2020-11-28 13:16:46,891   Finished training it 338944/613937 of epoch 0, -1.00 ms/it, loss 0.449729, accuracy 79.187 %,  lr = 0.100
+2020-11-28 13:16:57,178   Finished training it 339968/613937 of epoch 0, -1.00 ms/it, loss 0.451682, accuracy 79.005 %,  lr = 0.100
+2020-11-28 13:17:07,473   Finished training it 340992/613937 of epoch 0, -1.00 ms/it, loss 0.444248, accuracy 79.559 %,  lr = 0.100
+2020-11-28 13:17:17,839   Finished training it 342016/613937 of epoch 0, -1.00 ms/it, loss 0.450050, accuracy 79.042 %,  lr = 0.100
+2020-11-28 13:17:28,159   Finished training it 343040/613937 of epoch 0, -1.00 ms/it, loss 0.449358, accuracy 79.156 %,  lr = 0.100
+2020-11-28 13:17:38,453   Finished training it 344064/613937 of epoch 0, -1.00 ms/it, loss 0.449072, accuracy 79.321 %,  lr = 0.100
+2020-11-28 13:17:48,833   Finished training it 345088/613937 of epoch 0, -1.00 ms/it, loss 0.452853, accuracy 78.871 %,  lr = 0.100
+2020-11-28 13:17:59,189   Finished training it 346112/613937 of epoch 0, -1.00 ms/it, loss 0.451358, accuracy 78.946 %,  lr = 0.100
+2020-11-28 13:18:09,540   Finished training it 347136/613937 of epoch 0, -1.00 ms/it, loss 0.449238, accuracy 79.161 %,  lr = 0.100
+2020-11-28 13:18:19,827   Finished training it 348160/613937 of epoch 0, -1.00 ms/it, loss 0.450422, accuracy 79.048 %,  lr = 0.100
+2020-11-28 13:18:30,246   Finished training it 349184/613937 of epoch 0, -1.00 ms/it, loss 0.448574, accuracy 79.338 %,  lr = 0.100
+2020-11-28 13:18:40,576   Finished training it 350208/613937 of epoch 0, -1.00 ms/it, loss 0.450156, accuracy 79.124 %,  lr = 0.100
+2020-11-28 13:18:50,850   Finished training it 351232/613937 of epoch 0, -1.00 ms/it, loss 0.447263, accuracy 79.306 %,  lr = 0.100
+2020-11-28 13:19:01,201   Finished training it 352256/613937 of epoch 0, -1.00 ms/it, loss 0.450942, accuracy 79.050 %,  lr = 0.100
+2020-11-28 13:19:11,580   Finished training it 353280/613937 of epoch 0, -1.00 ms/it, loss 0.445182, accuracy 79.459 %,  lr = 0.100
+2020-11-28 13:19:21,904   Finished training it 354304/613937 of epoch 0, -1.00 ms/it, loss 0.447630, accuracy 79.276 %,  lr = 0.100
+2020-11-28 13:19:32,153   Finished training it 355328/613937 of epoch 0, -1.00 ms/it, loss 0.446878, accuracy 79.422 %,  lr = 0.100
+2020-11-28 13:19:42,616   Finished training it 356352/613937 of epoch 0, -1.00 ms/it, loss 0.449775, accuracy 79.036 %,  lr = 0.100
+2020-11-28 13:19:52,953   Finished training it 357376/613937 of epoch 0, -1.00 ms/it, loss 0.449471, accuracy 79.079 %,  lr = 0.100
+2020-11-28 13:20:03,253   Finished training it 358400/613937 of epoch 0, -1.00 ms/it, loss 0.448837, accuracy 79.120 %,  lr = 0.100
+2020-11-28 13:20:13,600   Finished training it 359424/613937 of epoch 0, -1.00 ms/it, loss 0.449398, accuracy 78.999 %,  lr = 0.100
+2020-11-28 13:20:23,959   Finished training it 360448/613937 of epoch 0, -1.00 ms/it, loss 0.451605, accuracy 79.002 %,  lr = 0.100
+2020-11-28 13:20:34,345   Finished training it 361472/613937 of epoch 0, -1.00 ms/it, loss 0.450332, accuracy 79.111 %,  lr = 0.100
+2020-11-28 13:20:44,657   Finished training it 362496/613937 of epoch 0, -1.00 ms/it, loss 0.453217, accuracy 78.807 %,  lr = 0.100
+2020-11-28 13:20:55,036   Finished training it 363520/613937 of epoch 0, -1.00 ms/it, loss 0.452043, accuracy 78.908 %,  lr = 0.100
+2020-11-28 13:21:05,441   Finished training it 364544/613937 of epoch 0, -1.00 ms/it, loss 0.450302, accuracy 79.065 %,  lr = 0.100
+2020-11-28 13:21:15,752   Finished training it 365568/613937 of epoch 0, -1.00 ms/it, loss 0.450210, accuracy 79.189 %,  lr = 0.100
+2020-11-28 13:21:26,013   Finished training it 366592/613937 of epoch 0, -1.00 ms/it, loss 0.449630, accuracy 79.083 %,  lr = 0.100
+2020-11-28 13:21:36,491   Finished training it 367616/613937 of epoch 0, -1.00 ms/it, loss 0.448229, accuracy 79.175 %,  lr = 0.100
+2020-11-28 13:21:46,814   Finished training it 368640/613937 of epoch 0, -1.00 ms/it, loss 0.452157, accuracy 78.970 %,  lr = 0.100
+2020-11-28 13:21:57,155   Finished training it 369664/613937 of epoch 0, -1.00 ms/it, loss 0.452114, accuracy 78.912 %,  lr = 0.100
+2020-11-28 13:22:07,514   Finished training it 370688/613937 of epoch 0, -1.00 ms/it, loss 0.450930, accuracy 78.902 %,  lr = 0.100
+2020-11-28 13:22:17,953   Finished training it 371712/613937 of epoch 0, -1.00 ms/it, loss 0.448545, accuracy 79.182 %,  lr = 0.100
+2020-11-28 13:22:28,282   Finished training it 372736/613937 of epoch 0, -1.00 ms/it, loss 0.449798, accuracy 79.103 %,  lr = 0.100
+2020-11-28 13:22:38,584   Finished training it 373760/613937 of epoch 0, -1.00 ms/it, loss 0.450241, accuracy 79.027 %,  lr = 0.100
+2020-11-28 13:22:49,048   Finished training it 374784/613937 of epoch 0, -1.00 ms/it, loss 0.450931, accuracy 79.070 %,  lr = 0.100
+2020-11-28 13:22:59,449   Finished training it 375808/613937 of epoch 0, -1.00 ms/it, loss 0.448962, accuracy 79.089 %,  lr = 0.100
+2020-11-28 13:23:09,752   Finished training it 376832/613937 of epoch 0, -1.00 ms/it, loss 0.445984, accuracy 79.506 %,  lr = 0.100
+2020-11-28 13:23:20,078   Finished training it 377856/613937 of epoch 0, -1.00 ms/it, loss 0.455818, accuracy 78.751 %,  lr = 0.100
+2020-11-28 13:23:30,492   Finished training it 378880/613937 of epoch 0, -1.00 ms/it, loss 0.450244, accuracy 79.135 %,  lr = 0.100
+2020-11-28 13:23:40,866   Finished training it 379904/613937 of epoch 0, -1.00 ms/it, loss 0.450979, accuracy 79.031 %,  lr = 0.100
+2020-11-28 13:23:51,216   Finished training it 380928/613937 of epoch 0, -1.00 ms/it, loss 0.449485, accuracy 79.146 %,  lr = 0.100
+2020-11-28 13:24:01,566   Finished training it 381952/613937 of epoch 0, -1.00 ms/it, loss 0.448863, accuracy 79.193 %,  lr = 0.100
+2020-11-28 13:24:11,947   Finished training it 382976/613937 of epoch 0, -1.00 ms/it, loss 0.448370, accuracy 79.190 %,  lr = 0.100
+2020-11-28 13:24:22,324   Finished training it 384000/613937 of epoch 0, -1.00 ms/it, loss 0.447506, accuracy 79.279 %,  lr = 0.100
+2020-11-28 13:24:32,642   Finished training it 385024/613937 of epoch 0, -1.00 ms/it, loss 0.444712, accuracy 79.378 %,  lr = 0.100
+2020-11-28 13:24:43,061   Finished training it 386048/613937 of epoch 0, -1.00 ms/it, loss 0.448694, accuracy 79.257 %,  lr = 0.100
+2020-11-28 13:24:51,978   Finished training it 387072/613937 of epoch 0, -1.00 ms/it, loss 0.450567, accuracy 79.005 %,  lr = 0.100
+2020-11-28 13:25:00,517   Finished training it 388096/613937 of epoch 0, -1.00 ms/it, loss 0.449963, accuracy 79.124 %,  lr = 0.100
+2020-11-28 13:25:09,341   Finished training it 389120/613937 of epoch 0, -1.00 ms/it, loss 0.449353, accuracy 79.205 %,  lr = 0.100
+2020-11-28 13:25:17,862   Finished training it 390144/613937 of epoch 0, -1.00 ms/it, loss 0.452255, accuracy 78.937 %,  lr = 0.100
+2020-11-28 13:25:27,034   Finished training it 391168/613937 of epoch 0, -1.00 ms/it, loss 0.452862, accuracy 78.804 %,  lr = 0.100
+2020-11-28 13:25:35,618   Finished training it 392192/613937 of epoch 0, -1.00 ms/it, loss 0.451260, accuracy 79.088 %,  lr = 0.100
+2020-11-28 13:25:44,364   Finished training it 393216/613937 of epoch 0, -1.00 ms/it, loss 0.448393, accuracy 79.321 %,  lr = 0.100
+2020-11-28 13:25:52,846   Finished training it 394240/613937 of epoch 0, -1.00 ms/it, loss 0.449214, accuracy 79.102 %,  lr = 0.100
+2020-11-28 13:26:01,304   Finished training it 395264/613937 of epoch 0, -1.00 ms/it, loss 0.450418, accuracy 78.975 %,  lr = 0.100
+2020-11-28 13:26:09,611   Finished training it 396288/613937 of epoch 0, -1.00 ms/it, loss 0.449917, accuracy 79.172 %,  lr = 0.100
+2020-11-28 13:26:17,979   Finished training it 397312/613937 of epoch 0, -1.00 ms/it, loss 0.447392, accuracy 79.266 %,  lr = 0.100
+2020-11-28 13:26:28,231   Finished training it 398336/613937 of epoch 0, -1.00 ms/it, loss 0.452799, accuracy 79.152 %,  lr = 0.100
+2020-11-28 13:26:38,565   Finished training it 399360/613937 of epoch 0, -1.00 ms/it, loss 0.451259, accuracy 78.899 %,  lr = 0.100
+2020-11-28 13:26:45,016   Finished training it 400000/613937 of epoch 0, -1.00 ms/it, loss 0.447013, accuracy 79.473 %,  lr = 0.100
+2020-11-28 13:26:45,016   Testing.....
+2020-11-28 13:28:15,796   Testing at - 400000/613937 of epoch 0, loss 0.457484, accuracy 78.560 %, best 78.588 %
+2020-11-28 13:28:19,706   Finished training it 400384/613937 of epoch 0, -1.00 ms/it, loss 0.450117, accuracy 78.963 %,  lr = 0.100
+2020-11-28 13:28:30,093   Finished training it 401408/613937 of epoch 0, -1.00 ms/it, loss 0.450097, accuracy 79.036 %,  lr = 0.100
+2020-11-28 13:28:40,449   Finished training it 402432/613937 of epoch 0, -1.00 ms/it, loss 0.451019, accuracy 78.897 %,  lr = 0.100
+2020-11-28 13:28:50,797   Finished training it 403456/613937 of epoch 0, -1.00 ms/it, loss 0.448912, accuracy 79.156 %,  lr = 0.100
+2020-11-28 13:29:01,215   Finished training it 404480/613937 of epoch 0, -1.00 ms/it, loss 0.447551, accuracy 79.178 %,  lr = 0.100
+2020-11-28 13:29:11,583   Finished training it 405504/613937 of epoch 0, -1.00 ms/it, loss 0.449816, accuracy 79.146 %,  lr = 0.100
+2020-11-28 13:29:21,961   Finished training it 406528/613937 of epoch 0, -1.00 ms/it, loss 0.449645, accuracy 79.173 %,  lr = 0.100
+2020-11-28 13:29:32,306   Finished training it 407552/613937 of epoch 0, -1.00 ms/it, loss 0.446767, accuracy 79.507 %,  lr = 0.100
+2020-11-28 13:29:42,680   Finished training it 408576/613937 of epoch 0, -1.00 ms/it, loss 0.444966, accuracy 79.402 %,  lr = 0.100
+2020-11-28 13:29:53,019   Finished training it 409600/613937 of epoch 0, -1.00 ms/it, loss 0.449305, accuracy 78.935 %,  lr = 0.100
+2020-11-28 13:30:03,355   Finished training it 410624/613937 of epoch 0, -1.00 ms/it, loss 0.450129, accuracy 79.085 %,  lr = 0.100
+2020-11-28 13:30:13,680   Finished training it 411648/613937 of epoch 0, -1.00 ms/it, loss 0.449594, accuracy 79.190 %,  lr = 0.100
+2020-11-28 13:30:24,075   Finished training it 412672/613937 of epoch 0, -1.00 ms/it, loss 0.446596, accuracy 79.247 %,  lr = 0.100
+2020-11-28 13:30:34,364   Finished training it 413696/613937 of epoch 0, -1.00 ms/it, loss 0.447465, accuracy 79.224 %,  lr = 0.100
+2020-11-28 13:30:44,666   Finished training it 414720/613937 of epoch 0, -1.00 ms/it, loss 0.446188, accuracy 79.359 %,  lr = 0.100
+2020-11-28 13:30:55,050   Finished training it 415744/613937 of epoch 0, -1.00 ms/it, loss 0.450887, accuracy 78.984 %,  lr = 0.100
+2020-11-28 13:31:05,395   Finished training it 416768/613937 of epoch 0, -1.00 ms/it, loss 0.449045, accuracy 79.254 %,  lr = 0.100
+2020-11-28 13:31:15,663   Finished training it 417792/613937 of epoch 0, -1.00 ms/it, loss 0.451262, accuracy 78.975 %,  lr = 0.100
+2020-11-28 13:31:25,976   Finished training it 418816/613937 of epoch 0, -1.00 ms/it, loss 0.447200, accuracy 79.347 %,  lr = 0.100
+2020-11-28 13:31:36,327   Finished training it 419840/613937 of epoch 0, -1.00 ms/it, loss 0.448302, accuracy 79.111 %,  lr = 0.100
+2020-11-28 13:31:46,633   Finished training it 420864/613937 of epoch 0, -1.00 ms/it, loss 0.449795, accuracy 79.033 %,  lr = 0.100
+2020-11-28 13:31:56,973   Finished training it 421888/613937 of epoch 0, -1.00 ms/it, loss 0.447013, accuracy 79.150 %,  lr = 0.100
+2020-11-28 13:32:07,339   Finished training it 422912/613937 of epoch 0, -1.00 ms/it, loss 0.447635, accuracy 79.207 %,  lr = 0.100
+2020-11-28 13:32:17,670   Finished training it 423936/613937 of epoch 0, -1.00 ms/it, loss 0.447912, accuracy 79.085 %,  lr = 0.100
+2020-11-28 13:32:27,992   Finished training it 424960/613937 of epoch 0, -1.00 ms/it, loss 0.446483, accuracy 79.318 %,  lr = 0.100
+2020-11-28 13:32:38,384   Finished training it 425984/613937 of epoch 0, -1.00 ms/it, loss 0.447069, accuracy 79.185 %,  lr = 0.100
+2020-11-28 13:32:48,797   Finished training it 427008/613937 of epoch 0, -1.00 ms/it, loss 0.448935, accuracy 79.008 %,  lr = 0.100
+2020-11-28 13:32:59,172   Finished training it 428032/613937 of epoch 0, -1.00 ms/it, loss 0.447712, accuracy 79.228 %,  lr = 0.100
+2020-11-28 13:33:09,530   Finished training it 429056/613937 of epoch 0, -1.00 ms/it, loss 0.447738, accuracy 79.092 %,  lr = 0.100
+2020-11-28 13:33:19,907   Finished training it 430080/613937 of epoch 0, -1.00 ms/it, loss 0.447230, accuracy 79.370 %,  lr = 0.100
+2020-11-28 13:33:30,270   Finished training it 431104/613937 of epoch 0, -1.00 ms/it, loss 0.445760, accuracy 79.277 %,  lr = 0.100
+2020-11-28 13:33:40,583   Finished training it 432128/613937 of epoch 0, -1.00 ms/it, loss 0.447652, accuracy 79.115 %,  lr = 0.100
+2020-11-28 13:33:50,938   Finished training it 433152/613937 of epoch 0, -1.00 ms/it, loss 0.450918, accuracy 79.053 %,  lr = 0.100
+2020-11-28 13:34:01,296   Finished training it 434176/613937 of epoch 0, -1.00 ms/it, loss 0.445826, accuracy 79.404 %,  lr = 0.100
+2020-11-28 13:34:11,697   Finished training it 435200/613937 of epoch 0, -1.00 ms/it, loss 0.450328, accuracy 79.196 %,  lr = 0.100
+2020-11-28 13:34:22,062   Finished training it 436224/613937 of epoch 0, -1.00 ms/it, loss 0.447355, accuracy 79.317 %,  lr = 0.100
+2020-11-28 13:34:32,443   Finished training it 437248/613937 of epoch 0, -1.00 ms/it, loss 0.449794, accuracy 79.062 %,  lr = 0.100
+2020-11-28 13:34:42,727   Finished training it 438272/613937 of epoch 0, -1.00 ms/it, loss 0.446610, accuracy 79.361 %,  lr = 0.100
+2020-11-28 13:34:53,007   Finished training it 439296/613937 of epoch 0, -1.00 ms/it, loss 0.448865, accuracy 79.210 %,  lr = 0.100
+2020-11-28 13:35:03,380   Finished training it 440320/613937 of epoch 0, -1.00 ms/it, loss 0.445373, accuracy 79.382 %,  lr = 0.100
+2020-11-28 13:35:13,765   Finished training it 441344/613937 of epoch 0, -1.00 ms/it, loss 0.445610, accuracy 79.170 %,  lr = 0.100
+2020-11-28 13:35:24,098   Finished training it 442368/613937 of epoch 0, -1.00 ms/it, loss 0.445543, accuracy 79.305 %,  lr = 0.100
+2020-11-28 13:35:34,448   Finished training it 443392/613937 of epoch 0, -1.00 ms/it, loss 0.449657, accuracy 79.080 %,  lr = 0.100
+2020-11-28 13:35:44,830   Finished training it 444416/613937 of epoch 0, -1.00 ms/it, loss 0.448478, accuracy 79.198 %,  lr = 0.100
+2020-11-28 13:35:55,179   Finished training it 445440/613937 of epoch 0, -1.00 ms/it, loss 0.447206, accuracy 79.233 %,  lr = 0.100
+2020-11-28 13:36:05,481   Finished training it 446464/613937 of epoch 0, -1.00 ms/it, loss 0.450987, accuracy 79.002 %,  lr = 0.100
+2020-11-28 13:36:15,840   Finished training it 447488/613937 of epoch 0, -1.00 ms/it, loss 0.450007, accuracy 79.147 %,  lr = 0.100
+2020-11-28 13:36:26,208   Finished training it 448512/613937 of epoch 0, -1.00 ms/it, loss 0.449171, accuracy 79.131 %,  lr = 0.100
+2020-11-28 13:36:36,504   Finished training it 449536/613937 of epoch 0, -1.00 ms/it, loss 0.451377, accuracy 78.897 %,  lr = 0.100
+2020-11-28 13:36:46,865   Finished training it 450560/613937 of epoch 0, -1.00 ms/it, loss 0.450119, accuracy 79.089 %,  lr = 0.100
+2020-11-28 13:36:57,248   Finished training it 451584/613937 of epoch 0, -1.00 ms/it, loss 0.446623, accuracy 79.297 %,  lr = 0.100
+2020-11-28 13:37:07,614   Finished training it 452608/613937 of epoch 0, -1.00 ms/it, loss 0.444707, accuracy 79.401 %,  lr = 0.100
+2020-11-28 13:37:17,915   Finished training it 453632/613937 of epoch 0, -1.00 ms/it, loss 0.451009, accuracy 78.830 %,  lr = 0.100
+2020-11-28 13:37:28,356   Finished training it 454656/613937 of epoch 0, -1.00 ms/it, loss 0.449577, accuracy 78.979 %,  lr = 0.100
+2020-11-28 13:37:38,729   Finished training it 455680/613937 of epoch 0, -1.00 ms/it, loss 0.449445, accuracy 79.118 %,  lr = 0.100
+2020-11-28 13:37:49,055   Finished training it 456704/613937 of epoch 0, -1.00 ms/it, loss 0.448891, accuracy 78.979 %,  lr = 0.100
+2020-11-28 13:37:59,458   Finished training it 457728/613937 of epoch 0, -1.00 ms/it, loss 0.445755, accuracy 79.349 %,  lr = 0.100
+2020-11-28 13:38:09,844   Finished training it 458752/613937 of epoch 0, -1.00 ms/it, loss 0.450365, accuracy 79.237 %,  lr = 0.100
+2020-11-28 13:38:20,173   Finished training it 459776/613937 of epoch 0, -1.00 ms/it, loss 0.446754, accuracy 79.234 %,  lr = 0.100
+2020-11-28 13:38:26,927   ------------------Growth starts---------------------
+2020-11-28 13:38:31,020   save_model to ./saved_model/model_after_growth2.pickle
+
+2020-11-28 13:38:31,021   Growth ID 2, Growing size from 3X to 4X.....
+
+2020-11-28 13:38:39,642   FC param size = 475.98K, param size = 540.68M,  FLOP = 951.97K
+2020-11-28 13:38:39,642   m_spa=16, ln_bot=[ 13 512 256  64  16], ln_top=[367 512 256   1] 
+
+2020-11-28 13:38:39,643   Reading and loading pre-trained weights............
+2020-11-28 13:38:41,974   zero initialization
+2020-11-28 13:38:41,974   zero initialization
+2020-11-28 13:38:41,975   zero initialization
+2020-11-28 13:38:41,981   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,983   zero initialization
+2020-11-28 13:38:41,984   zero initialization
+2020-11-28 13:38:41,985   zero initialization
+2020-11-28 13:38:41,989   zero initialization
+2020-11-28 13:38:41,989   zero initialization
+2020-11-28 13:38:41,990   zero initialization
+2020-11-28 13:38:41,990   zero initialization
+2020-11-28 13:38:41,993   zero initialization
+2020-11-28 13:38:41,994   zero initialization
+2020-11-28 13:38:41,994   zero initialization
+2020-11-28 13:38:41,994   zero initialization
+2020-11-28 13:38:41,995   zero initialization
+2020-11-28 13:38:41,999   zero initialization
+2020-11-28 13:38:41,999   zero initialization
+2020-11-28 13:38:41,999   zero initialization
+2020-11-28 13:38:41,999   zero initialization
+2020-11-28 13:38:41,999   zero initialization
+2020-11-28 13:38:42,000   zero initialization
+2020-11-28 13:38:42,000   zero initialization
+2020-11-28 13:38:42,000   zero initialization
+2020-11-28 13:38:42,000   zero initialization
+2020-11-28 13:38:42,000   zero initialization
+2020-11-28 13:38:42,001   zero initialization
+2020-11-28 13:38:42,001   zero initialization
+2020-11-28 13:38:42,001   zero initialization
+2020-11-28 13:38:42,001   zero initialization
+2020-11-28 13:38:42,002   zero initialization
+2020-11-28 13:38:42,002   zero initialization
+2020-11-28 13:38:42,002   zero initialization
+2020-11-28 13:38:42,003   zero initialization
+2020-11-28 13:38:42,003   zero initialization
+2020-11-28 13:38:42,003   load_model: Loading ./saved_model/model_after_growth2.pickle....
+2020-11-28 13:38:44,841   save_model to ./saved_model/model_after_growth3.pickle
+
+2020-11-28 13:38:44,841   ------------------Growth finishes---------------------
+2020-11-28 13:38:48,363   Finished training it 460800/613937 of epoch 0, -1.00 ms/it, loss 0.447987, accuracy 79.214 %,  lr = 0.100
+2020-11-28 13:38:58,732   Finished training it 461824/613937 of epoch 0, -1.00 ms/it, loss 0.447866, accuracy 79.309 %,  lr = 0.100
+2020-11-28 13:39:09,086   Finished training it 462848/613937 of epoch 0, -1.00 ms/it, loss 0.446291, accuracy 79.240 %,  lr = 0.100
+2020-11-28 13:39:19,516   Finished training it 463872/613937 of epoch 0, -1.00 ms/it, loss 0.449431, accuracy 78.964 %,  lr = 0.100
+2020-11-28 13:39:29,873   Finished training it 464896/613937 of epoch 0, -1.00 ms/it, loss 0.447674, accuracy 79.207 %,  lr = 0.100
+2020-11-28 13:39:39,423   Finished training it 465920/613937 of epoch 0, -1.00 ms/it, loss 0.453394, accuracy 78.818 %,  lr = 0.100
+2020-11-28 13:39:47,730   Finished training it 466944/613937 of epoch 0, -1.00 ms/it, loss 0.447652, accuracy 79.166 %,  lr = 0.100
+2020-11-28 13:39:56,331   Finished training it 467968/613937 of epoch 0, -1.00 ms/it, loss 0.449748, accuracy 79.071 %,  lr = 0.100
+2020-11-28 13:40:05,240   Finished training it 468992/613937 of epoch 0, -1.00 ms/it, loss 0.447309, accuracy 79.082 %,  lr = 0.100
+2020-11-28 13:40:13,864   Finished training it 470016/613937 of epoch 0, -1.00 ms/it, loss 0.449558, accuracy 79.126 %,  lr = 0.100
+2020-11-28 13:40:23,742   Finished training it 471040/613937 of epoch 0, -1.00 ms/it, loss 0.447650, accuracy 79.193 %,  lr = 0.100
+2020-11-28 13:40:33,740   Finished training it 472064/613937 of epoch 0, -1.00 ms/it, loss 0.450590, accuracy 79.042 %,  lr = 0.100
+2020-11-28 13:40:43,624   Finished training it 473088/613937 of epoch 0, -1.00 ms/it, loss 0.451425, accuracy 78.831 %,  lr = 0.100
+2020-11-28 13:40:53,365   Finished training it 474112/613937 of epoch 0, -1.00 ms/it, loss 0.446298, accuracy 79.340 %,  lr = 0.100
+2020-11-28 13:41:02,966   Finished training it 475136/613937 of epoch 0, -1.00 ms/it, loss 0.447711, accuracy 79.248 %,  lr = 0.100
+2020-11-28 13:41:13,378   Finished training it 476160/613937 of epoch 0, -1.00 ms/it, loss 0.447881, accuracy 79.259 %,  lr = 0.100
+2020-11-28 13:41:23,756   Finished training it 477184/613937 of epoch 0, -1.00 ms/it, loss 0.449529, accuracy 79.146 %,  lr = 0.100
+2020-11-28 13:41:34,080   Finished training it 478208/613937 of epoch 0, -1.00 ms/it, loss 0.453518, accuracy 78.847 %,  lr = 0.100
+2020-11-28 13:41:44,505   Finished training it 479232/613937 of epoch 0, -1.00 ms/it, loss 0.449334, accuracy 79.083 %,  lr = 0.100
+2020-11-28 13:41:52,268   Finished training it 480000/613937 of epoch 0, -1.00 ms/it, loss 0.447771, accuracy 79.089 %,  lr = 0.100
+2020-11-28 13:41:52,268   Testing.....
+2020-11-28 13:43:24,573   Testing at - 480000/613937 of epoch 0, loss 0.453448, accuracy 78.805 %, best 78.805 %
+2020-11-28 13:43:27,196   Finished training it 480256/613937 of epoch 0, -1.00 ms/it, loss 0.446006, accuracy 79.425 %,  lr = 0.100
+2020-11-28 13:43:37,625   Finished training it 481280/613937 of epoch 0, -1.00 ms/it, loss 0.447842, accuracy 79.237 %,  lr = 0.100
+2020-11-28 13:43:47,958   Finished training it 482304/613937 of epoch 0, -1.00 ms/it, loss 0.448520, accuracy 79.144 %,  lr = 0.100
+2020-11-28 13:43:58,275   Finished training it 483328/613937 of epoch 0, -1.00 ms/it, loss 0.443749, accuracy 79.506 %,  lr = 0.100
+2020-11-28 13:44:08,688   Finished training it 484352/613937 of epoch 0, -1.00 ms/it, loss 0.445865, accuracy 79.514 %,  lr = 0.100
+2020-11-28 13:44:19,047   Finished training it 485376/613937 of epoch 0, -1.00 ms/it, loss 0.449713, accuracy 79.097 %,  lr = 0.100
+2020-11-28 13:44:29,408   Finished training it 486400/613937 of epoch 0, -1.00 ms/it, loss 0.448702, accuracy 79.262 %,  lr = 0.100
+2020-11-28 13:44:39,785   Finished training it 487424/613937 of epoch 0, -1.00 ms/it, loss 0.446514, accuracy 79.250 %,  lr = 0.100
+2020-11-28 13:44:50,161   Finished training it 488448/613937 of epoch 0, -1.00 ms/it, loss 0.449040, accuracy 79.144 %,  lr = 0.100
+2020-11-28 13:45:00,527   Finished training it 489472/613937 of epoch 0, -1.00 ms/it, loss 0.447876, accuracy 79.044 %,  lr = 0.100
+2020-11-28 13:45:10,833   Finished training it 490496/613937 of epoch 0, -1.00 ms/it, loss 0.449955, accuracy 79.228 %,  lr = 0.100
+2020-11-28 13:45:21,203   Finished training it 491520/613937 of epoch 0, -1.00 ms/it, loss 0.445664, accuracy 79.475 %,  lr = 0.100
+2020-11-28 13:45:31,596   Finished training it 492544/613937 of epoch 0, -1.00 ms/it, loss 0.448165, accuracy 79.102 %,  lr = 0.100
+2020-11-28 13:45:41,976   Finished training it 493568/613937 of epoch 0, -1.00 ms/it, loss 0.444625, accuracy 79.272 %,  lr = 0.100
+2020-11-28 13:45:52,319   Finished training it 494592/613937 of epoch 0, -1.00 ms/it, loss 0.446966, accuracy 79.163 %,  lr = 0.100
+2020-11-28 13:46:02,719   Finished training it 495616/613937 of epoch 0, -1.00 ms/it, loss 0.445056, accuracy 79.263 %,  lr = 0.100
+2020-11-28 13:46:13,076   Finished training it 496640/613937 of epoch 0, -1.00 ms/it, loss 0.444744, accuracy 79.343 %,  lr = 0.100
+2020-11-28 13:46:23,391   Finished training it 497664/613937 of epoch 0, -1.00 ms/it, loss 0.450087, accuracy 79.102 %,  lr = 0.100
+2020-11-28 13:46:33,789   Finished training it 498688/613937 of epoch 0, -1.00 ms/it, loss 0.449171, accuracy 79.163 %,  lr = 0.100
+2020-11-28 13:46:44,176   Finished training it 499712/613937 of epoch 0, -1.00 ms/it, loss 0.449227, accuracy 79.201 %,  lr = 0.100
+2020-11-28 13:46:54,508   Finished training it 500736/613937 of epoch 0, -1.00 ms/it, loss 0.447705, accuracy 79.118 %,  lr = 0.100
+2020-11-28 13:47:04,810   Finished training it 501760/613937 of epoch 0, -1.00 ms/it, loss 0.448300, accuracy 79.214 %,  lr = 0.100
+2020-11-28 13:47:15,213   Finished training it 502784/613937 of epoch 0, -1.00 ms/it, loss 0.447286, accuracy 79.137 %,  lr = 0.100
+2020-11-28 13:47:25,537   Finished training it 503808/613937 of epoch 0, -1.00 ms/it, loss 0.449840, accuracy 79.128 %,  lr = 0.100
+2020-11-28 13:47:35,899   Finished training it 504832/613937 of epoch 0, -1.00 ms/it, loss 0.445388, accuracy 79.358 %,  lr = 0.100
+2020-11-28 13:47:46,279   Finished training it 505856/613937 of epoch 0, -1.00 ms/it, loss 0.446995, accuracy 79.315 %,  lr = 0.100
+2020-11-28 13:47:56,682   Finished training it 506880/613937 of epoch 0, -1.00 ms/it, loss 0.447635, accuracy 79.167 %,  lr = 0.100
+2020-11-28 13:48:07,085   Finished training it 507904/613937 of epoch 0, -1.00 ms/it, loss 0.444729, accuracy 79.366 %,  lr = 0.100
+2020-11-28 13:48:17,410   Finished training it 508928/613937 of epoch 0, -1.00 ms/it, loss 0.448884, accuracy 79.082 %,  lr = 0.100
+2020-11-28 13:48:27,704   Finished training it 509952/613937 of epoch 0, -1.00 ms/it, loss 0.447089, accuracy 79.225 %,  lr = 0.100
+2020-11-28 13:48:38,061   Finished training it 510976/613937 of epoch 0, -1.00 ms/it, loss 0.449501, accuracy 79.059 %,  lr = 0.100
+2020-11-28 13:48:48,405   Finished training it 512000/613937 of epoch 0, -1.00 ms/it, loss 0.449140, accuracy 79.115 %,  lr = 0.100
+2020-11-28 13:48:58,782   Finished training it 513024/613937 of epoch 0, -1.00 ms/it, loss 0.444221, accuracy 79.356 %,  lr = 0.100
+2020-11-28 13:49:09,180   Finished training it 514048/613937 of epoch 0, -1.00 ms/it, loss 0.450610, accuracy 79.118 %,  lr = 0.100
+2020-11-28 13:49:19,539   Finished training it 515072/613937 of epoch 0, -1.00 ms/it, loss 0.447356, accuracy 79.095 %,  lr = 0.100
+2020-11-28 13:49:29,848   Finished training it 516096/613937 of epoch 0, -1.00 ms/it, loss 0.445233, accuracy 79.230 %,  lr = 0.100
+2020-11-28 13:49:40,244   Finished training it 517120/613937 of epoch 0, -1.00 ms/it, loss 0.446517, accuracy 79.245 %,  lr = 0.100
+2020-11-28 13:49:50,609   Finished training it 518144/613937 of epoch 0, -1.00 ms/it, loss 0.444555, accuracy 79.460 %,  lr = 0.100
+2020-11-28 13:50:00,936   Finished training it 519168/613937 of epoch 0, -1.00 ms/it, loss 0.444430, accuracy 79.356 %,  lr = 0.100
+2020-11-28 13:50:11,248   Finished training it 520192/613937 of epoch 0, -1.00 ms/it, loss 0.448733, accuracy 79.247 %,  lr = 0.100
+2020-11-28 13:50:21,643   Finished training it 521216/613937 of epoch 0, -1.00 ms/it, loss 0.451148, accuracy 79.013 %,  lr = 0.100
+2020-11-28 13:50:31,960   Finished training it 522240/613937 of epoch 0, -1.00 ms/it, loss 0.445872, accuracy 79.286 %,  lr = 0.100
+2020-11-28 13:50:42,180   Finished training it 523264/613937 of epoch 0, -1.00 ms/it, loss 0.445132, accuracy 79.456 %,  lr = 0.100
+2020-11-28 13:50:52,530   Finished training it 524288/613937 of epoch 0, -1.00 ms/it, loss 0.448459, accuracy 79.391 %,  lr = 0.100
+2020-11-28 13:51:02,901   Finished training it 525312/613937 of epoch 0, -1.00 ms/it, loss 0.448603, accuracy 79.060 %,  lr = 0.100
+2020-11-28 13:51:13,223   Finished training it 526336/613937 of epoch 0, -1.00 ms/it, loss 0.448582, accuracy 78.987 %,  lr = 0.100
+2020-11-28 13:51:23,566   Finished training it 527360/613937 of epoch 0, -1.00 ms/it, loss 0.449995, accuracy 78.987 %,  lr = 0.100
+2020-11-28 13:51:33,880   Finished training it 528384/613937 of epoch 0, -1.00 ms/it, loss 0.447384, accuracy 79.108 %,  lr = 0.100
+2020-11-28 13:51:44,239   Finished training it 529408/613937 of epoch 0, -1.00 ms/it, loss 0.445902, accuracy 79.225 %,  lr = 0.100
+2020-11-28 13:51:54,557   Finished training it 530432/613937 of epoch 0, -1.00 ms/it, loss 0.446765, accuracy 79.266 %,  lr = 0.100
+2020-11-28 13:52:04,926   Finished training it 531456/613937 of epoch 0, -1.00 ms/it, loss 0.445619, accuracy 79.236 %,  lr = 0.100
+2020-11-28 13:52:15,326   Finished training it 532480/613937 of epoch 0, -1.00 ms/it, loss 0.446394, accuracy 79.222 %,  lr = 0.100
+2020-11-28 13:52:25,711   Finished training it 533504/613937 of epoch 0, -1.00 ms/it, loss 0.448036, accuracy 79.218 %,  lr = 0.100
+2020-11-28 13:52:36,018   Finished training it 534528/613937 of epoch 0, -1.00 ms/it, loss 0.449820, accuracy 79.132 %,  lr = 0.100
+2020-11-28 13:52:46,466   Finished training it 535552/613937 of epoch 0, -1.00 ms/it, loss 0.447695, accuracy 79.243 %,  lr = 0.100
+2020-11-28 13:52:56,825   Finished training it 536576/613937 of epoch 0, -1.00 ms/it, loss 0.449467, accuracy 79.099 %,  lr = 0.100
+2020-11-28 13:53:07,135   Finished training it 537600/613937 of epoch 0, -1.00 ms/it, loss 0.445827, accuracy 79.459 %,  lr = 0.100
+2020-11-28 13:53:17,524   Finished training it 538624/613937 of epoch 0, -1.00 ms/it, loss 0.445031, accuracy 79.321 %,  lr = 0.100
+2020-11-28 13:53:27,920   Finished training it 539648/613937 of epoch 0, -1.00 ms/it, loss 0.452444, accuracy 78.957 %,  lr = 0.100
+2020-11-28 13:53:38,266   Finished training it 540672/613937 of epoch 0, -1.00 ms/it, loss 0.444270, accuracy 79.419 %,  lr = 0.100
+2020-11-28 13:53:48,568   Finished training it 541696/613937 of epoch 0, -1.00 ms/it, loss 0.444723, accuracy 78.966 %,  lr = 0.100
+2020-11-28 13:53:58,961   Finished training it 542720/613937 of epoch 0, -1.00 ms/it, loss 0.444089, accuracy 79.349 %,  lr = 0.100
+2020-11-28 13:54:09,348   Finished training it 543744/613937 of epoch 0, -1.00 ms/it, loss 0.446633, accuracy 79.298 %,  lr = 0.100
+2020-11-28 13:54:19,687   Finished training it 544768/613937 of epoch 0, -1.00 ms/it, loss 0.448229, accuracy 79.102 %,  lr = 0.100
+2020-11-28 13:54:30,337   Finished training it 545792/613937 of epoch 0, -1.00 ms/it, loss 0.446449, accuracy 79.376 %,  lr = 0.100
+2020-11-28 13:54:41,022   Finished training it 546816/613937 of epoch 0, -1.00 ms/it, loss 0.447765, accuracy 79.091 %,  lr = 0.100
+2020-11-28 13:54:51,662   Finished training it 547840/613937 of epoch 0, -1.00 ms/it, loss 0.448420, accuracy 79.170 %,  lr = 0.100
+2020-11-28 13:55:01,948   Finished training it 548864/613937 of epoch 0, -1.00 ms/it, loss 0.446506, accuracy 79.271 %,  lr = 0.100
+2020-11-28 13:55:10,647   Finished training it 549888/613937 of epoch 0, -1.00 ms/it, loss 0.448092, accuracy 79.280 %,  lr = 0.100
+2020-11-28 13:55:19,325   Finished training it 550912/613937 of epoch 0, -1.00 ms/it, loss 0.448805, accuracy 79.060 %,  lr = 0.100
+2020-11-28 13:55:28,047   Finished training it 551936/613937 of epoch 0, -1.00 ms/it, loss 0.447128, accuracy 79.315 %,  lr = 0.100
+2020-11-28 13:55:36,762   Finished training it 552960/613937 of epoch 0, -1.00 ms/it, loss 0.447157, accuracy 79.362 %,  lr = 0.100
+2020-11-28 13:55:45,483   Finished training it 553984/613937 of epoch 0, -1.00 ms/it, loss 0.445183, accuracy 79.475 %,  lr = 0.100
+2020-11-28 13:55:54,167   Finished training it 555008/613937 of epoch 0, -1.00 ms/it, loss 0.443690, accuracy 79.501 %,  lr = 0.100
+2020-11-28 13:56:02,755   Finished training it 556032/613937 of epoch 0, -1.00 ms/it, loss 0.452021, accuracy 78.932 %,  lr = 0.100
+2020-11-28 13:56:11,509   Finished training it 557056/613937 of epoch 0, -1.00 ms/it, loss 0.448144, accuracy 79.118 %,  lr = 0.100
+2020-11-28 13:56:20,029   Finished training it 558080/613937 of epoch 0, -1.00 ms/it, loss 0.451120, accuracy 78.906 %,  lr = 0.100
+2020-11-28 13:56:28,841   Finished training it 559104/613937 of epoch 0, -1.00 ms/it, loss 0.449300, accuracy 79.027 %,  lr = 0.100
+2020-11-28 13:56:37,899   Finished training it 560000/613937 of epoch 0, -1.00 ms/it, loss 0.447391, accuracy 79.096 %,  lr = 0.100
+2020-11-28 13:56:37,899   Testing.....
+2020-11-28 13:58:09,093   Testing at - 560000/613937 of epoch 0, loss 0.452522, accuracy 78.825 %, best 78.825 %
+2020-11-28 13:58:10,396   Finished training it 560128/613937 of epoch 0, -1.00 ms/it, loss 0.446815, accuracy 79.004 %,  lr = 0.100
+2020-11-28 13:58:20,761   Finished training it 561152/613937 of epoch 0, -1.00 ms/it, loss 0.448365, accuracy 79.065 %,  lr = 0.100
+2020-11-28 13:58:31,086   Finished training it 562176/613937 of epoch 0, -1.00 ms/it, loss 0.445822, accuracy 79.379 %,  lr = 0.100
+2020-11-28 13:58:41,426   Finished training it 563200/613937 of epoch 0, -1.00 ms/it, loss 0.445595, accuracy 79.237 %,  lr = 0.100
+2020-11-28 13:58:51,803   Finished training it 564224/613937 of epoch 0, -1.00 ms/it, loss 0.442064, accuracy 79.866 %,  lr = 0.100
+2020-11-28 13:59:02,163   Finished training it 565248/613937 of epoch 0, -1.00 ms/it, loss 0.448433, accuracy 78.996 %,  lr = 0.100
+2020-11-28 13:59:12,523   Finished training it 566272/613937 of epoch 0, -1.00 ms/it, loss 0.449886, accuracy 79.051 %,  lr = 0.100
+2020-11-28 13:59:22,834   Finished training it 567296/613937 of epoch 0, -1.00 ms/it, loss 0.446250, accuracy 79.195 %,  lr = 0.100
+2020-11-28 13:59:33,264   Finished training it 568320/613937 of epoch 0, -1.00 ms/it, loss 0.446588, accuracy 79.146 %,  lr = 0.100
+2020-11-28 13:59:43,612   Finished training it 569344/613937 of epoch 0, -1.00 ms/it, loss 0.445380, accuracy 79.373 %,  lr = 0.100
+2020-11-28 13:59:53,889   Finished training it 570368/613937 of epoch 0, -1.00 ms/it, loss 0.446573, accuracy 79.204 %,  lr = 0.100
+2020-11-28 14:00:04,255   Finished training it 571392/613937 of epoch 0, -1.00 ms/it, loss 0.445911, accuracy 79.297 %,  lr = 0.100
+2020-11-28 14:00:14,659   Finished training it 572416/613937 of epoch 0, -1.00 ms/it, loss 0.448316, accuracy 79.080 %,  lr = 0.100
+2020-11-28 14:00:24,968   Finished training it 573440/613937 of epoch 0, -1.00 ms/it, loss 0.448930, accuracy 79.120 %,  lr = 0.100
+2020-11-28 14:00:35,267   Finished training it 574464/613937 of epoch 0, -1.00 ms/it, loss 0.446045, accuracy 79.213 %,  lr = 0.100
+2020-11-28 14:00:46,569   Finished training it 575488/613937 of epoch 0, -1.00 ms/it, loss 0.443121, accuracy 79.361 %,  lr = 0.100
+2020-11-28 14:00:56,945   Finished training it 576512/613937 of epoch 0, -1.00 ms/it, loss 0.446280, accuracy 79.427 %,  lr = 0.100
+2020-11-28 14:01:07,262   Finished training it 577536/613937 of epoch 0, -1.00 ms/it, loss 0.445829, accuracy 79.163 %,  lr = 0.100
+2020-11-28 14:01:17,581   Finished training it 578560/613937 of epoch 0, -1.00 ms/it, loss 0.446965, accuracy 79.156 %,  lr = 0.100
+2020-11-28 14:01:28,009   Finished training it 579584/613937 of epoch 0, -1.00 ms/it, loss 0.443747, accuracy 79.454 %,  lr = 0.100
+2020-11-28 14:01:38,367   Finished training it 580608/613937 of epoch 0, -1.00 ms/it, loss 0.447977, accuracy 79.099 %,  lr = 0.100
+2020-11-28 14:01:48,689   Finished training it 581632/613937 of epoch 0, -1.00 ms/it, loss 0.449080, accuracy 79.109 %,  lr = 0.100
+2020-11-28 14:01:59,068   Finished training it 582656/613937 of epoch 0, -1.00 ms/it, loss 0.444859, accuracy 79.459 %,  lr = 0.100
+2020-11-28 14:02:09,474   Finished training it 583680/613937 of epoch 0, -1.00 ms/it, loss 0.445222, accuracy 79.370 %,  lr = 0.100
+2020-11-28 14:02:19,790   Finished training it 584704/613937 of epoch 0, -1.00 ms/it, loss 0.444767, accuracy 79.103 %,  lr = 0.100
+2020-11-28 14:02:30,127   Finished training it 585728/613937 of epoch 0, -1.00 ms/it, loss 0.448972, accuracy 79.178 %,  lr = 0.100
+2020-11-28 14:02:40,543   Finished training it 586752/613937 of epoch 0, -1.00 ms/it, loss 0.447916, accuracy 79.234 %,  lr = 0.100
+2020-11-28 14:02:50,897   Finished training it 587776/613937 of epoch 0, -1.00 ms/it, loss 0.447863, accuracy 79.131 %,  lr = 0.100
+2020-11-28 14:03:01,264   Finished training it 588800/613937 of epoch 0, -1.00 ms/it, loss 0.446597, accuracy 79.033 %,  lr = 0.100
+2020-11-28 14:03:11,642   Finished training it 589824/613937 of epoch 0, -1.00 ms/it, loss 0.445855, accuracy 79.175 %,  lr = 0.100
+2020-11-28 14:03:22,013   Finished training it 590848/613937 of epoch 0, -1.00 ms/it, loss 0.444982, accuracy 79.489 %,  lr = 0.100
+2020-11-28 14:03:32,388   Finished training it 591872/613937 of epoch 0, -1.00 ms/it, loss 0.447776, accuracy 79.131 %,  lr = 0.100
+2020-11-28 14:03:42,787   Finished training it 592896/613937 of epoch 0, -1.00 ms/it, loss 0.446173, accuracy 79.288 %,  lr = 0.100
+2020-11-28 14:03:53,198   Finished training it 593920/613937 of epoch 0, -1.00 ms/it, loss 0.448378, accuracy 79.082 %,  lr = 0.100
+2020-11-28 14:04:03,526   Finished training it 594944/613937 of epoch 0, -1.00 ms/it, loss 0.450067, accuracy 78.951 %,  lr = 0.100
+2020-11-28 14:04:13,870   Finished training it 595968/613937 of epoch 0, -1.00 ms/it, loss 0.449939, accuracy 79.019 %,  lr = 0.100
+2020-11-28 14:04:24,269   Finished training it 596992/613937 of epoch 0, -1.00 ms/it, loss 0.446907, accuracy 79.231 %,  lr = 0.100
+2020-11-28 14:04:34,635   Finished training it 598016/613937 of epoch 0, -1.00 ms/it, loss 0.452115, accuracy 78.851 %,  lr = 0.100
+2020-11-28 14:04:45,001   Finished training it 599040/613937 of epoch 0, -1.00 ms/it, loss 0.447105, accuracy 79.439 %,  lr = 0.100
+2020-11-28 14:04:54,459   Finished training it 600064/613937 of epoch 0, -1.00 ms/it, loss 0.445858, accuracy 79.318 %,  lr = 0.100
+2020-11-28 14:05:03,516   Finished training it 601088/613937 of epoch 0, -1.00 ms/it, loss 0.444388, accuracy 79.454 %,  lr = 0.100
+2020-11-28 14:05:12,971   Finished training it 602112/613937 of epoch 0, -1.00 ms/it, loss 0.447683, accuracy 79.230 %,  lr = 0.100
+2020-11-28 14:05:21,740   Finished training it 603136/613937 of epoch 0, -1.00 ms/it, loss 0.443539, accuracy 79.370 %,  lr = 0.100
+2020-11-28 14:05:30,636   Finished training it 604160/613937 of epoch 0, -1.00 ms/it, loss 0.447387, accuracy 79.224 %,  lr = 0.100
+2020-11-28 14:05:38,979   Finished training it 605184/613937 of epoch 0, -1.00 ms/it, loss 0.448218, accuracy 78.995 %,  lr = 0.100
+2020-11-28 14:05:47,593   Finished training it 606208/613937 of epoch 0, -1.00 ms/it, loss 0.446157, accuracy 79.216 %,  lr = 0.100
+2020-11-28 14:05:57,253   Finished training it 607232/613937 of epoch 0, -1.00 ms/it, loss 0.447952, accuracy 79.121 %,  lr = 0.100
+2020-11-28 14:06:06,252   Finished training it 608256/613937 of epoch 0, -1.00 ms/it, loss 0.447347, accuracy 79.227 %,  lr = 0.100
+2020-11-28 14:06:14,908   Finished training it 609280/613937 of epoch 0, -1.00 ms/it, loss 0.446053, accuracy 79.327 %,  lr = 0.100
+2020-11-28 14:06:23,494   Finished training it 610304/613937 of epoch 0, -1.00 ms/it, loss 0.443146, accuracy 79.301 %,  lr = 0.100
+2020-11-28 14:06:33,756   Finished training it 611328/613937 of epoch 0, -1.00 ms/it, loss 0.446423, accuracy 79.358 %,  lr = 0.100
+2020-11-28 14:06:43,723   Finished training it 612352/613937 of epoch 0, -1.00 ms/it, loss 0.445377, accuracy 79.372 %,  lr = 0.100
+2020-11-28 14:06:52,725   Finished training it 613376/613937 of epoch 0, -1.00 ms/it, loss 0.447987, accuracy 79.359 %,  lr = 0.100
+2020-11-28 14:06:58,372   Finished training it 613937/613937 of epoch 0, -1.00 ms/it, loss 0.446723, accuracy 79.150 %,  lr = 0.100
+2020-11-28 14:06:58,372   Testing.....
+2020-11-28 14:08:30,163   Testing at - 613937/613937 of epoch 0, loss 0.453858, accuracy 78.759 %, best 78.825 %
+2020-11-28 14:08:30,171   time cost 6883.26 second
