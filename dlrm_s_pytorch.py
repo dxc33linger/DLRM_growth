@@ -525,8 +525,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-1024-512-528-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="1024-512-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-512-256-64-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="512-256-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -611,7 +611,7 @@ if __name__ == "__main__":
     ## added
     parser.add_argument("--gpu-id", type= str, default='1')
     parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
-    parser.add_argument("--size-scale", type=int, default="1")
+    parser.add_argument("--size-scale", type=float, default="1.0")
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
     parser.add_argument("--grow-embedding", action='store_true',  default=False)
     parser.add_argument("--growth-stop-horizon", type=float, default=0.5)
@@ -662,9 +662,9 @@ if __name__ == "__main__":
         ### prepare training data ###
         ln_bot = np.fromstring(args.arch_mlp_bot, dtype=int, sep="-")
         if args.grow_embedding:
-            ln_bot = ln_bot *size_scale * growth_scale
+            ln_bot = int(ln_bot * size_scale * growth_scale)
         else:
-            ln_bot[0:-1] = ln_bot[0:-1] * size_scale * growth_scale
+            ln_bot[0:-1] = list(map(int, ln_bot[0:-1] * size_scale * growth_scale))
         # print('ln_bot', ln_bot)
         # input data
         train_data, train_ld, nbatches = trainset
@@ -681,9 +681,9 @@ if __name__ == "__main__":
             )))
         ### parse command line arguments ###
         if args.grow_embedding:
-            m_spa = args.arch_sparse_feature_size * size_scale * growth_scale
+            m_spa = int(args.arch_sparse_feature_size * size_scale * growth_scale)
         else:
-            m_spa = args.arch_sparse_feature_size * size_scale
+            m_spa = int(args.arch_sparse_feature_size)
         m_den_out = ln_bot[ln_bot.size - 1]
         # print('m_den_out', m_den_out)
         if args.arch_interaction_op == "dot":
@@ -704,7 +704,7 @@ if __name__ == "__main__":
             )
         arch_mlp_top_adjusted = str(num_int) + "-" + args.arch_mlp_top
         ln_top = np.fromstring(arch_mlp_top_adjusted, dtype=int, sep="-")
-        ln_top[1:-1] = ln_top[1:-1] * size_scale * growth_scale
+        ln_top[1:-1] = list(map(int, ln_top[1:-1] * size_scale * growth_scale))
 
         # sanity check: feature sizes and mlp dimensions must match
         if m_den != ln_bot[0]:
@@ -869,7 +869,7 @@ if __name__ == "__main__":
         # logging.info('save_model to ' + path + '\n')
 
         # logging.info('dlrm: {}'.format(dlrm))
-        logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2*1000))
+        logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2))
         logging.info('m_spa={}, ln_bot={}, ln_top={} \n'.format(m_spa, ln_bot, ln_top))
 
         if not args.inference_only:
@@ -1289,7 +1289,7 @@ if __name__ == "__main__":
                     gL = total_loss / total_samp
                     total_loss = 0
                     gL_log.append(gL)
-                    gA_log.append(gA*100)
+                    gA_log.append(gA)
 
                     str_run_type = "inference" if args.inference_only else "training"
                     logging.info(
@@ -1616,39 +1616,49 @@ if __name__ == "__main__":
         prediction = sess.run(output_names=["pred"], input_feed=dict_inputs)
         print("prediction", prediction)
         '''
-    scio.savemat('./log/savemat_loss{:.4f}_accu{:.4f}.mat'.format(gL, gA),
+    scio.savemat('./log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA),
                  {'gL_log': gL_log, 'gA_log': gA_log, 'args.growth_step': args.growth_step,
                   'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
                   'm_spa':m_spa, 'ln_emb':ln_emb, 'num_fea':num_fea, 'num_int':num_int,
-                  'ln_bot':ln_bot, 'ln_top':ln_top, 'nbatches':nbatches, 'dimension_info_dict': dimension_info_dict})
+                  'ln_bot':ln_bot, 'ln_top':ln_top, 'nbatches':nbatches, 'dimension_info_dict': dimension_info_dict,
+                  'args.arch_mlp_bot': args.arch_mlp_bot, 'args.arch_mlp_top': args.arch_mlp_top})
 
-    num_iteration = len(gL_log)
     assert len(gL_log) == len(gA_log)
     title_font = {'size': '8', 'color': 'black', 'weight': 'normal'}  # Bottom vertical alignment for more space
     axis_font = {'size': '10'}
 
-    plt.figure(figsize=(10, 5.5))
-    plt.subplot(121)
+    plt.figure(figsize=(16, 6.5))
+    plt.subplot(131)
     # plt.figure()
-    x = np.linspace(0, num_iteration, num=num_iteration)
-    plt.xlim(0, num_iteration)
+    x = np.linspace(0, len(gL_log), num=len(gL_log))
+    plt.xlim(0, len(gL_log))
     plt.xlabel("Num of Iterations")
     plt.ylabel('BCELoss')
-    plt.plot(x, gL_log, 'b-o', alpha=1.0, label='Loss - FC growth')
+    plt.plot(x, gL_log, 'r-o', alpha=1.0, label='Loss - FC growth')
     plt.yticks(np.arange(0.4, 0.6, step=0.1))
-    plt.xticks(np.arange(0, num_iteration + 1, step=20), rotation=45)
-    plt.legend(loc='best')
+    plt.xticks(np.arange(0, len(gL_log) + 1, step=20), rotation=45)
+    plt.legend(loc='lower right')
     plt.title('Kaggle Display Advertising Challenge Dataset')
 
-    plt.subplot(122)
-    x = np.linspace(0, num_iteration, num=num_iteration)
-    plt.xlim(0, num_iteration)
+    plt.subplot(132)
+    x = np.linspace(0, len(gA_log), num=len(gA_log))
+    plt.xlim(0, len(gA_log))
     plt.xlabel("Num of Iterations")
     plt.ylabel('Accuracy %')
     plt.plot(x, gA_log, 'g-', alpha=1.0, label='Accuracy - FC growth')
     plt.yticks(np.arange(70, 80, step=1))
-    plt.xticks(np.arange(0, num_iteration + 1, step=20), rotation=45)
-    plt.legend(loc='best')
+    plt.xticks(np.arange(0, len(gA_log) + 1, step=20), rotation=45)
+    plt.legend(loc='lower left')
     plt.title('Kaggle Display Advertising Challenge Dataset')
-    plt.savefig('./log/learning_curve_loss{:.4f}_Accu{:.4f}.png'.format(gL_log[-1], gA_log[-1]))
+
+    plt.subplot(133)
+    x = np.linspace(0, len(param_FC_log), num=len(param_FC_log))
+    plt.xlim(0, len(param_FC_log))
+    plt.xlabel("Num of Iterations")
+    plt.ylabel('Num of parameters (K)')
+    plt.plot(x, param_FC_log, 'b-', alpha=1.0, label='FC param - FC growth')
+    plt.xticks(np.arange(0, len(param_FC_log) + 1, step=20 * 2048), rotation=45)
+    plt.legend(loc='lower right')
+    plt.title('Kaggle Display Advertising Challenge Dataset')
+    plt.savefig('./log/learning_curve_bot{}_step{}_loss{:.5f}_Accu{:.5f}.png'.format(args.arch_mlp_bot, args.growth_step,  gL_log[-1], gA_log[-1]))
 
