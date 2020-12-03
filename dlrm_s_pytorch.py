@@ -1,4 +1,3 @@
-
 # Copyright (c) Facebook, Inc. and its affiliates.
 #
 # This source code is licensed under the MIT license found in the
@@ -71,6 +70,7 @@ import math
 # The onnx import causes deprecation warnings every time workers
 # are spawned during testing. So, we filter out those warnings.
 import warnings
+
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore", category=DeprecationWarning)
 import onnx
@@ -90,6 +90,7 @@ import sklearn.metrics
 import scipy.io as scio
 import matplotlib.pyplot as plt
 import matplotlib
+
 matplotlib.use('AGG')
 
 # from torchviz import make_dot
@@ -98,7 +99,9 @@ matplotlib.use('AGG')
 
 from torch.optim.lr_scheduler import _LRScheduler
 import utils
+
 exc = getattr(builtins, "IOError", "FileNotFoundError")
+
 
 class LRPolicyScheduler(_LRScheduler):
     def __init__(self, optimizer, num_warmup_steps, decay_start_step, num_decay_steps):
@@ -135,6 +138,7 @@ class LRPolicyScheduler(_LRScheduler):
                 # do not adjust
                 lr = self.base_lrs
         return lr
+
 
 ### define dlrm in PyTorch ###
 class DLRM_Net(nn.Module):
@@ -185,7 +189,7 @@ class DLRM_Net(nn.Module):
             # construct embedding operator
             if self.qr_flag and n > self.qr_threshold:
                 EE = QREmbeddingBag(n, m, self.qr_collisions,
-                    operation=self.qr_operation, mode="sum", sparse=True)
+                                    operation=self.qr_operation, mode="sum", sparse=True)
             elif self.md_flag:
                 base = max(m)
                 _m = m[i] if n > self.md_threshold else base
@@ -216,33 +220,33 @@ class DLRM_Net(nn.Module):
         return emb_l
 
     def __init__(
-        self,
-        m_spa=None,
-        ln_emb=None,
-        ln_bot=None,
-        ln_top=None,
-        arch_interaction_op=None,
-        arch_interaction_itself=False,
-        sigmoid_bot=-1,
-        sigmoid_top=-1,
-        sync_dense_params=True,
-        loss_threshold=0.0,
-        ndevices=-1,
-        qr_flag=False,
-        qr_operation="mult",
-        qr_collisions=0,
-        qr_threshold=200,
-        md_flag=False,
-        md_threshold=200,
+            self,
+            m_spa=None,
+            ln_emb=None,
+            ln_bot=None,
+            ln_top=None,
+            arch_interaction_op=None,
+            arch_interaction_itself=False,
+            sigmoid_bot=-1,
+            sigmoid_top=-1,
+            sync_dense_params=True,
+            loss_threshold=0.0,
+            ndevices=-1,
+            qr_flag=False,
+            qr_operation="mult",
+            qr_collisions=0,
+            qr_threshold=200,
+            md_flag=False,
+            md_threshold=200,
     ):
         super(DLRM_Net, self).__init__()
 
         if (
-            (m_spa is not None)
-            and (ln_emb is not None)
-            and (ln_bot is not None)
-            and (ln_top is not None)
-            and (arch_interaction_op is not None)
+                (m_spa is not None)
+                and (ln_emb is not None)
+                and (ln_bot is not None)
+                and (ln_top is not None)
+                and (arch_interaction_op is not None)
         ):
 
             # save arguments
@@ -557,7 +561,7 @@ if __name__ == "__main__":
     parser.add_argument("--data-set", type=str, default="kaggle")  # or terabyte
     parser.add_argument("--data-trace-file", type=str, default="./input/dist_emb_j.log")
     parser.add_argument("--raw-data-file", type=str, default="./input/train.txt")
-    parser.add_argument("--processed-data-file", type=str, default="./input/kaggleAdDisplayChallenge_processed.npz") #
+    parser.add_argument("--processed-data-file", type=str, default="./input/kaggleAdDisplayChallenge_processed.npz")  #
     parser.add_argument("--data-randomize", type=str, default="total")  # or day or none
     parser.add_argument("--data-trace-enable-padding", type=bool, default=False)
     parser.add_argument("--max-ind-range", type=int, default=-1)
@@ -609,18 +613,18 @@ if __name__ == "__main__":
     parser.add_argument("--lr-decay-start-step", type=int, default=0)
     parser.add_argument("--lr-num-decay-steps", type=int, default=0)
     ## added
-    parser.add_argument("--gpu-id", type= str, default='1')
+    parser.add_argument("--gpu-id", type=str, default='1')
     parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
-    parser.add_argument("--size-scale", type=float, default="1.0")
+    parser.add_argument("--initial-capacity", type=float, default="1.0")
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
-    parser.add_argument("--grow-embedding", action='store_true',  default=False)
+    parser.add_argument("--grow-embedding", action='store_true', default=False)
     parser.add_argument("--growth-stop-horizon", type=float, default=0.5)
+    parser.add_argument("--growth-ratio", type=float, default=1.0)
 
-    parser.add_argument("--debuglog", type= str, default='')
-
+    parser.add_argument("--debuglog", type=str, default='')
 
     args = parser.parse_args()
-    os.environ["CUDA_VISIBLE_DEVICES"]= args.gpu_id
+    os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu_id
     log_format = '%(asctime)s   %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M%p')
@@ -628,8 +632,10 @@ if __name__ == "__main__":
         fh = logging.FileHandler(os.path.join(
             './log/log_dlrm_s_pytorch_bot{}_top{}_Baseline.txt'.format(args.arch_mlp_bot, args.arch_mlp_top)))
     else:
-        fh = logging.FileHandler(os.path.join('./log/log_dlrm_s_pytorch_bot{}_top{}_growthStep{}_Horizon{}_GrowEmb{}_Init{}_{}.txt'.format(args.arch_mlp_bot, args.arch_mlp_top, args.growth_step,
-                                                                                                                                        args.growth_stop_horizon, args.grow_embedding, args.initialization, args.debuglog)))
+        fh = logging.FileHandler(os.path.join(
+            './log/log_dlrm_s_pytorch_bot{}_top{}_GStep{}_Gratio{:.2f}_Sscale{:.2f}_Horizon{:.2f}_GrowEmb{}_Init{}_{}.txt'.format(
+                args.arch_mlp_bot, args.arch_mlp_top, args.growth_step, args.growth_ratio, args.initial_capacity,
+                args.growth_stop_horizon, args.grow_embedding, args.initialization, args.debuglog)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
     logging.info("******************************************************")
@@ -640,7 +646,7 @@ if __name__ == "__main__":
 
 
     def prepare_dataset():
-        if  args.data_generation == "dataset":
+        if args.data_generation == "dataset":
             train_data, train_ld, test_data, test_ld = \
                 dp.make_criteo_data_and_loaders(args)
             nbatches = args.num_batches if args.num_batches > 0 else len(train_ld)
@@ -657,14 +663,16 @@ if __name__ == "__main__":
         return trainset, testset
 
 
-    #===============
-    def instance_dimension(size_scale, growth_scale, trainset):
+    # ===============
+    def instance_dimension(size_scale, trainset):
+        if size_scale > 1.0:
+            size_scale = 1.0
         ### prepare training data ###
         ln_bot = np.fromstring(args.arch_mlp_bot, dtype=int, sep="-")
         if args.grow_embedding:
-            ln_bot = int(ln_bot * size_scale * growth_scale)
+            ln_bot = int(ln_bot * size_scale)
         else:
-            ln_bot[0:-1] = list(map(int, ln_bot[0:-1] * size_scale * growth_scale))
+            ln_bot[0:-1] = list(map(int, ln_bot[0:-1] * size_scale))
         # print('ln_bot', ln_bot)
         # input data
         train_data, train_ld, nbatches = trainset
@@ -681,7 +689,7 @@ if __name__ == "__main__":
             )))
         ### parse command line arguments ###
         if args.grow_embedding:
-            m_spa = int(args.arch_sparse_feature_size * size_scale * growth_scale)
+            m_spa = int(args.arch_sparse_feature_size * size_scale)
         else:
             m_spa = int(args.arch_sparse_feature_size)
         m_den_out = ln_bot[ln_bot.size - 1]
@@ -704,7 +712,7 @@ if __name__ == "__main__":
             )
         arch_mlp_top_adjusted = str(num_int) + "-" + args.arch_mlp_top
         ln_top = np.fromstring(arch_mlp_top_adjusted, dtype=int, sep="-")
-        ln_top[1:-1] = list(map(int, ln_top[1:-1] * size_scale * growth_scale))
+        ln_top[1:-1] = list(map(int, ln_top[1:-1] * size_scale))
 
         # sanity check: feature sizes and mlp dimensions must match
         if m_den != ln_bot[0]:
@@ -808,17 +816,18 @@ if __name__ == "__main__":
                 print(T.detach().cpu().numpy())
         ndevices = min(ngpus, args.mini_batch_size, num_fea - 1) if use_gpu else -1
 
-        dimension_info = (m_spa, ln_emb,  ln_bot,  ln_top, num_fea, num_int)
+        dimension_info = (m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int)
 
-        return  dimension_info, ndevices
-        #===============
+        return dimension_info, ndevices
+        # ===============
+
 
     ### construct the neural network specified above ###
     # WARNING: to obtain exactly the same initialization for
     # the weights we need to start from the same random seed.
     # np.random.seed(args.numpy_rand_seed)
     ### structure
-    def instance_dlrm(m_spa, ln_emb,  ln_bot,  ln_top, ndevices):
+    def instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices):
         dlrm = DLRM_Net(
             m_spa,
             ln_emb,
@@ -857,7 +866,6 @@ if __name__ == "__main__":
             if dlrm.ndevices > 1:
                 dlrm.emb_l = dlrm.create_emb(m_spa, ln_emb)
 
-
         param = utils.count_parameters_in_MB(dlrm)
         param_FC = utils.count_parameters_in_FC(dlrm)
         if not os.path.isdir('./saved_model'):
@@ -869,7 +877,8 @@ if __name__ == "__main__":
         # logging.info('save_model to ' + path + '\n')
 
         # logging.info('dlrm: {}'.format(dlrm))
-        logging.info('FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC*2))
+        logging.info(
+            'FC param size = {:.2f}K, param size = {:.2f}M,  FLOP = {:.2f}K'.format(param_FC, param, param_FC * 2))
         logging.info('m_spa={}, ln_bot={}, ln_top={} \n'.format(m_spa, ln_bot, ln_top))
 
         if not args.inference_only:
@@ -879,7 +888,9 @@ if __name__ == "__main__":
                                              args.lr_num_decay_steps)
 
         return dlrm, optimizer, lr_scheduler
-    #---------------------
+
+
+    # ---------------------
 
     def save_trained_model(current_net, growth_id):
         if not os.path.isdir('./saved_model'):
@@ -895,8 +906,8 @@ if __name__ == "__main__":
         global growth_id
         logging.info('growth_id', growth_id)
         logging.info('output', output, output.shape)
-        output = output * growth_id / (growth_id+1)
-        logging.info('output',output, output.shape)
+        output = output * growth_id / (growth_id + 1)
+        logging.info('output', output, output.shape)
 
 
     def load_trained_model(to_net, growth_id):
@@ -914,80 +925,121 @@ if __name__ == "__main__":
                 if re.search('emb', layer_name):
                     if args.grow_embedding:
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                        param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                        random_initialization = torch.empty(param_old.shape[0],
+                                                            param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
+                                                                                                                     std).type(
+                            torch.cuda.FloatTensor)
+                        param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                     else:
                         param_new = Variable(param_old.clone(), requires_grad=True)
                 elif layer_name == 'bot_l.6.weight':
                     logging.info('bot_l.6.weight', param_old, param_old.shape)
                     if args.grow_embedding:
-                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
-                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(),
+                                                                                          requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0],
+                                                            param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
+                                                                                                                     std).type(
+                            torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization,
+                                                                                        requires_grad=True)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0],
+                                                            param_new.shape[1]).clone().normal_(0, std).type(
+                            torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
                     else:
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        random_initialization = torch.empty(param_old.shape[0],
+                                                            param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
+                                                                                                                     std).type(
+                            torch.cuda.FloatTensor)
                         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                     logging.info('bot_l.6.weight', param_new, param_new.shape)
 
 
                 elif layer_name == 'bot_l.0.weight':
-                    param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
-                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]: , :] = Variable(random_initialization, requires_grad = True)
+                    param_new[0:param_old.shape[0], :] = Variable(param_old.clone(), requires_grad=True)
+                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0],
+                                                        param_old.shape[1]).clone().normal_(0, std).type(
+                        torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
                 elif layer_name == 'bot_l.0.bias':
                     param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad = True)
+                    random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0,
+                                                                                                                 std).type(
+                        torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad=True)
                 elif layer_name == 'top_l.4.weight':
                     param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                    random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                    param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad = True)
+                    random_initialization = torch.empty(param_old.shape[0],
+                                                        param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
+                                                                                                                 std).type(
+                        torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                 elif layer_name == 'top_l.4.bias':
                     param_new = Variable(param_old.clone(), requires_grad=True)
                 else:
-                    if len(param_old.shape) == 2: # weight
-                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
-                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
-                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                    if len(param_old.shape) == 2:  # weight
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(),
+                                                                                          requires_grad=True)
+                        random_initialization = torch.empty(param_old.shape[0],
+                                                            param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
+                                                                                                                     std).type(
+                            torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(random_initialization,
+                                                                                        requires_grad=True)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0],
+                                                            param_new.shape[1]).clone().normal_(0, std).type(
+                            torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:, :] = Variable(random_initialization, requires_grad=True)
                     else:
                         param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                        random_initialization = torch.empty(param_new.shape[0] - param_old.shape[0]).clone().normal_(0,
+                                                                                                                     std).type(
+                            torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:] = Variable(random_initialization, requires_grad=True)
             elif args.initialization == 'zero':
                 logging.info('zero initialization')
-                if re.search( 'emb', layer_name):
-                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(),  requires_grad = True)
-                    zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
-                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad = True)
+                if re.search('emb', layer_name):
+                    param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
+                    zero_initialization = torch.zeros(param_old.shape[0],
+                                                      param_new.shape[1] - param_old.shape[1]).clone().type(
+                        torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad=True)
                 elif layer_name == 'bot_l.0.weight':
-                    param_new[0:param_old.shape[0], :] =  Variable(param_old.clone(),  requires_grad = True)
-                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0], param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]: , :] = Variable(zero_initialization, requires_grad = True)
+                    param_new[0:param_old.shape[0], :] = Variable(param_old.clone(), requires_grad=True)
+                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0],
+                                                      param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]:, :] = Variable(zero_initialization, requires_grad=True)
                 elif layer_name == 'bot_l.0.bias':
                     param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(torch.cuda.FloatTensor)
-                    param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad = True)
+                    zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(
+                        torch.cuda.FloatTensor)
+                    param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad=True)
                 elif layer_name == 'top_l.4.weight':
                     param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                    zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
-                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad = True)
+                    zero_initialization = torch.zeros(param_old.shape[0],
+                                                      param_new.shape[1] - param_old.shape[1]).clone().type(
+                        torch.cuda.FloatTensor)
+                    param_new[:, param_old.shape[1]:] = Variable(zero_initialization, requires_grad=True)
                 elif layer_name == 'top_l.4.bias':
                     param_new = Variable(param_old.clone(), requires_grad=True)
                 else:
-                    if len(param_old.shape) == 2: # weight
-                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        zero_initialization = torch.zeros(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().type(torch.cuda.FloatTensor)
-                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(zero_initialization, requires_grad=True)
-                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0], param_new.shape[1]).clone().type(torch.cuda.FloatTensor)
+                    if len(param_old.shape) == 2:  # weight
+                        param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(),
+                                                                                          requires_grad=True)
+                        zero_initialization = torch.zeros(param_old.shape[0],
+                                                          param_new.shape[1] - param_old.shape[1]).clone().type(
+                            torch.cuda.FloatTensor)
+                        param_new[0:param_old.shape[0], param_old.shape[1]:] = Variable(zero_initialization,
+                                                                                        requires_grad=True)
+                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0],
+                                                          param_new.shape[1]).clone().type(torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:, :] = Variable(zero_initialization, requires_grad=True)
                     else:
                         param_new[0:param_old.shape[0]] = Variable(param_old.clone(), requires_grad=True)
-                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(torch.cuda.FloatTensor)
+                        zero_initialization = torch.zeros(param_new.shape[0] - param_old.shape[0]).clone().type(
+                            torch.cuda.FloatTensor)
                         param_new[param_old.shape[0]:] = Variable(zero_initialization, requires_grad=True)
 
             new_param_dict[layer_name] = Variable(param_new.type(torch.cuda.FloatTensor), requires_grad=True)
@@ -1007,6 +1059,7 @@ if __name__ == "__main__":
             handle6.remove()
 
         logging.info('load_model: Loading {}....'.format(path))
+
 
     def dlrm_wrap(dlrm_net, X, lS_o, lS_i, use_gpu, device):
         if use_gpu:  # .cuda()
@@ -1062,6 +1115,7 @@ if __name__ == "__main__":
             # print(loss_fn_)
             return loss_sc_.mean()
 
+
     ### some basic setup ###
     np.random.seed(args.numpy_rand_seed)
     np.set_printoptions(precision=args.print_precision)
@@ -1087,16 +1141,14 @@ if __name__ == "__main__":
         print("Using CPU...")
 
     trainset, testset = prepare_dataset()
-    train_data, train_ld, nbatches  = trainset
+    train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
-    dimension_info, ndevices   = instance_dimension(size_scale= args.size_scale, growth_scale = 1, trainset = trainset)
+    dimension_info, ndevices = instance_dimension(size_scale=args.initial_capacity, trainset=trainset)
     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
 
     dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-
-
 
     # training or inference
     best_gA_test = 0
@@ -1175,7 +1227,7 @@ if __name__ == "__main__":
     gA_log = []
     param_log = []
     param_FC_log = []
-    dimension_info_dict  = {}
+    dimension_info_dict = {}
     with torch.autograd.profiler.profile(args.enable_profiling, use_gpu) as prof:
         while k < args.nepochs:
             if k < skip_upto_epoch:
@@ -1273,9 +1325,9 @@ if __name__ == "__main__":
 
                 should_print = ((j + 1) % args.print_freq == 0) or (j + 1 == nbatches)
                 should_test = (
-                    (args.test_freq > 0)
-                    and (args.data_generation == "dataset")
-                    and (((j + 1) % args.test_freq == 0) or (j + 1 == nbatches))
+                        (args.test_freq > 0)
+                        and (args.data_generation == "dataset")
+                        and (((j + 1) % args.test_freq == 0) or (j + 1 == nbatches))
                 )
 
                 # print time, loss and accuracy
@@ -1294,7 +1346,7 @@ if __name__ == "__main__":
                     str_run_type = "inference" if args.inference_only else "training"
                     logging.info(
                         "Finished {} it {}/{} of epoch {}, {:.2f} ms/it, ".format(
-                            str_run_type, j+1, nbatches, k, gT
+                            str_run_type, j + 1, nbatches, k, gT
                         )
                         + "loss {:.6f}, accuracy {:3.3f} %,  lr = {:.3f}".format(gL, gA * 100, lr_scheduler.get_lr()[0])
                     )
@@ -1334,8 +1386,8 @@ if __name__ == "__main__":
 
                         # forward pass
                         Z_test = dlrm_wrap(dlrm,
-                            X_test, lS_o_test, lS_i_test, use_gpu, device
-                        )
+                                           X_test, lS_o_test, lS_i_test, use_gpu, device
+                                           )
                         if args.mlperf_logging:
                             S_test = Z_test.detach().cpu().numpy()  # numpy array
                             T_test = T_test.detach().cpu().numpy()  # numpy array
@@ -1362,25 +1414,25 @@ if __name__ == "__main__":
                         targets = np.concatenate(targets, axis=0)
 
                         metrics = {
-                            'loss' : sklearn.metrics.log_loss,
-                            'recall' : lambda y_true, y_score:
+                            'loss': sklearn.metrics.log_loss,
+                            'recall': lambda y_true, y_score:
                             sklearn.metrics.recall_score(
                                 y_true=y_true,
                                 y_pred=np.round(y_score)
                             ),
-                            'precision' : lambda y_true, y_score:
+                            'precision': lambda y_true, y_score:
                             sklearn.metrics.precision_score(
                                 y_true=y_true,
                                 y_pred=np.round(y_score)
                             ),
-                            'f1' : lambda y_true, y_score:
+                            'f1': lambda y_true, y_score:
                             sklearn.metrics.f1_score(
                                 y_true=y_true,
                                 y_pred=np.round(y_score)
                             ),
-                            'ap' : sklearn.metrics.average_precision_score,
-                            'roc_auc' : sklearn.metrics.roc_auc_score,
-                            'accuracy' : lambda y_true, y_score:
+                            'ap': sklearn.metrics.average_precision_score,
+                            'roc_auc': sklearn.metrics.roc_auc_score,
+                            'accuracy': lambda y_true, y_score:
                             sklearn.metrics.accuracy_score(
                                 y_true=y_true,
                                 y_pred=np.round(y_score)
@@ -1474,43 +1526,40 @@ if __name__ == "__main__":
                     # .format(time_wrap(use_gpu) - accum_test_time_begin))
 
                     if (args.mlperf_logging
-                        and (args.mlperf_acc_threshold > 0)
-                        and (best_gA_test > args.mlperf_acc_threshold)):
+                            and (args.mlperf_acc_threshold > 0)
+                            and (best_gA_test > args.mlperf_acc_threshold)):
                         logging.info("MLPerf testing accuracy threshold "
-                              + str(args.mlperf_acc_threshold)
-                              + " reached, stop training")
+                                     + str(args.mlperf_acc_threshold)
+                                     + " reached, stop training")
                         break
 
                     if (args.mlperf_logging
-                        and (args.mlperf_auc_threshold > 0)
-                        and (best_auc_test > args.mlperf_auc_threshold)):
+                            and (args.mlperf_auc_threshold > 0)
+                            and (best_auc_test > args.mlperf_auc_threshold)):
                         logging.info("MLPerf testing auc threshold "
-                              + str(args.mlperf_auc_threshold)
-                              + " reached, stop training")
+                                     + str(args.mlperf_auc_threshold)
+                                     + " reached, stop training")
                         break
 
                 # ### locate growth
-                if args.growth_step != 0 and\
-                        j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id+1) and \
+                if args.growth_step != 0 and \
+                        j == math.floor(nbatches * args.growth_stop_horizon / args.growth_step) * (growth_id + 1) and \
                         j < math.ceil(nbatches * args.growth_stop_horizon) and \
                         growth_id < args.growth_step - 1:
                     logging.info('------------------Growth starts---------------------')
                     save_trained_model(dlrm, growth_id)
-                    logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, growth_id+1, growth_id+2))
-                    dimension_info, ndevices = instance_dimension(size_scale=args.size_scale, growth_scale = growth_id+2, trainset = trainset)
+                    logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, args.growth_ratio * growth_id + args.initial_capacity, args.growth_ratio * (growth_id+1) + args.initial_capacity))
+                    dimension_info, ndevices = instance_dimension(size_scale = args.growth_ratio * (growth_id+1) + args.initial_capacity, trainset=trainset)
                     dimension_info_dict['Growth{}'.format(growth_id)] = dimension_info
                     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-                    dlrm, optimizer, lr_scheduler  = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                    dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                     load_trained_model(dlrm, growth_id)
                     growth_id += 1
-                    save_trained_model(dlrm, growth_id)
-
                     logging.info('------------------Growth finishes---------------------')
                 torch.cuda.empty_cache()
             k += 1  # nepochs
 
             #### train ends
-
 
     time_end = time.time()
     logging.info('time cost {:.2f} second'.format(time_end - time_start))
@@ -1571,16 +1620,18 @@ if __name__ == "__main__":
                 print("ii.shape", ii.shape)
 
         # name inputs and outputs
-        o_inputs = ["offsets"] if torch.is_tensor(lS_o_onnx) else ["offsets_"+str(i) for i in range(len(lS_o_onnx))]
-        i_inputs = ["indices"] if torch.is_tensor(lS_i_onnx) else ["indices_"+str(i) for i in range(len(lS_i_onnx))]
+        o_inputs = ["offsets"] if torch.is_tensor(lS_o_onnx) else ["offsets_" + str(i) for i in range(len(lS_o_onnx))]
+        i_inputs = ["indices"] if torch.is_tensor(lS_i_onnx) else ["indices_" + str(i) for i in range(len(lS_i_onnx))]
         all_inputs = ["dense_x"] + o_inputs + i_inputs
-        #debug prints
+        # debug prints
         print("inputs", all_inputs)
 
         # create dynamic_axis dictionaries
-        do_inputs = [{'offsets': {1 : 'batch_size' }}] if torch.is_tensor(lS_o_onnx) else [{"offsets_"+str(i) :{0 : 'batch_size'}} for i in range(len(lS_o_onnx))]
-        di_inputs = [{'indices': {1 : 'batch_size' }}] if torch.is_tensor(lS_i_onnx) else [{"indices_"+str(i) :{0 : 'batch_size'}} for i in range(len(lS_i_onnx))]
-        dynamic_axes = {'dense_x' : {0 : 'batch_size'}, 'pred' : {0 : 'batch_size'}}
+        do_inputs = [{'offsets': {1: 'batch_size'}}] if torch.is_tensor(lS_o_onnx) else [
+            {"offsets_" + str(i): {0: 'batch_size'}} for i in range(len(lS_o_onnx))]
+        di_inputs = [{'indices': {1: 'batch_size'}}] if torch.is_tensor(lS_i_onnx) else [
+            {"indices_" + str(i): {0: 'batch_size'}} for i in range(len(lS_i_onnx))]
+        dynamic_axes = {'dense_x': {0: 'batch_size'}, 'pred': {0: 'batch_size'}}
         for do in do_inputs:
             dynamic_axes.update(do)
         for di in di_inputs:
@@ -1590,7 +1641,8 @@ if __name__ == "__main__":
 
         # export model
         torch.onnx.export(
-            dlrm, (X_onnx, lS_o_onnx, lS_i_onnx), dlrm_pytorch_onnx_file, verbose=True, use_external_data_format=True, opset_version=11, input_names=all_inputs, output_names=["pred"], dynamic_axes=dynamic_axes
+            dlrm, (X_onnx, lS_o_onnx, lS_i_onnx), dlrm_pytorch_onnx_file, verbose=True, use_external_data_format=True,
+            opset_version=11, input_names=all_inputs, output_names=["pred"], dynamic_axes=dynamic_axes
         )
         # recover the model back
         dlrm_pytorch_onnx = onnx.load(dlrm_pytorch_onnx_file)
@@ -1616,12 +1668,13 @@ if __name__ == "__main__":
         prediction = sess.run(output_names=["pred"], input_feed=dict_inputs)
         print("prediction", prediction)
         '''
-    scio.savemat('./log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA),
-                 {'gL_log': gL_log, 'gA_log': gA_log, 'args.growth_step': args.growth_step,
-                  'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
-                  'm_spa':m_spa, 'ln_emb':ln_emb, 'num_fea':num_fea, 'num_int':num_int,
-                  'ln_bot':ln_bot, 'ln_top':ln_top, 'nbatches':nbatches, 'dimension_info_dict': dimension_info_dict,
-                  'args.arch_mlp_bot': args.arch_mlp_bot, 'args.arch_mlp_top': args.arch_mlp_top})
+    scio.savemat(
+        './log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA),
+        {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'args.growth_step': args.growth_step,
+         'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
+         'm_spa': m_spa, 'ln_emb': ln_emb, 'num_fea': num_fea, 'num_int': num_int,
+         'ln_bot': ln_bot, 'ln_top': ln_top, 'nbatches': nbatches, 'dimension_info_dict': dimension_info_dict,
+         'args.arch_mlp_bot': args.arch_mlp_bot, 'args.arch_mlp_top': args.arch_mlp_top})
 
     assert len(gL_log) == len(gA_log)
     title_font = {'size': '8', 'color': 'black', 'weight': 'normal'}  # Bottom vertical alignment for more space
@@ -1660,5 +1713,6 @@ if __name__ == "__main__":
     plt.xticks(np.arange(0, len(param_FC_log) + 1, step=20 * 2048), rotation=45)
     plt.legend(loc='lower right')
     plt.title('Kaggle Display Advertising Challenge Dataset')
-    plt.savefig('./log/learning_curve_bot{}_step{}_loss{:.5f}_Accu{:.5f}.png'.format(args.arch_mlp_bot, args.growth_step,  gL_log[-1], gA_log[-1]))
-
+    plt.savefig(
+        './log/learning_curve_bot{}_step{}_TestAcc{:.5f}.png'.format(args.arch_mlp_bot, args.growth_step,
+                                                                 gA_test))
