@@ -519,7 +519,7 @@ if __name__ == "__main__":
     import re
     from collections import OrderedDict
     from torch.autograd import Variable
-
+    import collections
     ### parse arguments ###
     parser = argparse.ArgumentParser(
         description="Train Deep Learning Recommendation Model (DLRM)"
@@ -915,7 +915,7 @@ if __name__ == "__main__":
         logging.info('output', output, output.shape)
 
 
-    def load_trained_model(to_net, growth_id):
+    def load_trained_model_stacking(to_net, growth_id):
         file_name = "model_after_growth{}.pickle".format(growth_id)
         path = os.path.join('./saved_model', file_name)
         logging.info('Reading and loading pre-trained weights............')
@@ -1066,11 +1066,11 @@ if __name__ == "__main__":
         logging.info('load_model: Loading {}....'.format(path))
 
     def generate_mask(to_net, prune_ratio):
-        gradient_list = {}
-        weight_list = {}
-        taylor_list = {}
-        threshold_list = {}
-        all_mask = {}
+        gradient_list = collections.defaultdict()
+        weight_list = collections.defaultdict()
+        taylor_list = collections.defaultdict()
+        threshold_list = collections.defaultdict()
+        all_mask = collections.defaultdict()
 
         logging.info("Generating mask, prune_ratio={}, according to Taylor ........\n".format(prune_ratio))
 
@@ -1100,14 +1100,13 @@ if __name__ == "__main__":
                     bias_name = name[0:8] + 'bias'
                     all_mask[bias_name] = mask_bias
 
-        return all_mask
+        return all_mask, arg_max_rev.tolist()
 
 
-    def prune(to_net, mask_dict):
+    def structured_masking(to_net, mask_dict):
         logging.info('Pruning....')
         # for key, val in mask_dict.items():
         #     print(key, mask_dict[key])
-        # print(mask_dict.keys())
         param_processed = OrderedDict([(k, None) for k in to_net.state_dict().keys()])
         for layer_name, param_current in to_net.state_dict().items():
             param_current = param_current.type(torch.cuda.FloatTensor)
@@ -1116,8 +1115,6 @@ if __name__ == "__main__":
             else:
                 param_processed[layer_name] = param_current
         to_net.load_state_dict(param_processed)
-        utils.count_parameters_in_FC(to_net, pruned_flag = True)
-
         return to_net
 
 
@@ -1204,7 +1201,7 @@ if __name__ == "__main__":
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
     logging.info('mask_ratio={}, mask_delay={}'.format(mask_ratio, mask_delay))
-    dimension_info, ndevices = instance_dimension(size_scale=mask_ratio[0], trainset=trainset)
+    dimension_info, ndevices = instance_dimension(size_scale=(1-mask_ratio[0]), trainset=trainset)
     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
@@ -1288,8 +1285,9 @@ if __name__ == "__main__":
     gA_log = []
     param_log = []
     param_FC_log = []
-    dimension_info_dict = {}
+    dimension_info_dict = collections.defaultdict()
     stage_id = 0
+    pruned_flag = False
     with torch.autograd.profiler.profile(args.enable_profiling, use_gpu) as prof:
         while k < args.nepochs:
             if k < skip_upto_epoch:
@@ -1307,6 +1305,55 @@ if __name__ == "__main__":
                 start_idx = 0
 
             for j, (X, lS_o, lS_i, T) in enumerate(train_ld, start_idx):
+                # ### locate growth
+                if len(mask_delay) != 0:
+                    for idx, delay in enumerate(mask_delay):
+                        if j == math.floor(nbatches * delay):
+                            logging.info('------------------DSD starts---------------------')
+                            logging.info(
+                                'DSD stage {}, mask_ratio={} mask_delay ={}\n'.format(stage_id, mask_ratio[idx], delay))
+                            if idx == 0:
+                                dimension_info, ndevices = instance_dimension(size_scale=(1.0 - mask_ratio[0]),
+                                                                              trainset=trainset)
+                                dimension_info_dict['DSD{}'.format(idx)] = dimension_info
+                                m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
+                                dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                                pruned_flag = False
+                            elif mask_ratio[idx - 1] > mask_ratio[idx]:
+                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                                dlrm = structured_masking(dlrm, all_mask)
+                                pruned_flag = True
+                                #
+                                # for layer_name, check_param in dlrm.state_dict().items():
+                                #     print(check_param)
+
+                            elif mask_ratio[idx - 1] < mask_ratio[idx]:
+                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                                dlrm = structured_masking(dlrm, all_mask)
+                                if mask_ratio[idx] != 1.0:
+                                    pruned_flag = True
+
+                                # for layer_name, check_param in dlrm.state_dict().items():
+                                #     print(check_param)
+                            elif mask_ratio[idx - 1] == mask_ratio[idx]:
+                                if mask_ratio[idx] != 1.0:
+                                    pruned_flag = True
+                                break
+                            else:
+                                sys.exit("Does not match any condition")
+
+                            # save_trained_model(dlrm, growth_id)
+                            # logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, args.growth_ratio * growth_id + mask_ratio[0], args.growth_ratio * (growth_id+1) + mask_ratio[0]))
+                            # dimension_info, ndevices = instance_dimension(size_scale = args.growth_ratio * (growth_id+1) + mask_ratio[0], trainset=trainset)
+                            # dimension_info_dict['Growth{}'.format(growth_id)] = dimension_info
+                            # m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
+                            # dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                            # load_trained_model_stacking(dlrm, growth_id)
+                            stage_id += 1
+                            param_FC = utils.count_parameters_in_FC(to_net, pruned_flag=True)
+                            logging.info('FC param size = {:.2f}K,  FLOP = {:.2f}K'.format(param_FC, param_FC * 2))
+                            logging.info('------------------DSD finishes---------------------')
+
                 if j == 0 and args.save_onnx:
                     (X_onnx, lS_o_onnx, lS_i_onnx) = (X, lS_o, lS_i)
                 if j < skip_upto_batch:
@@ -1333,10 +1380,7 @@ if __name__ == "__main__":
                 print([S_i.detach().cpu().numpy().tolist() for S_i in lS_i])
                 print(T.detach().cpu().numpy())
                 '''
-                param = utils.count_parameters_in_MB(dlrm)
-                param_FC = utils.count_parameters_in_FC(dlrm)
-                param_log.append(param)
-                param_FC_log.append(param_FC)
+
                 # forward pass
                 Z = dlrm_wrap(dlrm, X, lS_o, lS_i, use_gpu, device)
                 # loss
@@ -1385,7 +1429,13 @@ if __name__ == "__main__":
                         and (args.data_generation == "dataset")
                         and (((j + 1) % args.test_freq == 0) or (j + 1 == nbatches))
                 )
+                if pruned_flag:
+                    dlrm = structured_masking(dlrm, all_mask)
 
+                param = utils.count_parameters_in_MB(dlrm)
+                param_FC = utils.count_parameters_in_FC(dlrm, pruned_flag)
+                param_log.append(param)
+                param_FC_log.append(param_FC)
                 # print time, loss and accuracy
                 if should_print or should_test:
                     gT = 1000.0 * total_time / total_iter if args.print_time else -1
@@ -1499,7 +1549,7 @@ if __name__ == "__main__":
 
                         # print("Compute time for validation metric : ", end="")
                         # first_it = True
-                        validation_results = {}
+                        validation_results = collections.defaultdict()
                         for metric_name, metric_function in metrics.items():
                             # if first_it:
                             #     first_it = False
@@ -1597,40 +1647,6 @@ if __name__ == "__main__":
                                      + " reached, stop training")
                         break
 
-                # ### locate growth
-                if len(mask_delay) != 0:
-                    for idx, delay in enumerate(mask_delay):
-                        if j == math.floor(nbatches * delay):
-                            logging.info('------------------DSD starts---------------------')
-                            logging.info('DSD stage {}, mask_ratio={} mask_delay ={}\n'.format(stage_id, mask_ratio[idx], delay))
-                            if idx == 0 :
-                                dimension_info, ndevices = instance_dimension(size_scale = mask_ratio[0], trainset=trainset)
-                                dimension_info_dict['DSD{}'.format(idx)] = dimension_info
-                                m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-                                dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-                            elif mask_ratio[idx-1] > mask_ratio[idx]:
-                                all_mask = generate_mask(dlrm, mask_ratio[idx])
-                                dlrm = prune(dlrm, all_mask)
-
-                                for layer_name, check_param in dlrm.state_dict().items():
-                                    print(check_param)
-
-                            elif mask_ratio[idx-1] < mask_ratio[idx]:
-                                grow
-                            elif mask_ratio[idx-1] == mask_ratio[idx]:
-                                break
-                            else:
-                                sys.exit("Does not match any condition")
-
-                            # save_trained_model(dlrm, growth_id)
-                            # logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, args.growth_ratio * growth_id + mask_ratio[0], args.growth_ratio * (growth_id+1) + mask_ratio[0]))
-                            # dimension_info, ndevices = instance_dimension(size_scale = args.growth_ratio * (growth_id+1) + mask_ratio[0], trainset=trainset)
-                            # dimension_info_dict['Growth{}'.format(growth_id)] = dimension_info
-                            # m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-                            # dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
-                            # load_trained_model(dlrm, growth_id)
-                            stage_id += 1
-                            logging.info('------------------DSD finishes---------------------')
 
 
                 torch.cuda.empty_cache()
@@ -1728,7 +1744,7 @@ if __name__ == "__main__":
         '''
         # run model using onnxruntime
         import onnxruntime as rt
-        dict_inputs = {}
+        dict_inputs = collections.defaultdict()
         dict_inputs["dense_x"] = X_onnx.numpy().astype(np.float32)
         if torch.is_tensor(lS_o_onnx):
             dict_inputs["offsets"] = lS_o_onnx.numpy().astype(np.int64)
@@ -1748,8 +1764,8 @@ if __name__ == "__main__":
     flops = sum(param_FC_log) * 2 / 1000000
 
     scio.savemat(
-        './log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA, flops),
-        {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'args.growth_step': args.growth_step,
+        './log/savemat_bot{}_maskDelay{}_maskRatio{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, mask_delay, mask_ratio, gL, gA, flops),
+        {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'masking_delay':args.masking_delay, 'masking_ratio':args.masking_ratio,
          'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
          'm_spa': m_spa, 'ln_emb': ln_emb, 'num_fea': num_fea, 'num_int': num_int,
          'ln_bot': ln_bot, 'ln_top': ln_top, 'nbatches': nbatches, 'dimension_info_dict': dimension_info_dict,

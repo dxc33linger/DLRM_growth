@@ -10,12 +10,28 @@ import logging
 def count_parameters_in_MB(model):
     return np.sum(np.prod(v.size()) for name, v in model.named_parameters() if "auxiliary" not in name) / 1e6
 
-def count_parameters_in_FC(model):
+def count_parameters_in_FC(model, pruned_flag = False):
     param = 0
-    for name, v in model.named_parameters():
-        if "emb_l" not in name:
-            param += np.sum(np.prod(v.size())) / 1e6
-            logging.info('layer name {} param {:.3f}MB'.format(name, np.prod(v.size()) / 1e6))
+    if not pruned_flag:
+        for name, v in model.named_parameters():
+            if "emb_l" not in name:
+                # print(v.size())
+                param += np.sum(np.prod(v.size())) / 1e3
+    else:
+        pre_input_shape = None
+        for name, v in model.named_parameters():
+            if "emb_l" not in name and len(v.shape) == 2:
+                binary = np.where(v.detach().cpu().numpy() == 0.0, 0.0, 1.0)
+                shape_0 = np.sum(binary, axis = 0)[0]
+                shape_1 = binary.shape[1]
+                if pre_input_shape:
+                    # print(shape_0, pre_input_shape)
+                    param += shape_0 * pre_input_shape / 1e3
+                else:
+                    # print(shape_0, shape_1)
+
+                    param += shape_0 * shape_1 / 1e3
+                pre_input_shape = shape_0
 
     return param
 

@@ -614,8 +614,8 @@ if __name__ == "__main__":
     parser.add_argument("--lr-num-decay-steps", type=int, default=0)
     ## added
     parser.add_argument("--gpu-id", type=str, default='1')
-    parser.add_argument("--growth-step", type=int, default="0")  # 0 means baseline
-    parser.add_argument("--initial-capacity", type=float, default="1.0")
+    parser.add_argument("--growth-step", type=int, default=0)  # 0 means baseline
+    parser.add_argument("--initial-capacity", type=float, default=1.0)
     parser.add_argument("--initialization", type=str, default="zero")  # random or zero
     parser.add_argument("--grow-embedding", action='store_true', default=False)
     parser.add_argument("--growth-stop-horizon", type=float, default=0.5)
@@ -628,13 +628,16 @@ if __name__ == "__main__":
     log_format = '%(asctime)s   %(message)s'
     logging.basicConfig(stream=sys.stdout, level=logging.INFO,
                         format=log_format, datefmt='%m/%d %I:%M%p')
-    if args.growth_step == 0:
+
+    if not os.path.exists('./log'):
+        os.mkdir('./log')
+    if args.growth_step == 0 or args.initial_capacity == 1.0:
         fh = logging.FileHandler(os.path.join(
             './log/log_dlrm_s_pytorch_bot{}_top{}_Baseline.txt'.format(args.arch_mlp_bot, args.arch_mlp_top)))
     else:
         fh = logging.FileHandler(os.path.join(
-            './log/log_dlrm_s_pytorch_bot{}_top{}_GStep{}_Gratio{:.2f}_Sscale{:.2f}_Horizon{:.2f}_GrowEmb{}_Init{}_{}.txt'.format(
-                args.arch_mlp_bot, args.arch_mlp_top, args.growth_step, args.growth_ratio, args.initial_capacity,
+            './log/log_dlrm_s_pytorch_bot{}_top{}_GStep{}_InitCap{:.2f}_Gratio{:.2f}_Horizon{:.2f}_GrowEmb{}_Init{}_{}.txt'.format(
+                args.arch_mlp_bot, args.arch_mlp_top, args.growth_step, args.initial_capacity, args.growth_ratio,
                 args.growth_stop_horizon, args.grow_embedding, args.initialization, args.debuglog)))
     fh.setFormatter(logging.Formatter(log_format))
     logging.getLogger().addHandler(fh)
@@ -1668,8 +1671,10 @@ if __name__ == "__main__":
         prediction = sess.run(output_names=["pred"], input_feed=dict_inputs)
         print("prediction", prediction)
         '''
+    flops = sum(param_FC_log) * 2 / 1000000
+
     scio.savemat(
-        './log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA),
+        './log/savemat_bot{}_step{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, args.growth_step, gL, gA, flops),
         {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'args.growth_step': args.growth_step,
          'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
          'm_spa': m_spa, 'ln_emb': ln_emb, 'num_fea': num_fea, 'num_int': num_int,
@@ -1699,7 +1704,7 @@ if __name__ == "__main__":
     plt.xlabel("Num of Iterations")
     plt.ylabel('Accuracy %')
     plt.plot(x, gA_log, 'g-', alpha=1.0, label='Accuracy - FC growth')
-    plt.yticks(np.arange(70, 80, step=1))
+    plt.yticks(np.arange(0.70, 0.80, step=1))
     plt.xticks(np.arange(0, len(gA_log) + 1, step=20), rotation=45)
     plt.legend(loc='lower left')
     plt.title('Kaggle Display Advertising Challenge Dataset')
