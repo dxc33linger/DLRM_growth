@@ -529,8 +529,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-512-256-64-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="512-256-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-16-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -938,7 +938,7 @@ if __name__ == "__main__":
                     else:
                         param_new = Variable(param_old.clone(), requires_grad=True)
                 elif layer_name == 'bot_l.6.weight':
-                    logging.info('bot_l.6.weight', param_old, param_old.shape)
+                    # logging.info('bot_l.6.weight', param_old, param_old.shape)
                     if args.grow_embedding:
                         param_new[0:param_old.shape[0], 0: param_old.shape[1]] = Variable(param_old.clone(),
                                                                                           requires_grad=True)
@@ -959,7 +959,7 @@ if __name__ == "__main__":
                                                                                                                      std).type(
                             torch.cuda.FloatTensor)
                         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
-                    logging.info('bot_l.6.weight', param_new, param_new.shape)
+                    # logging.info('bot_l.6.weight', param_new, param_new.shape)
 
 
                 elif layer_name == 'bot_l.0.weight':
@@ -1075,7 +1075,6 @@ if __name__ == "__main__":
         logging.info("Generating mask, prune_ratio={}, according to Taylor ........\n".format(prune_ratio))
 
         for name, param in to_net.named_parameters():
-            # print(name, param.shape)
             if 'bot_l' in name or 'top_l' in name:
                 if 'weight' in name:
                     weight_copy = param.data.abs().clone().cpu().numpy()
@@ -1083,6 +1082,8 @@ if __name__ == "__main__":
                     taylor = np.sum(weight_copy * grad_copy, axis=1)
                     num_keep = int(weight_copy.shape[0] * (1.0 - prune_ratio))
                     if num_keep <= 0: # the output layer
+                        continue
+                    if name == 'bot_l.6.weight':
                         continue
                     arg_max = np.argsort(taylor)  # Returns the indices that would sort an array. small->big
                     arg_max_rev = arg_max[::-1][:num_keep]  # big->small
@@ -1104,9 +1105,7 @@ if __name__ == "__main__":
 
 
     def structured_masking(to_net, mask_dict):
-        logging.info('Pruning....')
-        # for key, val in mask_dict.items():
-        #     print(key, mask_dict[key])
+        # logging.info('Pruning....')
         param_processed = OrderedDict([(k, None) for k in to_net.state_dict().keys()])
         for layer_name, param_current in to_net.state_dict().items():
             param_current = param_current.type(torch.cuda.FloatTensor)
@@ -1115,7 +1114,6 @@ if __name__ == "__main__":
             else:
                 param_processed[layer_name] = param_current
         to_net.load_state_dict(param_processed)
-        return to_net
 
 
     def dlrm_wrap(dlrm_net, X, lS_o, lS_i, use_gpu, device):
@@ -1309,9 +1307,8 @@ if __name__ == "__main__":
                 if len(mask_delay) != 0:
                     for idx, delay in enumerate(mask_delay):
                         if j == math.floor(nbatches * delay):
-                            logging.info('------------------DSD starts---------------------')
                             logging.info(
-                                'DSD stage {}, mask_ratio={} mask_delay ={}\n'.format(stage_id, mask_ratio[idx], delay))
+                                'DSD stage {}, mask_ratio={} mask_delay ={} ------------------DSD starts---------------------\n'.format(stage_id, mask_ratio[idx], delay))
                             if idx == 0:
                                 dimension_info, ndevices = instance_dimension(size_scale=(1.0 - mask_ratio[0]),
                                                                               trainset=trainset)
@@ -1319,28 +1316,31 @@ if __name__ == "__main__":
                                 m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
                                 dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                                 pruned_flag = False
-                            elif mask_ratio[idx - 1] > mask_ratio[idx]:
-                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
-                                dlrm = structured_masking(dlrm, all_mask)
-                                pruned_flag = True
-                                #
-                                # for layer_name, check_param in dlrm.state_dict().items():
-                                #     print(check_param)
 
-                            elif mask_ratio[idx - 1] < mask_ratio[idx]:
+                            elif mask_ratio[idx - 1] > mask_ratio[idx]: # Growth
                                 all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
-                                dlrm = structured_masking(dlrm, all_mask)
-                                if mask_ratio[idx] != 1.0:
+                                structured_masking(dlrm, all_mask)
+                                if mask_ratio[idx] != 0.0:
                                     pruned_flag = True
+                                else:
+                                    pruned_flag = False
 
-                                # for layer_name, check_param in dlrm.state_dict().items():
-                                #     print(check_param)
+
+                            elif mask_ratio[idx - 1] < mask_ratio[idx]: #pruning
+                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                                if mask_ratio[idx] != 0.0:
+                                    pruned_flag = True
+                                else:
+                                    pruned_flag = False
+
                             elif mask_ratio[idx - 1] == mask_ratio[idx]:
-                                if mask_ratio[idx] != 1.0:
+                                if mask_ratio[idx] != 0.0:
                                     pruned_flag = True
-                                break
+                                else:
+                                    pruned_flag = False
                             else:
                                 sys.exit("Does not match any condition")
+
 
                             # save_trained_model(dlrm, growth_id)
                             # logging.info('Growth ID {}, Growing size from {}X to {}X.....\n'.format(growth_id, args.growth_ratio * growth_id + mask_ratio[0], args.growth_ratio * (growth_id+1) + mask_ratio[0]))
@@ -1350,9 +1350,11 @@ if __name__ == "__main__":
                             # dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
                             # load_trained_model_stacking(dlrm, growth_id)
                             stage_id += 1
-                            param_FC = utils.count_parameters_in_FC(to_net, pruned_flag=True)
+                            param_FC = utils.count_parameters_in_FC(dlrm, pruned_flag=True)
                             logging.info('FC param size = {:.2f}K,  FLOP = {:.2f}K'.format(param_FC, param_FC * 2))
-                            logging.info('------------------DSD finishes---------------------')
+                            logging.info(
+                                'DSD stage {}, mask_ratio={} mask_delay ={} ------------------DSD finishes---------------------\n'.format(
+                                    stage_id, mask_ratio[idx], delay))
 
                 if j == 0 and args.save_onnx:
                     (X_onnx, lS_o_onnx, lS_i_onnx) = (X, lS_o, lS_i)
@@ -1430,7 +1432,7 @@ if __name__ == "__main__":
                         and (((j + 1) % args.test_freq == 0) or (j + 1 == nbatches))
                 )
                 if pruned_flag:
-                    dlrm = structured_masking(dlrm, all_mask)
+                    structured_masking(dlrm, all_mask)
 
                 param = utils.count_parameters_in_MB(dlrm)
                 param_FC = utils.count_parameters_in_FC(dlrm, pruned_flag)
@@ -1454,7 +1456,7 @@ if __name__ == "__main__":
                         "Finished {} it {}/{} of epoch {}, {:.2f} ms/it, ".format(
                             str_run_type, j + 1, nbatches, k, gT
                         )
-                        + "loss {:.6f}, accuracy {:3.3f} %,  lr = {:.3f}".format(gL, gA * 100, lr_scheduler.get_lr()[0])
+                        + "loss {:.6f}, accuracy {:3.3f} %,  lr = {:.3f},  pruned_flag = {}".format(gL, gA * 100, lr_scheduler.get_lr()[0], pruned_flag)
                     )
                     # Uncomment the line below to print out the total time with overhead
                     # print("Accumulated time so far: {}" \
@@ -1764,7 +1766,7 @@ if __name__ == "__main__":
     flops = sum(param_FC_log) * 2 / 1000000
 
     scio.savemat(
-        './log/savemat_bot{}_maskDelay{}_maskRatio{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, mask_delay, mask_ratio, gL, gA, flops),
+        './log/savemat_bot{}_maskDelay{}_maskRatio{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, mask_delay, mask_ratio, gL, sum(gA_log[-10:])/10.0, flops),
         {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'masking_delay':args.masking_delay, 'masking_ratio':args.masking_ratio,
          'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
          'm_spa': m_spa, 'ln_emb': ln_emb, 'num_fea': num_fea, 'num_int': num_int,
@@ -1794,7 +1796,7 @@ if __name__ == "__main__":
     plt.xlabel("Num of Iterations")
     plt.ylabel('Accuracy %')
     plt.plot(x, gA_log, 'g-', alpha=1.0, label='Accuracy - FC growth')
-    plt.yticks(np.arange(0.70, 0.80, step=1))
+    plt.yticks(np.arange(0.75, 0.80, step=0.01))
     plt.xticks(np.arange(0, len(gA_log) + 1, step=20), rotation=45)
     plt.legend(loc='lower left')
     plt.title('Kaggle Display Advertising Challenge Dataset')
@@ -1809,5 +1811,4 @@ if __name__ == "__main__":
     plt.legend(loc='lower right')
     plt.title('Kaggle Display Advertising Challenge Dataset')
     plt.savefig(
-        './log/learning_curve_bot{}_step{}_TestAcc{:.5f}.png'.format(args.arch_mlp_bot, args.growth_step,
-                                                                 gA_test))
+        './log/learning_curve_bot{}_maskDelay{}_maskRatio{}_TestAcc{:.5f}.png'.format(args.arch_mlp_bot, mask_delay, mask_ratio, gA_test))

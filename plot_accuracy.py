@@ -8,8 +8,8 @@ import pandas as pd
 import matplotlib
 matplotlib.use('AGG')
 
-file_name ='savemat_bot13-512-256-64-16_step2_loss0.4462_accu0.7924'
-content = scio.loadmat('./log/' + file_name + '.mat')
+filename ='savemat_bot13-512-256-64-16_step2_loss0.44641_accu0.79155'
+content = scio.loadmat('./log/' + filename + '.mat')
 gL_log = content['gL_log'][0]
 gA_log = content['gA_log'][0]
 ln_bot = content['ln_bot'][0]
@@ -17,6 +17,7 @@ ln_top = content['ln_top'][0]
 
 
 baseline = 'savemat_bot13-512-256-64-16_step0_loss0.4463_accu0.7919'
+assert filename != baseline, 'Check the provided .mat file. It should not the the same as baseline!'
 baseline = scio.loadmat('./log/' + baseline + '.mat')
 gL_log_base = baseline['gL_log'][0]
 gA_log_base = baseline['gA_log'][0]
@@ -59,7 +60,7 @@ plt.xlabel("Num of Iterations")
 plt.ylabel('Accuracy %')
 plt.plot(x, gA_log, 'g-', alpha=1.0, label='Accuracy - FC growth')
 plt.plot(x, gA_log_base, 'k--', alpha=1.0, label='Accuracy - Baseline')
-plt.yticks(np.arange(70, 80, step=1))
+plt.yticks(np.arange(0.70, 0.80, step=1))
 plt.xticks(np.arange(0, len(gA_log) + 1, step=20), rotation=45)
 plt.legend(loc='lower left')
 plt.title('Kaggle Display Advertising Challenge Dataset')

@@ -24,15 +24,11 @@ def count_parameters_in_FC(model, pruned_flag = False):
                 binary = np.where(v.detach().cpu().numpy() == 0.0, 0.0, 1.0)
                 shape_0 = np.sum(binary, axis = 0)[0]
                 shape_1 = binary.shape[1]
-                if pre_input_shape:
-                    # print(shape_0, pre_input_shape)
-                    param += shape_0 * pre_input_shape / 1e3
-                else:
-                    # print(shape_0, shape_1)
-
+                if name == "bot_l.0.weight" or name == "top_l.0.weight":
                     param += shape_0 * shape_1 / 1e3
+                else:
+                    param += shape_0 * pre_input_shape / 1e3
                 pre_input_shape = shape_0
-
     return param
 
 
