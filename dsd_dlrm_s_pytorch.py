@@ -520,6 +520,7 @@ if __name__ == "__main__":
     from collections import OrderedDict
     from torch.autograd import Variable
     import collections
+    import random
     ### parse arguments ###
     parser = argparse.ArgumentParser(
         description="Train Deep Learning Recommendation Model (DLRM)"
@@ -529,8 +530,8 @@ if __name__ == "__main__":
         "--arch-embedding-size", type=dash_separated_ints, default="4-3-2")
 
     parser.add_argument("--arch-sparse-feature-size", type=int, default=16)
-    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-64-32-16-16")
-    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="64-32-1")
+    parser.add_argument("--arch-mlp-bot", type=dash_separated_ints, default="13-128-16")
+    parser.add_argument("--arch-mlp-top", type=dash_separated_ints, default="128-1")
 
     parser.add_argument(
         "--arch-interaction-op", type=str, choices=['dot', 'cat'], default="dot")
@@ -1065,6 +1066,36 @@ if __name__ == "__main__":
 
         logging.info('load_model: Loading {}....'.format(path))
 
+
+    def random_mask(to_net, prune_ratio):
+        all_mask = collections.defaultdict()
+        logging.info("Randomly generating mask, prune_ratio={}........\n".format(prune_ratio))
+
+        for name, param in to_net.named_parameters():
+            if 'bot_l' in name or 'top_l' in name:
+                if 'weight' in name:
+                    weight_copy = param.data.abs().clone().cpu().numpy()
+
+                    num_keep = int(weight_copy.shape[0] * (1.0 - prune_ratio))
+                    if num_keep <= 0:  # the output layer
+                        continue
+                    if name == 'bot_l.6.weight':
+                        continue
+                    index_list = random.choices(np.arange(weight_copy.shape[0]).tolist(),k = num_keep)
+                    # print(weight_copy.shape)
+                    # print('index_list',index_list)
+                    mask = np.zeros(weight_copy.shape)
+                    mask[index_list, :] = 1.0  # 1 means keep weights
+                    # print(mask, mask.shape)
+                    all_mask[name] = mask
+                    mask_bias = mask[:, 0]
+                    bias_name = name[0:8] + 'bias'
+                    all_mask[bias_name] = mask_bias
+
+        return all_mask, index_list
+
+
+
     def generate_mask(to_net, prune_ratio):
         gradient_list = collections.defaultdict()
         weight_list = collections.defaultdict()
@@ -1083,7 +1114,8 @@ if __name__ == "__main__":
                     num_keep = int(weight_copy.shape[0] * (1.0 - prune_ratio))
                     if num_keep <= 0: # the output layer
                         continue
-                    if name == 'bot_l.6.weight':
+                    if param.shape[0] == args.arch_sparse_feature_size:
+                        logging.info('skipping ' + name)
                         continue
                     arg_max = np.argsort(taylor)  # Returns the indices that would sort an array. small->big
                     arg_max_rev = arg_max[::-1][:num_keep]  # big->small
@@ -1104,16 +1136,25 @@ if __name__ == "__main__":
         return all_mask, arg_max_rev.tolist()
 
 
-    def structured_masking(to_net, mask_dict):
+    def structured_masking_initalization(to_net, mask_dict, initialization = None):
         # logging.info('Pruning....')
         param_processed = OrderedDict([(k, None) for k in to_net.state_dict().keys()])
         for layer_name, param_current in to_net.state_dict().items():
             param_current = param_current.type(torch.cuda.FloatTensor)
             if layer_name in mask_dict.keys():
-                param_processed[layer_name] = Variable(torch.mul(param_current, torch.from_numpy(mask_dict[layer_name]).type(torch.cuda.FloatTensor)), requires_grad=True)
+                masked_weight = Variable(torch.mul(param_current, torch.from_numpy(mask_dict[layer_name]).type(torch.cuda.FloatTensor)), requires_grad=True)
+                if initialization and param_current.shape[0] != 1:
+                    logging.info('Random initialization according to Normal Distribution...........')
+                    std = param_current.std().item()
+                    random_initialization = torch.empty(param_current.shape).clone().normal_(0, std).type(torch.cuda.FloatTensor)
+                    param_processed[layer_name] = torch.where(masked_weight == 0.0, random_initialization, masked_weight)
+                else:
+                    logging.info('Zero initialization..............')
+                    param_processed[layer_name] = masked_weight
             else:
                 param_processed[layer_name] = param_current
         to_net.load_state_dict(param_processed)
+
 
 
     def dlrm_wrap(dlrm_net, X, lS_o, lS_i, use_gpu, device):
@@ -1199,7 +1240,7 @@ if __name__ == "__main__":
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
     logging.info('mask_ratio={}, mask_delay={}'.format(mask_ratio, mask_delay))
-    dimension_info, ndevices = instance_dimension(size_scale=(1-mask_ratio[0]), trainset=trainset)
+    dimension_info, ndevices = instance_dimension(size_scale = 1.0, trainset=trainset)
     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
     train_data, train_ld, nbatches = trainset
     test_data, test_ld, nbatches_test = testset
@@ -1310,36 +1351,55 @@ if __name__ == "__main__":
                             logging.info(
                                 'DSD stage {}, mask_ratio={} mask_delay ={} ------------------DSD starts---------------------\n'.format(stage_id, mask_ratio[idx], delay))
                             if idx == 0:
-                                dimension_info, ndevices = instance_dimension(size_scale=(1.0 - mask_ratio[0]),
-                                                                              trainset=trainset)
-                                dimension_info_dict['DSD{}'.format(idx)] = dimension_info
-                                m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
-                                dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                                all_mask, mask_idx = random_mask(dlrm, mask_ratio[idx])
+                                structured_masking_initalization(dlrm, all_mask, None)
+
+                            elif mask_ratio[idx - 1] > mask_ratio[idx]: # Growth:
+                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                                structured_masking_initalization(dlrm, all_mask, True)
+
+                            elif mask_ratio[idx] == 0.0 and mask_ratio[idx - 1] < mask_ratio[idx]: #pruning
+                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                                structured_masking_initalization(dlrm, all_mask, None)
+                            else:
+                                sys.exit('DO NOT HAVE THIS GROWTH OPTION')
+                                
+                            if mask_ratio[idx] != 0.0:
+                                pruned_flag = True
+                            else:
                                 pruned_flag = False
 
-                            elif mask_ratio[idx - 1] > mask_ratio[idx]: # Growth
-                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
-                                structured_masking(dlrm, all_mask)
-                                if mask_ratio[idx] != 0.0:
-                                    pruned_flag = True
-                                else:
-                                    pruned_flag = False
-
-
-                            elif mask_ratio[idx - 1] < mask_ratio[idx]: #pruning
-                                all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
-                                if mask_ratio[idx] != 0.0:
-                                    pruned_flag = True
-                                else:
-                                    pruned_flag = False
-
-                            elif mask_ratio[idx - 1] == mask_ratio[idx]:
-                                if mask_ratio[idx] != 0.0:
-                                    pruned_flag = True
-                                else:
-                                    pruned_flag = False
-                            else:
-                                sys.exit("Does not match any condition")
+                            # if idx == 0:
+                            #     dimension_info, ndevices = instance_dimension(size_scale=(1.0 - mask_ratio[0]),
+                            #                                                   trainset=trainset)
+                            #     dimension_info_dict['DSD{}'.format(idx)] = dimension_info
+                            #     m_spa, ln_emb, ln_bot, ln_top, num_fea, num_int = dimension_info
+                            #     dlrm, optimizer, lr_scheduler = instance_dlrm(m_spa, ln_emb, ln_bot, ln_top, ndevices)
+                            #     pruned_flag = False
+                            #
+                            # elif mask_ratio[idx - 1] > mask_ratio[idx]: # Growth
+                            #     all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                            #     structured_masking_initalization(dlrm, all_mask)
+                            #     if mask_ratio[idx] != 0.0:
+                            #         pruned_flag = True
+                            #     else:
+                            #         pruned_flag = False
+                            #
+                            #
+                            # elif mask_ratio[idx - 1] < mask_ratio[idx]: #pruning
+                            #     all_mask, mask_idx = generate_mask(dlrm, mask_ratio[idx])
+                            #     if mask_ratio[idx] != 0.0:
+                            #         pruned_flag = True
+                            #     else:
+                            #         pruned_flag = False
+                            #
+                            # elif mask_ratio[idx - 1] == mask_ratio[idx]:
+                            #     if mask_ratio[idx] != 0.0:
+                            #         pruned_flag = True
+                            #     else:
+                            #         pruned_flag = False
+                            # else:
+                            #     sys.exit("Does not match any condition")
 
 
                             # save_trained_model(dlrm, growth_id)
@@ -1432,7 +1492,7 @@ if __name__ == "__main__":
                         and (((j + 1) % args.test_freq == 0) or (j + 1 == nbatches))
                 )
                 if pruned_flag:
-                    structured_masking(dlrm, all_mask)
+                    structured_masking_initalization(dlrm, all_mask, None)
 
                 param = utils.count_parameters_in_MB(dlrm)
                 param_FC = utils.count_parameters_in_FC(dlrm, pruned_flag)
@@ -1766,7 +1826,7 @@ if __name__ == "__main__":
     flops = sum(param_FC_log) * 2 / 1000000
 
     scio.savemat(
-        './log/savemat_bot{}_maskDelay{}_maskRatio{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, mask_delay, mask_ratio, gL, sum(gA_log[-10:])/10.0, flops),
+        './log/savemat_bot{}_loss{:.5f}_accu{:.5f}_flop{:.2f}G.mat'.format(args.arch_mlp_bot, gL, sum(gA_log[-30:])/30.0, flops),
         {'gL_log': gL_log, 'gA_log': gA_log, 'gA_test':gA_test, 'masking_delay':args.masking_delay, 'masking_ratio':args.masking_ratio,
          'args.grow_embedding': args.grow_embedding, 'param_FC_log': param_FC_log, 'param_log': param_log,
          'm_spa': m_spa, 'ln_emb': ln_emb, 'num_fea': num_fea, 'num_int': num_int,

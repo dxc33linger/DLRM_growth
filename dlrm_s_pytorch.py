@@ -928,10 +928,7 @@ if __name__ == "__main__":
                 if re.search('emb', layer_name):
                     if args.grow_embedding:
                         param_new[:, 0:param_old.shape[1]] = Variable(param_old.clone(), requires_grad=True)
-                        random_initialization = torch.empty(param_old.shape[0],
-                                                            param_new.shape[1] - param_old.shape[1]).clone().normal_(0,
-                                                                                                                     std).type(
-                            torch.cuda.FloatTensor)
+                        random_initialization = torch.empty(param_old.shape[0], param_new.shape[1] - param_old.shape[1]).clone().normal_(0, std).type(torch.cuda.FloatTensor)
                         param_new[:, param_old.shape[1]:] = Variable(random_initialization, requires_grad=True)
                     else:
                         param_new = Variable(param_old.clone(), requires_grad=True)
